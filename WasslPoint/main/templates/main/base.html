@@ -1,3 +1,4 @@
+{%load static%}
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -18,7 +19,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-bg ">
   <div class="container-fluid">
-    <a class="btn btn-warning" href="#">تسجيل</a>
+    <a class="btn btn-warning" href="{%url 'accounts:login_view'%}">تسجيل دخول</a>
 
     <!-- زر الهامبرغر في الشاشات الصغيره -->
     <button
@@ -89,6 +90,9 @@
     </div>
   </div>
 </nav>
+
+{%block content%}
+{%endblock%}
 <footer class="py-3 my-4">
     <ul class="nav justify-content-center border-bottom pb-3 mb-3">
       <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">الرئيسيه</a></li>
