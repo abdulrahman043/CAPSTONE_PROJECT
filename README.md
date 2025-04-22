@@ -4,6 +4,7 @@ WasslPoint is a website-based project in Django that minimises the gap between u
 
 ## Who will benefit from this project?
 a. Companies that are looking for university students as trainees.
+
 b. University Students who are looking for Co-op opportunities.
 
 ## How will the Project help?
@@ -13,3 +14,4 @@ a. Helps companies in finding the most suitable students for their training post
 b. Ease the process of finding a co-op opportunity for students.
 
 ## Included Features:
+Signin, SignUp, SignOut, Contact Form, Post Co-op Opportunities, View all opportunities,
