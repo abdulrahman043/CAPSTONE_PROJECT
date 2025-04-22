@@ -31,9 +31,9 @@ class Country(models.Model):
 class PersonalInformation(models.Model):
     profile=models.OneToOneField(StudentProfile,models.CASCADE)
     full_name_ar=models.CharField(max_length=100)
-    full_name_en=models.CharField(max_length=100)
-    date_of_birth=models.DateField()
-    gender=models.CharField(max_length=1,choices=GENDER_CHOICES)
+    full_name_en=models.CharField(max_length=100,blank=True)
+    date_of_birth=models.DateField(blank=True,null=True)
+    gender=models.CharField(max_length=1,choices=GENDER_CHOICES,blank=True)
     nationality=models.ForeignKey(Country,on_delete=models.SET_NULL,null=True)
     picture=models.ImageField(default='profiles/' ,blank=True)
 class Experience(models.Model):
