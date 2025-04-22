@@ -11,90 +11,68 @@
   >
   <title>وصل</title>
   <style>
-    /* فقط لضبط اللون بدقّة */
     .navbar-bg { background-color: #20b7b3; }
   </style>
 </head>
 <body>
-
-<nav class="navbar navbar-expand-lg navbar-bg ">
-  <div class="container-fluid">
-    {%if not request.user.is_authenticated%}
-    <a class="btn btn-warning" href="{%url 'accounts:login_view'%}">تسجيل دخول</a>
-    {%else%}
-    <a class="btn btn-warning" href="{%url 'accounts:logout'%}">تسجيل خروج</a>
-
-    {%endif%}
-
-    <!-- زر الهامبرغر في الشاشات الصغيره -->
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#mainNav"
-      aria-controls="mainNav"
-      aria-expanded="false"
-      aria-label="تبديل التنقّل"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- قائمة الروابط -->
-    <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <!-- التدريبات -->
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle text-white"
-            href="#"
-            id="trainingDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
+    <nav class="navbar navbar-expand-lg navbar-bg navbar-dark">
+        <!-- شريط الـ flex الرئيسي -->
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+      
+          <!-- 1) زر الهامبرغر (يظهر فقط على الجوال)، order-0 ليكون أول عنصر -->
+          <button
+            class="navbar-toggler d-lg-none order-0"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mobileNav"
+            aria-controls="mobileNav"
             aria-expanded="false"
+            aria-label="تبديل التنقّل"
           >
-            التدريبات
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="trainingDropdown">
-            <li><a class="dropdown-item" href="#">آرامكو</a></li>
-            <li><a class="dropdown-item" href="#">سابك</a></li>
-            <li><a class="dropdown-item" href="#">طوي...</a></li>
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      
+          <!-- 2) زر تسجيل دخول/خروج (يظهر فقط على الديسكتوب)، order-lg-0 -->
+          <div class="d-none d-lg-block order-lg-0">
+            {% if not request.user.is_authenticated %}
+              <a class="btn btn-warning" href="{% url 'accounts:login_view' %}">تسجيل دخول</a>
+            {% else %}
+              <a class="btn btn-warning" href="{% url 'accounts:logout' %}">تسجيل خروج</a>
+            {% endif %}
+          </div>
+      
+          <!-- 3) قائمة الروابط (تظهر فقط على الديسكتوب)، order-lg-1 + mx-auto لتمركزها -->
+          <ul class="navbar-nav d-none d-lg-flex  order-lg-1">
+            <li class="nav-item mx-2"><a class="nav-link text-white" href="#">التدريبات</a></li>
+            <li class="nav-item mx-2"><a class="nav-link text-white" href="#">الشركات</a></li>
+            <li class="nav-item mx-2"><a class="nav-link text-white" href="#">من نحن</a></li>
+            <li class="nav-item mx-2"><a class="nav-link text-white" href="#">اتصل بنا</a></li>
           </ul>
-        </li>
-
-        <!-- للشركات -->
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle text-white"
-            href="#"
-            id="companiesDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            للشركات
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="companiesDropdown">
-            <li><a class="dropdown-item" href="#">شركة 1</a></li>
-            <li><a class="dropdown-item" href="#">شركة 2</a></li>
+      
+          <!-- 4) العلامة التجارية "وصل" دائماً في أقصى اليسار -->
+          <a class="navbar-brand text-white fs-4 ms-auto order-1 order-lg-2" href="#">وصل</a>
+      
+        </div>
+      
+        <!-- قائمة الجوال المطوية -->
+        <div class="collapse d-lg-none" id="mobileNav">
+          <ul class="navbar-nav px-3 pt-3 pb-2">
+            <li class="nav-item"><a class="nav-link text-white" href="#">التدريبات</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#">الشركات</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#">من نحن</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#">اتصل بنا</a></li>
           </ul>
-        </li>
-
-        <!-- من نحن؟ -->
-        <li class="nav-item">
-          <a class="nav-link text-white" href="#">من نحن؟</a>
-        </li>
-
-        <!-- اتصل بنا -->
-        <li class="nav-item">
-          <a class="nav-link text-white" href="#">اتصل بنا</a>
-        </li>
-      </ul>
-
-      <a class="navbar-brand text-white fs-4" href="#">وصل</a>
-
-    </div>
-  </div>
-</nav>
+          <!-- زر المصادقة في أسفل القائمة -->
+          <div class="px-3 pb-3">
+            {% if not request.user.is_authenticated %}
+              <a class="btn btn-warning w-100" href="{% url 'accounts:login_view' %}">تسجيل دخول</a>
+            {% else %}
+              <a class="btn btn-warning w-100" href="{% url 'accounts:logout' %}">تسجيل خروج</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+      
 
 {%block content%}
 {%endblock%}
