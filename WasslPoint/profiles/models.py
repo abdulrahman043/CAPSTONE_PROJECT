@@ -26,7 +26,7 @@ class ContactPerson:
 class StudentProfile(models.Model):
     user=models.OneToOneField(User,models.CASCADE)
 class Country(models.Model):
-    name=models.CharField()
+    name=models.CharField(max_length=200)
     status=models.BooleanField()
 class PersonalInformation(models.Model):
     profile=models.OneToOneField(StudentProfile,models.CASCADE)
@@ -42,7 +42,7 @@ class Experience(models.Model):
     company_name=models.CharField(max_length=100)
     start_date=models.DateField()
     end_date=models.DateField(null=True,blank=True)
-    description=models.CharField(blank=True)
+    description=models.CharField(blank=True,max_length=100)
 
 class Major(models.Model):
     name=models.CharField(max_length=100)
@@ -72,8 +72,9 @@ class Certification(models.Model):
 
 
 class CompanyProfile(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
-    company_name=models.TextField(max_length=200)
-    commercial_CRM_Certificate=models.FileField(upload_to='crm_certs/')
-    commercial_register= models.CharField()
-    industry=models.ForeignKey(Industry,on_delete=models.SET_NULL,null=True)
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    company_name = models.TextField(max_length=200)
+    commercial_CRM_Certificate = models.FileField(upload_to='crm_certs/')
+    commercial_register = models.CharField(max_length=200)
+    industry = models.ForeignKey(Industry,on_delete=models.SET_NULL,null=True)
+    CompanyAddress = models.ForeignKey(CompanyAddress,on_delete=models.SET_NULL,null=True)
