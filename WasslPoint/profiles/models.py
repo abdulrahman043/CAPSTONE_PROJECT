@@ -24,12 +24,12 @@ class ContactPerson:
     phone=models.CharField(max_length=20)
 
 class StudentProfile(models.Model):
-    user=models.OneToOneField(User,models.CASCADE)
+    user=models.OneToOneField(User,models.CASCADE,related_name='student_profile')
 class Country(models.Model):
     name=models.CharField(max_length=200)
     status=models.BooleanField()
 class PersonalInformation(models.Model):
-    profile=models.OneToOneField(StudentProfile,models.CASCADE)
+    profile=models.OneToOneField(StudentProfile,models.CASCADE,related_name='personal_info')
     full_name_ar=models.CharField(max_length=100)
     full_name_en=models.CharField(max_length=100,blank=True)
     date_of_birth=models.DateField(blank=True,null=True)
@@ -78,3 +78,9 @@ class CompanyProfile(models.Model):
     commercial_register = models.CharField(max_length=200)
     industry = models.ForeignKey(Industry,on_delete=models.SET_NULL,null=True)
     CompanyAddress = models.ForeignKey(CompanyAddress,on_delete=models.SET_NULL,null=True)
+class ContactInformation(models.Model):
+    profile=models.OneToOneField(StudentProfile,on_delete=models.CASCADE)
+    email=models.EmailField(null=True)
+    phone=models.CharField(null=True)
+    address_line=models.TextField(null=True)
+    City=models.ForeignKey(City,on_delete=models.CASCADE,null=True)
