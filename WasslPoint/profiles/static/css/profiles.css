@@ -8,6 +8,7 @@
 .profile-flex{
     display: flex;
     flex-direction: column;
+    gap: 2px;
 }
 .personal-info{
     display: flex;
