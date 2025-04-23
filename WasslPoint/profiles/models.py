@@ -81,6 +81,6 @@ class CompanyProfile(models.Model):
 class ContactInformation(models.Model):
     profile=models.OneToOneField(StudentProfile,on_delete=models.CASCADE)
     email=models.EmailField(null=True)
-    phone=models.CharField(null=True)
+    phone=models.CharField(null=True,max_length=20)
     address_line=models.TextField(null=True)
     City=models.ForeignKey(City,on_delete=models.CASCADE,null=True)
