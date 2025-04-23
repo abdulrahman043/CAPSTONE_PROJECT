@@ -40,7 +40,7 @@ class Experience(models.Model):
     profile=models.ForeignKey(StudentProfile,models.CASCADE)
     job_title=models.CharField(max_length=100)
     company_name=models.CharField(max_length=100)
-    start_date=models.DateField()
+    start_date=models.DateField(null=True)
     end_date=models.DateField(null=True,blank=True)
     description=models.CharField(blank=True,max_length=100)
 
@@ -52,8 +52,8 @@ class Education(models.Model):
     university  =models.CharField(max_length=200)
     degree=models.CharField(max_length=100)
     major=models.ForeignKey(Major,on_delete=models.SET_NULL,null=True)
-    graduating_date= models.DateField()
-    GPA=models.DecimalField(max_digits=4,decimal_places=2)
+    graduating_date= models.DateField(null=True)
+    GPA=models.DecimalField(max_digits=4,decimal_places=2,null=True)
 class Skill(models.Model):
     profile=models.ForeignKey(StudentProfile,models.CASCADE)
     name=models.CharField(max_length=100)
@@ -66,7 +66,7 @@ class Certification(models.Model):
     profile=models.ForeignKey(StudentProfile,models.CASCADE)
     name=models.CharField(max_length=200)
     issuer=models.CharField(max_length=100)
-    issue_date= models.DateField()
+    issue_date= models.DateField(null=True)
     expiry_date= models.DateField(null=True,blank=True)
     certificate_file= models.FileField(upload_to='certs/')
 
@@ -79,7 +79,7 @@ class CompanyProfile(models.Model):
     industry = models.ForeignKey(Industry,on_delete=models.SET_NULL,null=True)
     CompanyAddress = models.ForeignKey(CompanyAddress,on_delete=models.SET_NULL,null=True)
 class ContactInformation(models.Model):
-    profile=models.OneToOneField(StudentProfile,on_delete=models.CASCADE)
+    profile=models.OneToOneField(StudentProfile,on_delete=models.CASCADE,related_name='contact_info')
     email=models.EmailField(null=True)
     phone=models.CharField(null=True,max_length=20)
     address_line=models.TextField(null=True)

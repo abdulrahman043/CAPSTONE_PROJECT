@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from django.db import transaction
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.models import User
-from profiles.models import CompanyProfile,StudentProfile,PersonalInformation
+from profiles.models import CompanyProfile,StudentProfile,PersonalInformation,Experience,Education,Skill,Language,Certification,ContactInformation
 # Create your views here.
 
 def signup_view(request:HttpRequest):
@@ -14,6 +14,18 @@ def signup_view(request:HttpRequest):
                 user.save()
                 profile=StudentProfile.objects.create(user=user)
                 PersonalInformation.objects.create(profile=profile,full_name_ar=request.POST['full_name'])
+                Education.objects.create(profile=profile)
+                Experience.objects.create(profile=profile)
+                Skill.objects.create(profile=profile)
+                Language.objects.create(profile=profile)
+                Certification.objects.create(profile=profile)
+                ContactInformation.objects.create(profile=profile)
+
+                
+
+
+
+
                 return redirect('accounts:login_view')
             except Exception as e:
                 print(e)
