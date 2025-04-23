@@ -17,7 +17,7 @@ class CompanyAddress(models.Model):
     address_line2=models.TextField(max_length=255 ,blank=True)
     city=models.ForeignKey(City,on_delete=models.SET_NULL,null=True)
     postal_code= models.CharField(max_length=20)
-class ContactPerson:
+class ContactPerson(models.Model):
     company_address=models.OneToOneField(CompanyAddress,models.CASCADE)
     person_name=models.CharField(max_length=100)
     email=models.EmailField()
