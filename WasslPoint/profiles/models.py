@@ -35,7 +35,7 @@ class PersonalInformation(models.Model):
     date_of_birth=models.DateField(blank=True,null=True)
     gender=models.CharField(max_length=1,choices=GENDER_CHOICES,blank=True)
     nationality=models.ForeignKey(Country,on_delete=models.SET_NULL,null=True)
-    picture=models.ImageField(default='profiles/' ,blank=True)
+    picture=models.ImageField(upload_to='profiles/' ,blank=True,null=True)
 class Experience(models.Model):
     profile=models.ForeignKey(StudentProfile,models.CASCADE)
     job_title=models.CharField(max_length=100)
@@ -77,10 +77,10 @@ class CompanyProfile(models.Model):
     commercial_CRM_Certificate = models.FileField(upload_to='crm_certs/')
     commercial_register = models.CharField(max_length=200)
     industry = models.ForeignKey(Industry,on_delete=models.SET_NULL,null=True)
-    CompanyAddress = models.ForeignKey(CompanyAddress,on_delete=models.SET_NULL,null=True)
+    company_address = models.ForeignKey(CompanyAddress,on_delete=models.SET_NULL,null=True)
 class ContactInformation(models.Model):
     profile=models.OneToOneField(StudentProfile,on_delete=models.CASCADE,related_name='contact_info')
     email=models.EmailField(null=True)
     phone=models.CharField(null=True,max_length=20)
     address_line=models.TextField(null=True)
-    City=models.ForeignKey(City,on_delete=models.CASCADE,null=True)
+    city=models.ForeignKey(City,on_delete=models.CASCADE,null=True)
