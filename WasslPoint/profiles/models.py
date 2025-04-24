@@ -1,7 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
+from babel import Locale
 
+locale_ar = Locale('ar')
+LANGUAGE_CHOICES = [
+    (code, name)
+    for code, name in locale_ar.languages.items()
+]
 class City(models.Model):
     name=models.CharField(max_length=100)
     status=models.BooleanField(default=True)
@@ -59,13 +65,22 @@ class Education(models.Model):
     graduating_date= models.DateField(null=True)
     GPA=models.DecimalField(max_digits=4,decimal_places=2,null=True)
 class Skill(models.Model):
-    profile=models.ForeignKey(StudentProfile,models.CASCADE)
+    class Proficiency(models.TextChoices):
+        BEGINNER     = 'مبتدئ',     'مبتدئ'
+        INTERMEDIATE = 'متوسط', 'متوسط'
+        ADVANCED     = 'متقدم',     'متقدم'
+    profile=models.ForeignKey(StudentProfile,models.CASCADE,related_name='skill')
     name=models.CharField(max_length=100)
-    proficiency=models.CharField(max_length=20)
+    proficiency=models.CharField(max_length=20,choices=Proficiency.choices)
 class Language(models.Model):
-    profile=models.ForeignKey(StudentProfile,models.CASCADE)
-    name=models.CharField(max_length=100)
-    proficiency=models.CharField(max_length=20)
+    class Proficiency(models.TextChoices):
+        BEGINNER= 'مبتدئ',     'مبتدئ'
+        INTERMEDIATE= 'متوسط', 'متوسط'
+        ADVANCED='متقدم',     'متقدم'
+        NATIVE='اللغة الأم',     'اللغة الأم'
+    profile=models.ForeignKey(StudentProfile,models.CASCADE,related_name='language')
+    name=models.CharField(max_length=100,choices=LANGUAGE_CHOICES)
+    proficiency=models.CharField(max_length=20,choices=Proficiency.choices)
 class Certification(models.Model):
     profile=models.ForeignKey(StudentProfile,models.CASCADE)
     name=models.CharField(max_length=200)

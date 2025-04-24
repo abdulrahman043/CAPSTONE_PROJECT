@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.http import HttpRequest
-from .models import PersonalInformation,Country,ContactInformation,City,Experience
+from .models import PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language
 from datetime import date
 # Create your views here.
 def profile_view(request:HttpRequest):
@@ -38,16 +38,33 @@ def profile_view(request:HttpRequest):
             experience.job_title  = request.POST.get('job_title')
             experience.company_name  = request.POST.get('company_name')
             experience.description  = request.POST.get('description')
-            start_date = request.POST.get('start_date')   # e.g. "2025-04"
+            start_date = request.POST.get('start_date')   
             if start_date:
                 year, month = map(int, start_date.split('-'))
                 experience.start_date = date(year, month, 1)
-            end_date = request.POST.get('end_date')   # e.g. "2025-04"
+            end_date = request.POST.get('end_date')   
             if end_date:
                 year, month = map(int, end_date.split('-'))
                 experience.end_date = date(year, month, 1)
                     
             experience.save()
+            return redirect('profiles:profile_view')
+        if 'skill-submit' in request.POST:
+            skill = Skill.objects.create(profile=profile)
+            skill.name  = request.POST.get('name')
+            skill.proficiency  = request.POST.get('proficiency')
+           
+                    
+            skill.save()
+            return redirect('profiles:profile_view')
+        if 'language-submit' in request.POST:
+            print(request.POST)
+            language = Language.objects.create(profile=profile)
+            language.name  = request.POST.get('name')
+            language.proficiency  = request.POST.get('proficiency')
+           
+                    
+            language.save()
             return redirect('profiles:profile_view')
             
     countries = Country.objects.filter(status=True) 
@@ -56,6 +73,11 @@ def profile_view(request:HttpRequest):
 
     context = {
     "gender_choices": PersonalInformation.Gender.choices,
+    "language_choices": Language.Proficiency.choices,
+        'language_name_choices': Language._meta.get_field('name').choices,
+
+    "proficiency_choices": Skill.Proficiency.choices,
+
     'countries':countries,
     'cities':cities,
 }
@@ -65,6 +87,79 @@ def delate_exp(request:HttpRequest,exp_id):
     try:
         experience=Experience.objects.get(pk=exp_id)
         experience.delete()
+    
+    except Exception as e:
+        print(e)
+    return redirect('profiles:profile_view')
+def edit_exp(request:HttpRequest,exp_id):
+    try:
+        if request.method=='POST':
+
+            experience=Experience.objects.get(pk=exp_id)
+           
+            experience.job_title  = request.POST.get('job_title')
+            experience.company_name  = request.POST.get('company_name')
+            experience.description  = request.POST.get('description')
+            start_date = request.POST.get('start_date')   
+            if start_date:
+                year, month = map(int, start_date.split('-'))
+                experience.start_date = date(year, month, 1)
+            end_date = request.POST.get('end_date')   
+            if end_date:
+                year, month = map(int, end_date.split('-'))
+                experience.end_date = date(year, month, 1)
+                    
+            experience.save()
+            return redirect('profiles:profile_view')
+        
+    
+    except Exception as e:
+        print(e)
+    return redirect('profiles:profile_view')
+def delate_skill(request:HttpRequest,skill_id):
+    try:
+        skill=Skill.objects.get(pk=skill_id)
+        skill.delete()
+    
+    except Exception as e:
+        print(e)
+    return redirect('profiles:profile_view')
+def edit_skill(request:HttpRequest,skill_id):
+    try:
+        if request.method=='POST':
+
+            skill=Skill.objects.get(pk=skill_id)
+           
+            skill.name  = request.POST.get('name')
+            skill.proficiency  = request.POST.get('proficiency')
+                    
+            skill.save()
+            return redirect('profiles:profile_view')
+        
+    
+    except Exception as e:
+        print(e)
+    return redirect('profiles:profile_view')
+def delate_language(request:HttpRequest,lan_id):
+    try:
+        language=Language.objects.get(pk=lan_id)
+        language.delete()
+    
+    except Exception as e:
+        print(e)
+    return redirect('profiles:profile_view')
+def edit_language(request:HttpRequest,lan_id):
+    try:
+        if request.method=='POST':
+
+            language=Language.objects.get(pk=lan_id)
+           
+            language.name  = request.POST.get('name')
+            language.proficiency  = request.POST.get('proficiency')
+                    
+            language.save()
+            return redirect('profiles:profile_view')
+        
     
     except Exception as e:
         print(e)

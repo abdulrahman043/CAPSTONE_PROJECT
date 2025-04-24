@@ -1,0 +1,139 @@
+<div class="card-view ">
+    <div class="top-card border d-flex justify-content-between align-items-center p-2 ">
+        <h2 class="fs-6 p">المعلومات الشخصية</h2>
+        <a href="javascript:void(0)" class="edit-btn"><svg xmlns="http://www.w3.org/2000/svg"
+                width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                <path
+                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
+            </svg>
+        </a>
+    </div>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <p>الاسم</p>
+            </div>
+            <div class="col">
+                <p>{{request.user.student_profile.personal_info.full_name_en}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p>تاريخ الميلاد</p>
+            </div>
+            <div class="col">
+                <p>{{request.user.student_profile.personal_info.date_of_birth}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p>الجنس</p>
+            </div>
+            <div class="col">
+                <p>{{request.user.student_profile.personal_info.gender}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p>الاسم (باللغة العربية)</p>
+            </div>
+            <div class="col">
+                <p>{{request.user.student_profile.personal_info.full_name_ar}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p>الجنسية</p>
+            </div>
+            <div class="col">
+                <p>{{request.user.student_profile.personal_info.nationality.arabic_name}}</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="card-edit" style="display: none;">
+    <div class="top-card border d-flex justify-content-between align-items-center p-2 ">
+        <h2 class="fs-6">المعلومات الشخصية</h2>
+
+    </div>
+    <form method="post">
+        {%csrf_token%}
+        <div class="container mt-3">
+            <div class="row mb-2">
+                <div class="col">
+                    <label class="form-label" for="name">الاسم</label>
+                </div>
+                <div class="col">
+                    <p><input class="form-control" id="name" name="name" type="text" value="{{request.user.student_profile.personal_info.full_name_en}}"></p>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <label for="date_of_birth">تاريخ الميلاد</label>
+                </div>
+                <div class="col">
+                    <p> <input class="form-control" type="date" name="date_of_birth"
+                            id="date_of_birth" value="{{ request.user.student_profile.personal_info.date_of_birth|date:'Y-m-d' }}"
+                            ></p>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <p> <label for="gender">الجنس</label></p>
+                </div>
+                <div class="col">
+                    <p> {% for value, label in gender_choices %}
+                        <div class="form-check form-check-inline  ">
+                          <input class="form-check-input"
+                                 type="radio"
+                                 name="gender"
+                                 id="gender_{{ forloop.counter }}"
+                                 value="{{ value }}"
+                                 {% if request.user.student_profile.personal_info.gender == value %}checked{% endif %}>
+                          <label class="form-check-label" for="gender_{{ forloop.counter }}">
+                            {{ label }}
+                          </label>
+                        </div>
+                      {% endfor %}</p>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <label for="full_name_ar">الاسم (باللغة العربية)</label>
+                </div>
+                <div class="col">
+                    <p> <input class="form-control" type="text" name="full_name_ar"
+                            id="full_name_ar" value="{{request.user.student_profile.personal_info.full_name_ar}}"></p>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <label for="nationality">الجنسية</label>
+                </div>
+                <div class="col">
+                    <p> <select name="nationality" class="form-select" id="nationality">
+                        <option disabled selected>اختر الجنسية</option>
+                        {% for country in countries %}
+                          <option value="{{ country.id }}" {% if request.user.student_profile.personal_info.nationality.id == country.id %}selected{% endif %}>
+                            {{ country.arabic_name }}
+                          </option>
+                        {% endfor %}
+                      </select>
+                    </p>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                </div>
+                <div class="col">
+                    <button name="personal-submit" type="submit" class="btn btn-primary">حفظ</button>
+                    <button type="button"
+                        class="btn btn-outline-secondary cancel-btn">الغاء</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+</div>
