@@ -9,30 +9,20 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+    margin-top: 30px;
 }
-.personal-info{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 0 auto;
-    margin-top: 10px;
-    width: 600px;
-    border-radius: 10px;
+.card{
+  width: 100%;
+  
+}
+.btn-form{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+.test{
+  border: 2px solid red;
+      margin-top: 30px;
 
-}
-.personal-info-p {
-    display: flex;
-    flex-wrap: wrap;      /* allow wrapping onto new lines */
-    gap: 10rem;           /* 10rem between items on the same line */
-    row-gap: 10rem;       /* 10rem between lines, if you want it */
-  }
-.personal-info h2{
-    font-size: 1.2rem;   
-    padding: 5px; 
-
-}
-.edit-personal-info{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
