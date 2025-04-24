@@ -14,4 +14,5 @@ a. Helps companies in finding the most suitable students for their training post
 b. Ease the process of finding a co-op opportunity for students.
 
 ## Included Features:
-Signin, SignUp, SignOut, Contact Form, Post Co-op Opportunities, View all opportunities,
+Sign in, Sign Up, Sign Out, Contact Form, Post Co-op Opportunities, View all opportunities, apply for a co-op opportunity, and view all applicants.
+
