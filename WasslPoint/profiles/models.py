@@ -1,11 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
-GENDER_CHOICES = [
-    ('M', 'Male'),
-    ('F', 'Female'),
-    ('O', 'Other'),
-]
+
 class City(models.Model):
     name=models.CharField(max_length=100)
     status=models.BooleanField(default=True)
@@ -26,14 +22,22 @@ class ContactPerson(models.Model):
 class StudentProfile(models.Model):
     user=models.OneToOneField(User,models.CASCADE,related_name='student_profile')
 class Country(models.Model):
-    name=models.CharField(max_length=200)
-    status=models.BooleanField()
+    arabic_name=models.CharField(max_length=200)
+    english_name=models.CharField(max_length=200)
+    phone_code=models.CharField(max_length=200)
+
+    status=models.BooleanField(default=1)
+    def __str__(self):
+        return super().__str__()
 class PersonalInformation(models.Model):
+    class Gender(models.TextChoices):
+        MALE = 'ذكر', 'ذكر'
+        FEMALE = 'انثى', 'انثى'
     profile=models.OneToOneField(StudentProfile,models.CASCADE,related_name='personal_info')
     full_name_ar=models.CharField(max_length=100)
     full_name_en=models.CharField(max_length=100,blank=True)
     date_of_birth=models.DateField(blank=True,null=True)
-    gender=models.CharField(max_length=1,choices=GENDER_CHOICES,blank=True)
+    gender=models.CharField(max_length=4,choices=Gender.choices,blank=True)
     nationality=models.ForeignKey(Country,on_delete=models.SET_NULL,null=True)
     picture=models.ImageField(upload_to='profiles/' ,blank=True,null=True)
 class Experience(models.Model):
