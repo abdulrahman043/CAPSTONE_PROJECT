@@ -1,0 +1,108 @@
+/* الصورة الثابتة في الأعلى */
+.hero {
+    height: 100vh;
+  }
+  
+  .hero-slide {
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  /* السلايدر */
+  .carousel-item {
+    position: relative;
+    height: 300px;
+  }
+  
+  .carousel-img {
+    height: 90vh;
+    object-fit: cover;
+    object-position: center;
+  }
+  
+  /* نص وسط السلايدر */
+  .carousel-caption-centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-shadow: 2px 2px 5px #000;
+    color: white;
+    max-width: 90%;
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .carousel-caption-centered h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .carousel-caption-centered p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* الأسهم */
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+  }
+  
+  .carousel-control-prev:hover,
+  .carousel-control-next:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    width: 24px;
+    height: 24px;
+    background-size: 100% 100%;
+    filter: brightness(0) invert(1); /* يجعل السهم أبيض */
+  }
+  
+  /* صورة الخلفية الثابتة */
+  .hero-banner {
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  /* إحصائيات */
+  .shadow-sm i {
+    display: block;
+  }
+  
+  /* حجم الأيقونات داخل الإحصائيات */
+  .shadow-sm i {
+    color: #FF7C34;
+    width: 90px;
+    height: 90px;
+    font-size: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+  }
+  
+  /* تنسيق أرقام الإحصائيات */
+  .stat-box h5 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #009999;
+  }
+  
+  .stat-box span {
+    color: #009999;
+  }
+  
