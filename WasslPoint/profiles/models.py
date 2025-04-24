@@ -41,7 +41,7 @@ class PersonalInformation(models.Model):
     nationality=models.ForeignKey(Country,on_delete=models.SET_NULL,null=True)
     picture=models.ImageField(upload_to='profiles/' ,blank=True,null=True)
 class Experience(models.Model):
-    profile=models.ForeignKey(StudentProfile,models.CASCADE)
+    profile=models.ForeignKey(StudentProfile,models.CASCADE,related_name='experience')
     job_title=models.CharField(max_length=100)
     company_name=models.CharField(max_length=100)
     start_date=models.DateField(null=True)
