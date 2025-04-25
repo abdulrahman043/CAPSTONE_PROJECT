@@ -44,37 +44,66 @@
                     <form action="{%url 'profiles:edit_exp' exp.id%}" method="post">
                       {% csrf_token %}
                 
-                      <div class="mb-2">
-                        <label>المسمى الوظيفي</label>
-                        <input name="job_title" class="form-control" value="{{exp.job_title}}">
-                      </div>
-                      <div class="mb-2">
-                        <label>اسم الشركة</label>
-                        <input name="company_name" class="form-control" value="{{exp.company_name}}">
+                      <div class="container mt-3">
+                        <div class="row mb-2">
+                          <div class="col">
+                            <label for="job_title">المسمى الوظيفي</label>
+                          </div>
+                          <div class="col">
+                            <input id="job_title" name="job_title" class="form-control" value="{{exp.job_title}}">
+              
+                          </div>
+                        </div>
+                    
+                        <div class="row mb-2">
+                          <div class="col">
+                            <label for="company_name">اسم الشركة</label>            </div>
+                          <div class="col">
+                            <input id="company_name" name="company_name" class="form-control" value="{{exp.company_name}}">
+              
+                          </div>
+                        </div>
+                   
+                    
+                        <div class="row mb-2">
+                          <div class="col">
+                            <label for="start_date-ex">تاريخ البدء</label>
+                          </div>
+                          <div class="col">
+                            <input id="start_date-ex" type="month" name="start_date" class="form-control" value="{{exp.start_date|date:'Y-m'}}">
+              
+                          </div>
+                        </div>
+                    
+                      <div class="row mb-2">
+                        <div class="col">
+                          <label for="end_date-ex">تاريخ الانتهاء</label>
+              
+                        </div>
+                        <div class="col">
+                          <input type="month" id="end_date-ex" name="end_date" class="form-control" value="{{exp.end_date|date:'Y-m'}}">
+                        </div>
                       </div>
                       <div class="row mb-2">
                         <div class="col">
-                          <label>تاريخ البدء</label>
-                          <input type="month" name="start_date" class="form-control" value="{{exp.start_date|date:'Y-m'}}">
+                          <label for="description-ex">الوصف</label>
                         </div>
                         <div class="col">
-                          <label>تاريخ الانتهاء</label>
-                          <input type="month" name="end_date" class="form-control" value="{{exp.end_date|date:'Y-m'}}">
+                          <textarea id="description-ex" name="description" rows="3" class="form-control">{{exp.description}}</textarea>
+              
                         </div>
                       </div>
-                      <div class="mb-2">
-                        <label>الوصف</label>
-                        <textarea name="description" rows="3" class="form-control">{{exp.description}}</textarea>
-                      </div>
+                     
                       <div class="row mb-2">
-                        <div class="col-4">
-                        </div>
-                        <div class="col-8">
-                            <button type="submit" class="btn btn-primary" name="experience-submit">حفظ</button>
-                            <button type="button"
-                                class="btn btn-outline-secondary cancel-btn">الغاء</button>
-                        </div>
-                    </div>
+                          <div class="col-4">
+                          </div>
+                          <div class="col-8">
+                              <button type="submit" class="btn btn-primary" name="experience-submit">حفظ</button>
+                              <button type="button"
+                                  class="btn btn-outline-secondary cancel-btn">الغاء</button>
+                          </div>
+                      </div>
+                      </div>
                     </form>
                   </div>
                  
@@ -94,31 +123,58 @@
             <h2 class="fs-6">الخبرة</h2>
 
     </div>
-    <form  method="post" class="p-3">
+    <form action="{%url 'profiles:add_exp'%}" method="post" class="p-3">
         {% csrf_token %}
-  
-        <div class="mb-2">
-          <label>المسمى الوظيفي</label>
-          <input name="job_title" class="form-control" value="{{exp.job_title}}">
-        </div>
-        <div class="mb-2">
-          <label>اسم الشركة</label>
-          <input name="company_name" class="form-control" value="{{exp.company_name}}">
+        <div class="container mt-3">
+          <div class="row mb-2">
+            <div class="col">
+              <label for="job_title">المسمى الوظيفي</label>
+            </div>
+            <div class="col">
+              <input id="job_title" name="job_title" class="form-control" value="{{exp.job_title}}">
+
+            </div>
+          </div>
+      
+          <div class="row mb-2">
+            <div class="col">
+              <label for="company_name">اسم الشركة</label>            </div>
+            <div class="col">
+              <input id="company_name" name="company_name" class="form-control" value="{{exp.company_name}}">
+
+            </div>
+          </div>
+     
+      
+          <div class="row mb-2">
+            <div class="col">
+              <label for="start_date-ex">تاريخ البدء</label>
+            </div>
+            <div class="col">
+              <input id="start_date-ex" type="month" name="start_date" class="form-control" value="{{exp.start_date|date:'Y-m'}}">
+
+            </div>
+          </div>
+      
+        <div class="row mb-2">
+          <div class="col">
+            <label for="end_date-ex">تاريخ الانتهاء</label>
+
+          </div>
+          <div class="col">
+            <input type="month" id="end_date-ex" name="end_date" class="form-control" value="{{exp.end_date|date:'Y-m'}}">
+          </div>
         </div>
         <div class="row mb-2">
           <div class="col">
-            <label>تاريخ البدء</label>
-            <input type="month" name="start_date" class="form-control" value="{{exp.start_date|date:'Y-m'}}">
+            <label for="description-ex">الوصف</label>
           </div>
           <div class="col">
-            <label>تاريخ الانتهاء</label>
-            <input type="month" name="end_date" class="form-control" value="{{exp.end_date|date:'Y-m'}}">
+            <textarea id="description-ex" name="description" rows="3" class="form-control">{{exp.description}}</textarea>
+
           </div>
         </div>
-        <div class="mb-2">
-          <label>الوصف</label>
-          <textarea name="description" rows="3" class="form-control">{{exp.description}}</textarea>
-        </div>
+       
         <div class="row mb-2">
             <div class="col-4">
             </div>
@@ -128,7 +184,7 @@
                     class="btn btn-outline-secondary cancel-btn">الغاء</button>
             </div>
         </div>
-        
+        </div>
       </form>
 
 </div>

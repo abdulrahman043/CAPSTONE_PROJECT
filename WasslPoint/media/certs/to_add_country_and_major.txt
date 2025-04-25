@@ -1,0 +1,25 @@
+import json
+from profiles.models import Country
+
+with open('countries.json', encoding='utf-8') as file:
+    countries = json.load(file)
+    for entry in countries:
+        Country.objects.get_or_create(
+            english_name=entry['english_name'],
+            defaults={
+                'arabic_name': entry['arabic_name'],
+            }
+        )
+import json
+from profiles.models import Major
+
+with open('majors.json', encoding='utf-8') as file:
+    majors = json.load(file)
+    for entry in majors:
+        Major.objects.get_or_create(
+            en_name=entry['en_name'],
+            defaults={
+                'ar_name': entry['ar_name'],
+                'status': entry['status'],
+            }
+        )

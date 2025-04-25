@@ -55,10 +55,10 @@
         <div class="container mt-3">
             <div class="row mb-2">
                 <div class="col">
-                    <label class="form-label" for="name">ايميل</label>
+                    <label class="form-label" for="name-email">ايميل</label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="email" name="email" type="email" value="{{request.user.student_profile.contact_info.email}}"></p>
+                    <p><input class="form-control" id="name-email" name="email" type="email" value="{{request.user.student_profile.contact_info.email}}"></p>
                 </div>
             </div>
             <div class="row mb-2">
@@ -72,11 +72,11 @@
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <p> <label for="gender">العنوان</label></p>
+                    <p> <label for="address_line-c">العنوان</label></p>
                 </div>
                 <div class="col">
                     <p><input class="form-control" type="text" name="address_line"
-                        id="address_line"  value="{{request.user.student_profile.contact_info.address_line}}"></p>
+                        id="address_line-c"  value="{{request.user.student_profile.contact_info.address_line}}"></p>
                 </div>
             </div>
             <div class="row mb-2">

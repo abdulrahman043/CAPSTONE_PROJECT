@@ -32,7 +32,7 @@ class Country(models.Model):
     english_name=models.CharField(max_length=200)
     phone_code=models.CharField(max_length=200)
 
-    status=models.BooleanField(default=1)
+    status=models.BooleanField(default=True)
     def __str__(self):
         return super().__str__()
 class PersonalInformation(models.Model):
@@ -55,15 +55,32 @@ class Experience(models.Model):
     description=models.CharField(blank=True,max_length=100)
 
 class Major(models.Model):
-    name=models.CharField(max_length=100)
+    ar_name=models.CharField(max_length=100)
+    en_name=models.CharField(max_length=100)
+    status=models.BooleanField(default=True)
+
+    
+
     status=models.BooleanField(default=True)
 class Education(models.Model):
-    profile=models.ForeignKey(StudentProfile,models.CASCADE)
+    class Degree(models.TextChoices):
+        HIGH_SCHOOL= ' الثانوية العامة أو ما يعادلها',     ' الثانوية العامة أو ما يعادلها'
+        DIPLOMA= 'دبلوم', 'دبلوم'
+        BACHELOR='بكالوريوس',     'بكالوريوس'
+        POST_DIPLOMA='دبلوم عالي',     '  دبلوم عالي'
+        MASTER='ماجستير',     'ماجستير'
+        DOCTORATE=' دكتوراة',     '  دكتوراة'
+    class GPA_SCALE(models.TextChoices):
+        SCALE_4='4','4'
+        SCALE_5='5','5'
+        SCALE_100='100','100'
+    profile=models.ForeignKey(StudentProfile,models.CASCADE,related_name='education')
     university  =models.CharField(max_length=200)
-    degree=models.CharField(max_length=100)
+    degree=models.CharField(max_length=100,choices=Degree.choices)
     major=models.ForeignKey(Major,on_delete=models.SET_NULL,null=True)
     graduating_date= models.DateField(null=True)
-    GPA=models.DecimalField(max_digits=4,decimal_places=2,null=True)
+    gpa_scale = models.PositiveSmallIntegerField(choices=GPA_SCALE.choices,null=True)
+    GPA=models.DecimalField(max_digits=5,decimal_places=2,null=True)
 class Skill(models.Model):
     class Proficiency(models.TextChoices):
         BEGINNER     = 'مبتدئ',     'مبتدئ'
@@ -82,7 +99,7 @@ class Language(models.Model):
     name=models.CharField(max_length=100,choices=LANGUAGE_CHOICES)
     proficiency=models.CharField(max_length=20,choices=Proficiency.choices)
 class Certification(models.Model):
-    profile=models.ForeignKey(StudentProfile,models.CASCADE)
+    profile=models.ForeignKey(StudentProfile,models.CASCADE,related_name='certification')
     name=models.CharField(max_length=200)
     issuer=models.CharField(max_length=100)
     issue_date= models.DateField(null=True)

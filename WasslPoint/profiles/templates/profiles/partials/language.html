@@ -43,10 +43,10 @@
                 
                       <div class="row mb-2">
                         <div class="col">
-                            <label for="name">اسم اللغة</label>
+                            <label for="name-lan">اسم اللغة</label>
                         </div>
                         <div class="col">
-                            <p>  <select name="name" id="name" class="form-select">
+                            <p>  <select name="name" id="name-lan" class="form-select">
                                 <option value="" disabled selected>اختر لغة</option>
             
                                 {% for value, label in language_name_choices %}
@@ -60,10 +60,10 @@
                    
                     <div class="row mb-2">
                         <div class="col">
-                          <label for="proficiency">المستوى</label>
+                          <label for="proficiency-lan">المستوى</label>
                         </div>
                         <div class="col">
-                          <select name="proficiency" id="proficiency" class="form-select">
+                          <select name="proficiency" id="proficiency-lan" class="form-select">
                             {% for value, label in language_choices %}
                               <option value="{{ value }}" {% if lan.proficiency == value %}selected{% endif %}>
                                 {{ label }}
@@ -105,10 +105,10 @@
   
         <div class="row mb-2">
             <div class="col">
-                <label for="name">اسم اللغة</label>
+                <label for="lan-name">اسم اللغة</label>
             </div>
             <div class="col">
-                <p>  <select name="name" id="name" class="form-select">
+                <p>  <select name="name" id="lan-name" class="form-select">
                     <option value="" disabled selected>اختر لغة</option>
 
                     {% for value, label in language_name_choices %}
@@ -122,10 +122,10 @@
        
         <div class="row mb-2">
             <div class="col">
-              <label for="proficiency">المستوى</label>
+              <label for="proficiency-lan">المستوى</label>
             </div>
             <div class="col">
-              <select name="proficiency" id="proficiency" class="form-select">
+              <select name="proficiency" id="proficiency-lan" class="form-select">
                 {% for value, label in language_choices %}
                   <option value="{{ value }}" {% if lan.proficiency == value %}selected{% endif %}>
                     {{ label }}
