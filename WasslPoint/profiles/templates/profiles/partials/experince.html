@@ -1,0 +1,190 @@
+<div class="many-card-view ">
+    <div class="top-many-card border d-flex justify-content-between align-items-center p-2 ">
+        <h2 class="fs-6 p">الخبرة</h2>
+        <a href="javascript:void(0)" class="add-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+          </svg>
+        </a>
+    </div>
+    <div class="container mt-3">
+        {%if request.user.student_profile.experience %}
+        
+            {%for exp in request.user.student_profile.experience.all%}
+            <div class="many-card border mb-3" data-exp-id="{{exp.id}}">
+                <div class="many-card-view p-3">
+                    <div class="d-flex justify-content-between align-items-center ">
+                    <h6>{{ exp.job_title }}  </h6>
+                    <div> 
+                        <a  href="javascript:void(0)" class="edit-btn text-decoration-none"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"></path>
+                        </svg>
+                    </a>
+                    <form class="d-inline" method="post" action="{%url 'profiles:delate_exp' exp.id %}">
+                        {%csrf_token%}
+                        <button  class="edit-btn btn btn-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                          </svg>
+                    </button>
+    
+    
+    
+                    </form>
+                    </div>
+                </div>
+                    <p>في {{ exp.company_name }}</p>
+                    <p>{{ exp.start_date|date:"Y-m" }} - {{ exp.end_date|date:"Y-m" }}</p>
+                    <p>{{ exp.description }}</p>
+
+                  
+
+                </div>
+                <div class="many-card-edit p-3" style="display: none;">
+                    <form action="{%url 'profiles:edit_exp' exp.id%}" method="post">
+                      {% csrf_token %}
+                
+                      <div class="container mt-3">
+                        <div class="row mb-2">
+                          <div class="col">
+                            <label for="job_title">المسمى الوظيفي</label>
+                          </div>
+                          <div class="col">
+                            <input id="job_title" name="job_title" class="form-control" value="{{exp.job_title}}">
+              
+                          </div>
+                        </div>
+                    
+                        <div class="row mb-2">
+                          <div class="col">
+                            <label for="company_name">اسم الشركة</label>            </div>
+                          <div class="col">
+                            <input id="company_name" name="company_name" class="form-control" value="{{exp.company_name}}">
+              
+                          </div>
+                        </div>
+                   
+                    
+                        <div class="row mb-2">
+                          <div class="col">
+                            <label for="start_date-ex">تاريخ البدء</label>
+                          </div>
+                          <div class="col">
+                            <input id="start_date-ex" type="month" name="start_date" class="form-control" value="{{exp.start_date|date:'Y-m'}}">
+              
+                          </div>
+                        </div>
+                    
+                      <div class="row mb-2">
+                        <div class="col">
+                          <label for="end_date-ex">تاريخ الانتهاء</label>
+              
+                        </div>
+                        <div class="col">
+                          <input type="month" id="end_date-ex" name="end_date" class="form-control" value="{{exp.end_date|date:'Y-m'}}">
+                        </div>
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col">
+                          <label for="description-ex">الوصف</label>
+                        </div>
+                        <div class="col">
+                          <textarea id="description-ex" name="description" rows="3" class="form-control">{{exp.description}}</textarea>
+              
+                        </div>
+                      </div>
+                     
+                      <div class="row mb-2">
+                          <div class="col-4">
+                          </div>
+                          <div class="col-8">
+                              <button type="submit" class="btn btn-primary" name="experience-submit">حفظ</button>
+                              <button type="button"
+                                  class="btn btn-outline-secondary cancel-btn">الغاء</button>
+                          </div>
+                      </div>
+                      </div>
+                    </form>
+                  </div>
+                 
+                                             
+            </div>
+            {%empty%}
+            <p>لايوجد لديك خبرات</p>
+        {%endfor%}
+       
+        {%endif%}
+       
+    </div>
+
+</div>
+<div class="many-card-add" style="display: none;">
+    <div class="top-many-card border d-flex justify-content-between align-items-center p-2 ">
+            <h2 class="fs-6">الخبرة</h2>
+
+    </div>
+    <form action="{%url 'profiles:add_exp'%}" method="post" class="p-3">
+        {% csrf_token %}
+        <div class="container mt-3">
+          <div class="row mb-2">
+            <div class="col">
+              <label for="job_title">المسمى الوظيفي</label>
+            </div>
+            <div class="col">
+              <input id="job_title" name="job_title" class="form-control" value="{{exp.job_title}}">
+
+            </div>
+          </div>
+      
+          <div class="row mb-2">
+            <div class="col">
+              <label for="company_name">اسم الشركة</label>            </div>
+            <div class="col">
+              <input id="company_name" name="company_name" class="form-control" value="{{exp.company_name}}">
+
+            </div>
+          </div>
+     
+      
+          <div class="row mb-2">
+            <div class="col">
+              <label for="start_date-ex">تاريخ البدء</label>
+            </div>
+            <div class="col">
+              <input id="start_date-ex" type="month" name="start_date" class="form-control" value="{{exp.start_date|date:'Y-m'}}">
+
+            </div>
+          </div>
+      
+        <div class="row mb-2">
+          <div class="col">
+            <label for="end_date-ex">تاريخ الانتهاء</label>
+
+          </div>
+          <div class="col">
+            <input type="month" id="end_date-ex" name="end_date" class="form-control" value="{{exp.end_date|date:'Y-m'}}">
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col">
+            <label for="description-ex">الوصف</label>
+          </div>
+          <div class="col">
+            <textarea id="description-ex" name="description" rows="3" class="form-control">{{exp.description}}</textarea>
+
+          </div>
+        </div>
+       
+        <div class="row mb-2">
+            <div class="col-4">
+            </div>
+            <div class="col-8">
+                <button type="submit" class="btn btn-primary" name="experience-submit">حفظ</button>
+                <button type="button"
+                    class="btn btn-outline-secondary cancel-btn">الغاء</button>
+            </div>
+        </div>
+        </div>
+      </form>
+
+</div>
