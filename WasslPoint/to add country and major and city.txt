@@ -1,7 +1,7 @@
 python manage.py shell
 
 import json
-from profiles.models import Country
+from profiles.models import Country,Major,City
 
 with open('countries.json', encoding='utf-8') as file:
     countries = json.load(file)
@@ -12,8 +12,6 @@ with open('countries.json', encoding='utf-8') as file:
                 'arabic_name': entry['arabic_name'],
             }
         )
-import json
-from profiles.models import Major
 
 with open('majors.json', encoding='utf-8') as file:
     majors = json.load(file)
@@ -22,6 +20,16 @@ with open('majors.json', encoding='utf-8') as file:
             en_name=entry['en_name'],
             defaults={
                 'ar_name': entry['ar_name'],
+                'status': entry['status'],
+            }
+        )
+with open('cities.json', encoding='utf-8') as file:
+    cities = json.load(file)
+    for entry in cities:
+        City.objects.get_or_create(
+            english_name=entry['en_name'],
+            defaults={
+                'arabic_name': entry['ar_name'],
                 'status': entry['status'],
             }
         )

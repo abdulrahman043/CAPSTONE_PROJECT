@@ -38,7 +38,7 @@
                 <p>المدينة</p>
             </div>
             <div class="col">
-                <p>{{request.user.student_profile.contact_info.city.name}}</p>
+                <p>{{request.user.student_profile.contact_info.city.arabic_name}}</p>
             </div>
         </div>
        
@@ -88,7 +88,7 @@
                         <option disabled selected>اختر المدينة</option>
                         {% for city in cities %}
                           <option value="{{ city.id }}" {% if request.user.student_profile.contact_info.city.id == city.id %}selected{% endif %}>
-                            {{ city.name }}
+                            {{ city.arabic_name }}
                           </option>
                         {% endfor %}
                       </select></p>

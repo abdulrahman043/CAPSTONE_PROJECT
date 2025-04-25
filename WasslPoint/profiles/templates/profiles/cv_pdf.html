@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>السيرة الذاتية - {{ request.user.student_profile.personal_info.full_name_ar }}</title>
+  <style>
+    @page { margin: 1in; }
+    body {
+      font-family: Arial, sans-serif;
+      color: #000;
+      font-size: 12pt;
+      line-height: 1.5;
+      background: #fff;
+      direction: rtl;
+    }
+    .container {
+      width: 100%;
+      padding: 0 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h1 {
+      font-size: 24pt;
+      margin-bottom: 5px;
+    }
+    .subtitle {
+      font-size: 14pt;
+      margin-bottom: 10px;
+    }
+    .contact-info {
+      font-size: 11pt;
+    }
+    h2 {
+      font-size: 14pt;
+      margin-top: 30px;
+      border-bottom: 1px solid #000;
+      padding-bottom: 5px;
+    }
+    ul {
+      list-style: disc;
+      padding-right: 20px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    p {
+      margin: 6px 0;
+    }
+    .position {
+      font-weight: bold;
+    }
+    .institution {
+      font-style: italic;
+    }
+    a {
+      color: #000;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>{{ request.user.student_profile.personal_info.full_name_ar }}</h1>
+      {% if request.user.student_profile.personal_info.full_name_en %}<div class="subtitle">{{ request.user.student_profile.personal_info.full_name_en }}</div>{% endif %}
+      <div class="contact-info">
+        {% if request.user.student_profile.contact_info.city %}{{ request.user.student_profile.contact_info.city.name }}، {% endif %}
+        {% if request.user.student_profile.contact_info.phone %}{{ request.user.student_profile.contact_info.phone }} | {% endif %}
+        <a href="mailto:{{ request.user.student_profile.contact_info.email }}">{{ request.user.student_profile.contact_info.email }}</a>
+      </div>
+    </header>
+
+    {% if request.user.student_profile.experience.exists %}
+    <div class="section">
+      <h2>الخبرات العملية</h2>
+      <ul>
+        {% for exp in request.user.student_profile.experience.all %}
+          <li>
+            <span class="position">{{ exp.job_title }}</span>، {{ exp.company_name }} — {{ exp.start_date|date:'Y' }}{% if exp.end_date %} إلى {{ exp.end_date|date:'Y' }}{% else %} إلى الآن{% endif %}
+            {% if exp.description %}<br>{{ exp.description }}{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if request.user.student_profile.education.exists %}
+    <div class="section">
+      <h2>المؤهلات العلمية</h2>
+      <ul>
+        {% for edu in request.user.student_profile.education.all %}
+          <li>
+            <span class="institution">{{ edu.university }}</span>، {{ edu.get_degree_display }} — {{ edu.graduating_date|date:'Y' }}<br>
+            التخصص: {{ edu.major.ar_name }}{% if edu.GPA %} | المعدل: {{ edu.GPA }}/{{ edu.gpa_scale }}{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if request.user.student_profile.skill.exists %}
+    <div class="section">
+      <h2>المهارات</h2>
+      <ul>
+        {% for skill in request.user.student_profile.skill.all %}
+          <li>{{ skill.name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if request.user.student_profile.language.exists %}
+    <div class="section">
+      <h2>اللغات</h2>
+      <ul>
+        {% for lang in request.user.student_profile.language.all %}
+          <li>{{ lang.name }} - {{ lang.get_proficiency_display }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if request.user.student_profile.certification.exists %}
+    <div class="section">
+      <h2>الشهادات</h2>
+      <ul>
+        {% for cert in request.user.student_profile.certification.all %}
+          <li>{{ cert.name }}، {{ cert.issuer }}<br>
+            تاريخ الإصدار: {{ cert.issue_date|date:'Y-m-d' }}{% if cert.expiry_date %} | تاريخ الانتهاء: {{ cert.expiry_date|date:'Y-m-d' }}{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+  </div>
+</body>
+</html>
