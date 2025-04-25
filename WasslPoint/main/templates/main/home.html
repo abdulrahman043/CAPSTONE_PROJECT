@@ -1,0 +1,140 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- صورة ثابتة مع حقل بحث -->
+<section class="hero-banner text-center text-white d-flex align-items-center justify-content-center" style="background-image: url('{% static "images/banner4.jpg" %}'); height: 100vh; background-size: cover; background-position: center;">
+  <div>
+    <h1 class="display-4 fw-bold mb-4">اكتشف الفرص الآن</h1>
+    <form action="#" method="GET" class="d-flex justify-content-center">
+      <input type="text" name="q" placeholder="ابحث عن تدريب أو شركة..." class="form-control w-50 rounded-start">
+      <button type="submit" class="btn btn-warning rounded-end">بحث</button>
+    </form>
+  </div>
+</section>
+
+<!-- الإحصائيات -->
+<section class="py-5 text-center bg-light position-relative">
+  <!-- العنوان مزخرف بأسهم يمين ويسار -->
+  <h2 class="mb-4" style="color: #009999; font-weight: bold;">
+    <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
+    أرقام نقطه وصل
+    <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
+  </h2>
+
+  <div class="container">
+    <div class="row justify-content-center g-4">
+
+      <!-- الطالب -->
+      <div class="col-md-3 col-6">
+        <div class="bg-white p-4 rounded-4 shadow-sm d-flex flex-column align-items-center">
+          <i class="fi fi-rr-user mb-2" style="color: #FF7C34; width: 90px; height: 90px; font-size: 90px;"></i>
+          <div>
+            <h5 class="fw-bold" style="color: #009999; font-size: 40px;">10K</h5>
+            <span style="color: #009999; font-size: 40px;">طالب</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- الشركة -->
+      <div class="col-md-3 col-6">
+        <div class="bg-white p-4 rounded-4 shadow-sm d-flex flex-column align-items-center">
+          <i class="fi fi-rr-building mb-2" style="color: #FF7C34; width: 90px; height: 90px; font-size: 90px;"></i>
+          <div>
+            <h5 class="fw-bold" style="color: #009999; font-size: 40px;">+500</h5>
+            <span style="color: #009999; font-size: 40px;">شركة</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- تم تدريبهم -->
+      <div class="col-md-3 col-6">
+        <div class="bg-white p-4 rounded-4 shadow-sm d-flex flex-column align-items-center">
+          <i class="fi fi-rr-graduation-cap mb-2" style="color: #FF7C34; width: 90px; height: 90px; font-size: 90px;"></i>
+          <div>
+            <h5 class="fw-bold" style="color: #009999; font-size: 40px;">12K</h5>
+            <span style="color: #009999; font-size: 40px;">تم تدريبهم</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- الجامعة -->
+      <div class="col-md-3 col-6">
+        <div class="bg-white p-4 rounded-4 shadow-sm d-flex flex-column align-items-center">
+          <i class="fi fi-rr-school mb-2" style="color: #FF7C34; width: 90px; height: 90px; font-size: 90px;"></i>
+          <div>
+            <h5 class="fw-bold" style="color: #009999; font-size: 40px;">29</h5>
+            <span style="color: #009999; font-size: 40px; ">جامعة</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- سلايدر الصور -->
+<div id="bottomCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+
+    <!-- شريحة 1 -->
+    <div class="carousel-item active">
+      <div class="carousel-slide-bg d-flex align-items-center justify-content-center text-center text-white"
+           style="background-image: url('{% static 'images/banner1.jpg' %}');">
+        <div>
+          <h1 class="fw-bold">مستقبلك يبدأ من هنا</h1>
+          <p>انضم لأكبر منصة فرص تدريبية للطلاب والخريجين</p>
+          <a href="#" class="btn btn-warning mt-3">سجّل الآن</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- شريحة 2 -->
+    <div class="carousel-item">
+      <div class="carousel-slide-bg d-flex align-items-center justify-content-center text-center text-white"
+           style="background-image: url('{% static 'images/banner2.jpg' %}');">
+        <div>
+          <h1 class="fw-bold">اكتشف فرص تدريب حقيقية</h1>
+          <p>نقطة وصل تربطك بالشركات والمؤسسات الرائدة</p>
+          <a href="#" class="btn btn-warning mt-3">استعرض التدريبات</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- شريحة 3 -->
+    <div class="carousel-item">
+      <div class="carousel-slide-bg d-flex align-items-center justify-content-center text-center text-white"
+           style="background-image: url('{% static 'images/banner3.jpg' %}');">
+        <div>
+          <h1 class="fw-bold">لا تنتظر الفرصة.. اصنعها</h1>
+          <p>ابدأ رحلتك المهنية من اليوم</p>
+          <a href="#" class="btn btn-warning mt-3">ابدأ الآن</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- أزرار التنقل -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#bottomCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">السابق</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#bottomCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">التالي</span>
+  </button>
+</div>
+
+
+
+
+
+
+
+
+
+{% endblock %}
