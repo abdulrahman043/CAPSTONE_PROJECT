@@ -347,12 +347,13 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def export_cv_pdf(request):
-    try:
-        html=render_to_string('profiles/cv_pdf.html',{'request':request})
-        response=HttpResponse(content_type='application/pdf')
-        response['Content-Disposition']=f'filename={request.user.username}_cv.pdf'
-        HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf(response)
-        return response
+    pass
+    # try:
+    #     html=render_to_string('profiles/cv_pdf.html',{'request':request})
+    #     response=HttpResponse(content_type='application/pdf')
+    #     response['Content-Disposition']=f'filename={request.user.username}_cv.pdf'
+    #     HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf(response)
+    #     return response
 
-    except Exception as e:
-        print(e)
+    # except Exception as e:
+    #     print(e)
