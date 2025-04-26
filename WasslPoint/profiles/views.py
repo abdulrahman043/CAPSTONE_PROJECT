@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect
-from django.http import HttpRequest
+from django.http import HttpRequest,HttpResponse
 from .models import StudentProfile,PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language,Education,Certification,Major,CompanyProfile
 from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-
+from django.template.loader import render_to_string
+#from weasyprint import HTML
 # Create your views here.
 @login_required
 def profile_view(request:HttpRequest):
@@ -340,10 +341,7 @@ def company_profile_view(request:HttpRequest):
 
         
     return render(request,'profiles/company_profile.html')
-from django.template.loader import render_to_string
-from django.http import HttpResponse
-from weasyprint import HTML
-from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def export_cv_pdf(request):
