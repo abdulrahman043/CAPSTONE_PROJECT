@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- ===== صفحة اتصل بنا ===== -->
+<section class="contact-us-page text-center">
+  <h2 class="contact-title">
+    <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸</span> 
+    اتصل بنا 
+    <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
+  </h2>
+
+  <div class="contact-form-container">
+    <form method="POST" action="#">
+      {% csrf_token %}
+      
+      <!-- البريد الإلكتروني -->
+      <div class="form-group">
+        <div class="input-icon">
+          <i class="fi fi-rr-envelope"></i>
+        </div>
+        <input type="email" name="email" class="form-control-contact orange-border" placeholder="البريد الالكتروني" required>
+      </div>
+
+      <!-- عنوان الرسالة -->
+      <div class="form-group">
+        <input type="text" name="subject" class="form-control-contact blue-border" placeholder="عنوان الرساله" required>
+      </div>
+
+      <!-- نص الرسالة -->
+      <div class="form-group">
+        <textarea name="message" class="form-control-contact orange-border" placeholder="اكتب مشكلتك" rows="6" required></textarea>
+      </div>
+
+      <!-- زر الإرسال -->
+      <button type="submit" class="send-btn">ارسل</button>
+    </form>
+  </div>
+</section>
+
+{% endblock %}
