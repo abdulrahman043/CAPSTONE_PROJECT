@@ -9,7 +9,8 @@ LANGUAGE_CHOICES = [
     for code, name in locale_ar.languages.items()
 ]
 class City(models.Model):
-    name=models.CharField(max_length=100)
+    arabic_name=models.CharField(max_length=100)
+    english_name=models.CharField(max_length=100)
     status=models.BooleanField(default=True)
 class Industry(models.Model):
     name=models.CharField(max_length=100)
@@ -41,7 +42,7 @@ class PersonalInformation(models.Model):
         FEMALE = 'انثى', 'انثى'
     profile=models.OneToOneField(StudentProfile,models.CASCADE,related_name='personal_info')
     full_name_ar=models.CharField(max_length=100)
-    full_name_en=models.CharField(max_length=100,blank=True)
+    full_name_en=models.CharField(max_length=100,blank=True ,default='')
     date_of_birth=models.DateField(blank=True,null=True)
     gender=models.CharField(max_length=4,choices=Gender.choices,blank=True)
     nationality=models.ForeignKey(Country,on_delete=models.SET_NULL,null=True)
@@ -108,15 +109,16 @@ class Certification(models.Model):
 
 
 class CompanyProfile(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='company_profile')
     company_name = models.TextField(max_length=200)
     commercial_CRM_Certificate = models.FileField(upload_to='crm_certs/')
     commercial_register = models.CharField(max_length=200)
     industry = models.ForeignKey(Industry,on_delete=models.SET_NULL,null=True)
     company_address = models.ForeignKey(CompanyAddress,on_delete=models.SET_NULL,null=True)
+    is_active=models.BooleanField(default=False)
 class ContactInformation(models.Model):
     profile=models.OneToOneField(StudentProfile,on_delete=models.CASCADE,related_name='contact_info')
-    email=models.EmailField(null=True)
-    phone=models.CharField(null=True,max_length=20)
-    address_line=models.TextField(null=True)
+    email=models.EmailField(null=True,default='')
+    phone=models.CharField(null=True,max_length=20,default='')
+    address_line=models.TextField(null=True,default='')
     city=models.ForeignKey(City,on_delete=models.CASCADE,null=True)

@@ -22,7 +22,7 @@
                 <p>تاريخ الميلاد</p>
             </div>
             <div class="col">
-                <p>{{request.user.student_profile.personal_info.date_of_birth}}</p>
+                <p>{%if request.user.student_profile.personal_info.date_of_birth%} {{request.user.student_profile.personal_info.date_of_birth}} {%endif%}</p>
             </div>
         </div>
         <div class="row">

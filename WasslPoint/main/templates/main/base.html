@@ -26,7 +26,12 @@
         <!-- القوائم في النص -->
         <ul class="navbar-nav d-none d-lg-flex mx-auto">
           {% if request.user.is_authenticated %}
+            {%if request.user.student_profile%}
           <li class="nav-item mx-2"><a class="nav-link text-white" href="{% url 'profiles:profile_view' %}">الملف الشخصي</a></li>
+            {%elif  request.user.company_profile %}
+            <li class="nav-item mx-2"><a class="nav-link text-white" href="{% url 'profiles:company_profile_view' %}">الملف الشخصي</a></li>
+
+          {%endif%}
           {% endif %}
           <li class="nav-item mx-2"><a class="nav-link text-white" href="{% url 'main:home_view' %}">الرئيسيه</a></li>
           <li class="nav-item mx-2"><a class="nav-link text-white" href="#">التدريبات</a></li>

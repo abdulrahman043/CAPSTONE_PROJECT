@@ -5,11 +5,29 @@
 <link rel="stylesheet" href="{%static 'css/profiles.css'%}"> {%endblock%}
 {%block content%}
 <div class="container d-flex justify-content-center">
+
     <div class="row g-3 w-100 justify-content-center">
+      <div class="d-flex flex-row justify-content-between align-items-center mt-4">
+        <h1 class="fw-bold ">سيرتي الذاتية</h1>
+    
+        <div class="dropdown">
+          <a href="#" class="text-dark" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+            </svg>
+          </a>
         
-        <div class="col-5">
-          
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+            <li><a class="dropdown-item" href="{% url 'profiles:export_cv_pdf' %}">تصدير إلى PDF</a></li>
+          </ul>
+        </div>
+        
+      </div>
+
+        <div class="col-7 mb-4">
+        
             <div class="profile-flex ">
+
                 <div class="card border">
                   {%include 'profiles/partials/personal_info.html'%}
                 </div>

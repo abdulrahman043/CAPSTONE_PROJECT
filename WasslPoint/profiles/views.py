@@ -1,17 +1,25 @@
 from django.shortcuts import render,redirect
 from django.http import HttpRequest
-from .models import PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language,Education,Certification,Major
+from .models import StudentProfile,PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language,Education,Certification,Major,CompanyProfile
 from datetime import date
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+
 # Create your views here.
+@login_required
 def profile_view(request:HttpRequest):
+    try:
+        profile=request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('main:home_view')
     profile = request.user.student_profile
     if request.method=='POST':
         if 'personal-submit' in request.POST:
             personal, _ = PersonalInformation.objects.get_or_create(profile=profile)
-            personal.full_name_en  = request.POST.get('name', personal.full_name_en)
-            personal.full_name_ar  = request.POST.get('full_name_ar', personal.full_name_ar)
-            personal.date_of_birth = request.POST.get('date_of_birth') or None
-            personal.gender        = request.POST.get('gender', personal.gender)
+            personal.full_name_en  = request.POST.get('name')
+            personal.full_name_ar  = request.POST.get('full_name_ar')
+            personal.date_of_birth = request.POST.get('date_of_birth') 
+            personal.gender        = request.POST.get('gender')
             nat_id = request.POST.get('nationality')
             if nat_id:
                 personal.nationality = Country.objects.get(pk=nat_id)
@@ -43,7 +51,8 @@ def profile_view(request:HttpRequest):
     'cities':cities,
 }
     return render(request,'profiles/profile.html',context)
-
+@login_required
+@require_POST
 def delate_exp(request:HttpRequest,exp_id):
     try:
         experience=Experience.objects.get(pk=exp_id)
@@ -52,6 +61,8 @@ def delate_exp(request:HttpRequest,exp_id):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def edit_exp(request:HttpRequest,exp_id):
     try:
         if request.method=='POST':
@@ -77,6 +88,8 @@ def edit_exp(request:HttpRequest,exp_id):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def delate_skill(request:HttpRequest,skill_id):
     try:
         skill=Skill.objects.get(pk=skill_id)
@@ -85,6 +98,8 @@ def delate_skill(request:HttpRequest,skill_id):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def edit_skill(request:HttpRequest,skill_id):
     try:
         if request.method=='POST':
@@ -101,6 +116,9 @@ def edit_skill(request:HttpRequest,skill_id):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
+
 def delate_language(request:HttpRequest,lan_id):
     try:
         language=Language.objects.get(pk=lan_id)
@@ -109,6 +127,8 @@ def delate_language(request:HttpRequest,lan_id):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def edit_language(request:HttpRequest,lan_id):
     try:
         if request.method=='POST':
@@ -125,6 +145,8 @@ def edit_language(request:HttpRequest,lan_id):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def delate_edu(request:HttpRequest,edu_id):
     try:
         education=Education.objects.get(pk=edu_id)
@@ -133,6 +155,8 @@ def delate_edu(request:HttpRequest,edu_id):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def edit_edu(request:HttpRequest,edu_id):
     try:
         if request.method=='POST':
@@ -158,6 +182,8 @@ def edit_edu(request:HttpRequest,edu_id):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def delate_cert(request:HttpRequest,cert_id):
     try:
         certification=Certification.objects.get(pk=cert_id)
@@ -166,6 +192,8 @@ def delate_cert(request:HttpRequest,cert_id):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def edit_cert(request:HttpRequest,cert_id):
     try:
         if request.method=='POST':
@@ -193,6 +221,8 @@ def edit_cert(request:HttpRequest,cert_id):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def add_cert(request:HttpRequest):
     try:
         if request.method=='POST':
@@ -222,6 +252,8 @@ def add_cert(request:HttpRequest):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def add_exp(request:HttpRequest):
     try:
         if request.method=='POST':
@@ -245,6 +277,8 @@ def add_exp(request:HttpRequest):
         print(e)
         
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def add_skill(request:HttpRequest):
     try:
         if request.method=='POST':
@@ -256,6 +290,8 @@ def add_skill(request:HttpRequest):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def add_language(request:HttpRequest):
     try:
         if request.method=='POST':
@@ -267,6 +303,8 @@ def add_language(request:HttpRequest):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+@login_required
+@require_POST
 def add_edu(request:HttpRequest):
     try:
         if request.method=='POST':
@@ -288,3 +326,34 @@ def add_edu(request:HttpRequest):
     except Exception as e:
         print(e)
     return redirect('profiles:profile_view')
+
+
+@login_required
+def company_profile_view(request:HttpRequest):
+    if not request.user.is_authenticated:
+        return redirect('main:home_view')
+
+    try:
+        profile=request.user.company_profile
+    except CompanyProfile.DoesNotExist:
+        return redirect('main:home_view')
+
+        
+    return render(request,'profiles/company_profile.html')
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from weasyprint import HTML
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def export_cv_pdf(request):
+    pass
+    # try:
+    #     html=render_to_string('profiles/cv_pdf.html',{'request':request})
+    #     response=HttpResponse(content_type='application/pdf')
+    #     response['Content-Disposition']=f'filename={request.user.username}_cv.pdf'
+    #     HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf(response)
+    #     return response
+
+    # except Exception as e:
+    #     print(e)
