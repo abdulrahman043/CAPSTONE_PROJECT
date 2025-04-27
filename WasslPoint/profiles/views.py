@@ -5,7 +5,7 @@ from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.template.loader import render_to_string
-#from weasyprint import HTML
+from weasyprint import HTML
 # Create your views here.
 @login_required
 def profile_view(request:HttpRequest):
@@ -17,9 +17,8 @@ def profile_view(request:HttpRequest):
     if request.method=='POST':
         if 'personal-submit' in request.POST:
             personal, _ = PersonalInformation.objects.get_or_create(profile=profile)
-            personal.full_name_en  = request.POST.get('name')
-            personal.full_name_ar  = request.POST.get('full_name_ar')
-            personal.date_of_birth = request.POST.get('date_of_birth') 
+            personal.full_name  = request.POST.get('name')
+            personal.date_of_birth = request.POST.get('date_of_birth') or None
             personal.gender        = request.POST.get('gender')
             nat_id = request.POST.get('nationality')
             if nat_id:
@@ -345,13 +344,13 @@ def company_profile_view(request:HttpRequest):
 
 @login_required
 def export_cv_pdf(request):
-    pass
-    # try:
-    #     html=render_to_string('profiles/cv_pdf.html',{'request':request})
-    #     response=HttpResponse(content_type='application/pdf')
-    #     response['Content-Disposition']=f'filename={request.user.username}_cv.pdf'
-    #     HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf(response)
-    #     return response
+    
+    try:
+        html=render_to_string('profiles/cv_pdf.html',{'request':request})
+        response=HttpResponse(content_type='application/pdf')
+        response['Content-Disposition']=f'filename={request.user.username}_cv.pdf'
+        HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf(response)
+        return response
 
-    # except Exception as e:
-    #     print(e)
+    except Exception as e:
+        print(e)

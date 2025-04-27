@@ -1,9 +1,15 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpRequest
 from django.db import transaction
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.models import User
 from profiles.models import CompanyProfile,StudentProfile,PersonalInformation,Experience,Education,Skill,Language,Certification,ContactInformation
+from django.contrib.admin.views.decorators import staff_member_required 
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+
+
 # Create your views here.
 
 def signup_view(request:HttpRequest):
@@ -13,8 +19,8 @@ def signup_view(request:HttpRequest):
                 user = User.objects.create_user(username=request.POST["email"], password=request.POST["password"])
                 user.save()
                 profile=StudentProfile.objects.create(user=user)
-                PersonalInformation.objects.create(profile=profile,full_name_ar=request.POST['full_name'])
-                ContactInformation.objects.create(profile=profile)
+                PersonalInformation.objects.create(profile=profile,full_name=request.POST['full_name'])
+                ContactInformation.objects.create(profile=profile,email=request.POST["email"])
 
                 
 
@@ -51,3 +57,20 @@ def logout_view(request:HttpRequest):
     logout(request)
 
     return redirect('main:home_view')
+
+@login_required
+@staff_member_required
+def user_list(request: HttpRequest):
+    user_qs=User.objects.all()
+   
+    context={"user_page":user_qs}
+
+    return render(request, 'accounts/user_list.html',context)
+def user_delete(request, user_id):
+    user=User.objects.get(pk=user_id)
+    if user.is_superuser or user.is_staff:
+        pass
+    elif request.user!=user:
+        user.delete()
+    
+    return redirect('accounts:user_list')
