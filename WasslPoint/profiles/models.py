@@ -41,10 +41,9 @@ class PersonalInformation(models.Model):
         MALE = 'ذكر', 'ذكر'
         FEMALE = 'انثى', 'انثى'
     profile=models.OneToOneField(StudentProfile,models.CASCADE,related_name='personal_info')
-    full_name_ar=models.CharField(max_length=100)
-    full_name_en=models.CharField(max_length=100,blank=True ,default='')
+    full_name=models.CharField(max_length=100)
     date_of_birth=models.DateField(blank=True,null=True)
-    gender=models.CharField(max_length=4,choices=Gender.choices,blank=True)
+    gender=models.CharField(max_length=4,choices=Gender.choices,blank=True,null=True)
     nationality=models.ForeignKey(Country,on_delete=models.SET_NULL,null=True)
     picture=models.ImageField(upload_to='profiles/' ,blank=True,null=True)
 class Experience(models.Model):

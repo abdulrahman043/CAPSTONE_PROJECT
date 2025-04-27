@@ -17,9 +17,8 @@ def profile_view(request:HttpRequest):
     if request.method=='POST':
         if 'personal-submit' in request.POST:
             personal, _ = PersonalInformation.objects.get_or_create(profile=profile)
-            personal.full_name_en  = request.POST.get('name')
-            personal.full_name_ar  = request.POST.get('full_name_ar')
-            personal.date_of_birth = request.POST.get('date_of_birth') 
+            personal.full_name  = request.POST.get('name')
+            personal.date_of_birth = request.POST.get('date_of_birth') or None
             personal.gender        = request.POST.get('gender')
             nat_id = request.POST.get('nationality')
             if nat_id:

@@ -14,7 +14,7 @@
                 <p>الاسم</p>
             </div>
             <div class="col">
-                <p>{{request.user.student_profile.personal_info.full_name_en}}</p>
+                <p>{{request.user.student_profile.personal_info.full_name}}</p>
             </div>
         </div>
         <div class="row">
@@ -30,17 +30,10 @@
                 <p>الجنس</p>
             </div>
             <div class="col">
-                <p>{{request.user.student_profile.personal_info.gender}}</p>
+                <p>{%if request.user.student_profile.personal_info.gender%}{{request.user.student_profile.personal_info.gender}}{%endif%}</p>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <p>الاسم (باللغة العربية)</p>
-            </div>
-            <div class="col">
-                <p>{{request.user.student_profile.personal_info.full_name_ar}}</p>
-            </div>
-        </div>
+       
         <div class="row">
             <div class="col">
                 <p>الجنسية</p>
@@ -65,7 +58,7 @@
                     <label class="form-label" for="name">الاسم</label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="name" name="name" type="text" value="{{request.user.student_profile.personal_info.full_name_en}}"></p>
+                    <p><input class="form-control" id="name" name="name" type="text" value="{{request.user.student_profile.personal_info.full_name}}"></p>
                 </div>
             </div>
             <div class="row mb-2">
@@ -98,15 +91,7 @@
                       {% endfor %}</p>
                 </div>
             </div>
-            <div class="row mb-2">
-                <div class="col">
-                    <label for="full_name_ar">الاسم (باللغة العربية)</label>
-                </div>
-                <div class="col">
-                    <p> <input class="form-control" type="text" name="full_name_ar"
-                            id="full_name_ar" value="{{request.user.student_profile.personal_info.full_name_ar}}"></p>
-                </div>
-            </div>
+           
             <div class="row mb-2">
                 <div class="col">
                     <label for="nationality">الجنسية</label>
