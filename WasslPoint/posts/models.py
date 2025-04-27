@@ -15,6 +15,8 @@ class CoopPosting(models.Model):
     start_date= models.DateField()
     major=models.ManyToManyField(Major)
     description= models.TextField()
+    
+    
 class Application(models.Model):
     student=models.ForeignKey(StudentProfile,on_delete=models.CASCADE)
     coop_posting=models.ForeignKey(CoopPosting,on_delete=models.CASCADE)
