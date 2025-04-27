@@ -9,9 +9,15 @@
     اتصل بنا 
     <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
   </h2>
-
+  <div>
+    {% if success %}
+      <div class="alert alert-success" role="alert">
+       تم إرسال الرسالة بنجاح! ✅
+      </div>
+    {% endif %}
+  </div>
   <div class="contact-form-container">
-    <form method="POST" action="#">
+    <form method="POST" action="{% url 'main:contact_view' %}">
       {% csrf_token %}
       
       <!-- البريد الإلكتروني -->

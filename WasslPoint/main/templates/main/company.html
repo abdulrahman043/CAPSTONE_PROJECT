@@ -1,0 +1,60 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- زر إضافة تدريب -->
+<div class="btn" style="margin-top: 30px;">
+    <a href="#">اضف تدريب</a>
+</div>
+
+<!-- التدريبات -->
+<section class="ads">
+    <h2 class="mb-4" style="color: #009999; font-weight: bold;">
+        <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
+        الشركات
+        <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
+    </h2>
+
+    <div class="ads-container">
+        {% for coop in coops %}
+            <div class="ad ad-card">
+
+                <!-- اسم الشركة -->
+                <h1>{{ coop.company.user.first_name }}</h1>
+
+                <!-- اللقب -->
+                <h2>{{ coop.title }}</h2>
+
+                <!-- متطلبات التعاون -->
+                <p class="description-clamp">
+                    <strong>متطلبات التعاون:</strong> {{ coop.coop_requirements }}
+                </p>
+
+                <!-- التواريخ -->
+                <p><strong>تاريخ النشر:</strong> {{ coop.posting_date }}</p>
+                <p><strong>تاريخ الانتهاء:</strong> {{ coop.expiration_date }}</p>
+                <p><strong>تاريخ البدء:</strong> {{ coop.start_date }}</p>
+
+                <!-- التخصصات -->
+                <p><strong>التخصصات المطلوبة:</strong>
+                    {% for major in coop.major.all %}
+                        {{ major.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+
+                <!-- الوصف -->
+                <p class="description-clamp">
+                    <strong>الوصف:</strong> {{ coop.description }}
+                </p>
+
+                <!-- زر التفاصيل -->
+                <a href="#">
+                    <button>التفاصيل</button>
+                </a>
+
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

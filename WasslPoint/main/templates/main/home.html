@@ -3,17 +3,12 @@
 {% block content %}
 
 <!-- صورة ثابتة مع حقل بحث -->
-<section class="hero-banner text-center text-white d-flex align-items-center justify-content-center" style="background-image: url('{% static "images/banner4.jpg" %}'); height: 100vh; background-size: cover; background-position: center;">
-  <div style="width: 100%; max-width: 700px;"> <!-- تحكم بحجم العنصر كله -->
-    <h1 class="display-4 fw-bold mb-4">اكتشف الفرص الآن</h1>
-    <form action="#" method="GET" class="d-flex justify-content-center">
-      <input 
-        type="text" 
-        name="q" 
-        placeholder="ابحث عن تدريب أو شركة..." 
-        class="form-control" 
-        style="height: 60px; font-size: 1.5rem; border: 2px solid #ffffff; background: transparent; color: white; border-radius: 8px 0 0 8px; padding: 10px 20px;">
-      <button type="submit" class="btn" style="background-color: #FF7C34; color: white; border-radius: 10px;">بحث</button>
+<section class="hero-banner d-flex align-items-center justify-content-center text-center" style="background-image: url('{% static "images/banner4.jpg" %}'); height: 100vh; background-size: cover; background-position: center;">
+  <div class="search-container">
+    <h1 class="hero-title mb-4">اكتشف الفرص الآن</h1>
+    <form action="#" method="GET" class="search-form">
+      <input type="text" name="q" placeholder="أرامكو ، سابك ، طويق ..." class="search-input">
+      <button type="submit" class="search-button">بحث</button>
     </form>
   </div>
 </section>
