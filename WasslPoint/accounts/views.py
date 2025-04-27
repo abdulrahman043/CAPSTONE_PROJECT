@@ -8,7 +8,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 
 # Create your views here.
 
@@ -73,4 +75,15 @@ def user_delete(request, user_id):
     elif request.user!=user:
         user.delete()
     
+    return redirect('accounts:user_list')
+@login_required
+@staff_member_required
+@require_POST
+def bulk_delete_users(request):
+    # 받은 ID 목록 (체크된 사용자)
+    ids = request.POST.getlist('selected_users')
+    # 자신, staff, superuser는 제외하고 삭제
+    qs = User.objects.filter(id__in=ids, is_staff=False, is_superuser=False).exclude(id=request.user.id)
+    count = qs.count()
+    qs.delete()
     return redirect('accounts:user_list')
