@@ -9,7 +9,7 @@ urlpatterns=[
     path('signup/company/',views.signup_company_view,name='signup_company_view'),
     path('users/',views.user_list,name='user_list'),
         path('users/<int:user_id>/delete/', views.user_delete, name='user_delete'),
-    path('users/bulk-delete/', views.bulk_delete_users, name='bulk_delete_users'),
+    path('users/delete_all/', views.delete_all, name='delete_all'),
 
 
 

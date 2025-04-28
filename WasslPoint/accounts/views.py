@@ -64,8 +64,10 @@ def logout_view(request:HttpRequest):
 @staff_member_required
 def user_list(request: HttpRequest):
     user_qs=User.objects.all()
-   
-    context={"user_page":user_qs}
+    paginator=Paginator(user_qs,5)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"user_page":user_page}
 
     return render(request, 'accounts/user_list.html',context)
 def user_delete(request, user_id):
@@ -79,11 +81,12 @@ def user_delete(request, user_id):
 @login_required
 @staff_member_required
 @require_POST
-def bulk_delete_users(request):
-    # 받은 ID 목록 (체크된 사용자)
-    ids = request.POST.getlist('selected_users')
-    # 자신, staff, superuser는 제외하고 삭제
-    qs = User.objects.filter(id__in=ids, is_staff=False, is_superuser=False).exclude(id=request.user.id)
-    count = qs.count()
-    qs.delete()
+def delete_all(request:HttpRequest):
+    try:
+        if request.method=='POST':
+            ids=request.POST.getlist('selected_users')
+            if ids:
+                User.objects.filter(id__in=ids,is_staff=False, is_superuser=False).exclude(id=request.user.id).delete()
+    except:
+        pass
     return redirect('accounts:user_list')
