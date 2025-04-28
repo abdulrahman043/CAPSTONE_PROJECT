@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 from babel import Locale
+from datetime import date
 
 locale_ar = Locale('ar')
 LANGUAGE_CHOICES = [
@@ -28,6 +29,50 @@ class ContactPerson(models.Model):
 
 class StudentProfile(models.Model):
     user=models.OneToOneField(User,models.CASCADE,related_name='student_profile')
+    @property
+    def completion_percent(self):
+        total = 6
+        done = 0
+        pi = getattr(self, 'personal_info', None)
+        if pi and pi.full_name and pi.date_of_birth and pi.gender and pi.nationality:
+            done += 1
+        ci = getattr(self, 'contact_info', None)
+        if ci and ci.email and ci.phone and ci.address_line and ci.city:
+            done += 1
+        if self.experience.exists():
+            done += 1
+        if self.education.exists():
+            done += 1
+        if self.skill.exists():
+            done += 1
+        if self.language.exists():
+            done += 1
+        return int(done / total * 100)
+    @property
+    def missing_sections(self):
+        missing = []
+
+        pi = getattr(self, 'personal_info', None)
+        if not (pi and pi.full_name and pi.date_of_birth and pi.gender and pi.nationality):
+            missing.append("المعلومات الشخصية")
+
+        ci = getattr(self, 'contact_info', None)
+        if not (ci and ci.email and ci.phone and ci.address_line and ci.city):
+            missing.append("معلومات الاتصال")
+
+        if not self.experience.exists():
+            missing.append("إضافة خبرة واحدة على الأقل")
+
+        if not self.education.exists():
+            missing.append("إضافة مؤهل تعليمي واحد على الأقل")
+
+        if not self.skill.exists():
+            missing.append("إضافة مهارة واحدة على الأقل")
+
+        if not self.language.exists():
+            missing.append("إضافة لغة واحدة على الأقل")
+
+        return missing
 class Country(models.Model):
     arabic_name=models.CharField(max_length=200)
     english_name=models.CharField(max_length=200)
@@ -46,7 +91,17 @@ class PersonalInformation(models.Model):
     date_of_birth=models.DateField(blank=True,null=True)
     gender=models.CharField(max_length=6,choices=Gender.choices,blank=True,null=True)
     nationality=models.ForeignKey(Country,on_delete=models.SET_NULL,null=True)
-    picture=models.ImageField(upload_to='profiles/' ,blank=True,null=True)
+    picture=models.ImageField(upload_to='profiles/profiles_images/' ,blank=True,null=True,default='profiles/profiles_images/default.png')
+    @property
+    def age(self):
+        dob = self.date_of_birth
+        if not dob:
+            return None
+        today = date.today()
+        years = today.year - dob.year
+        if (today.month, today.day) < (dob.month, dob.day):
+            years -= 1
+        return years
 class Experience(models.Model):
     profile=models.ForeignKey(StudentProfile,models.CASCADE,related_name='experience')
     job_title=models.CharField(max_length=100)

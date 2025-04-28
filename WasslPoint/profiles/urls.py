@@ -52,6 +52,8 @@ urlpatterns = [path('profile/',views.profile_view,name='profile_view'),
 
 
     path('export/pdf/', views.export_cv_pdf, name='export_cv_pdf'),
+        path('export/pdf/<user_id>', views.export_cv_pdf, name='export_cv_pdf_admin'),
+
 
 
                ]

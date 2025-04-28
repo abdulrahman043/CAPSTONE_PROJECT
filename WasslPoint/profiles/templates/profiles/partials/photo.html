@@ -1,0 +1,38 @@
+<form method="post"
+      enctype="multipart/form-data"
+      class="row align-items-center gy-2"
+      style="max-width: 500px;"
+      {% if admin_view %}
+        action="{% url 'profiles:profile_view_admin' profile.user.id %}"
+      {% endif %}
+>
+  {% csrf_token %}
+
+  <div class="col-auto">
+    <input
+      type="file"
+      id="picture-input"
+      name="picture"
+      accept="image/*"
+      style="display: none;"
+      onchange="this.form.submit()"
+    >
+    <label for="picture-input" style="cursor: pointer;">
+      <img
+        src="{% if profile.personal_info.picture %}{{ profile.personal_info.picture.url }}{% else %}/static/default-avatar.png{% endif %}"
+        alt="الصورة الشخصية"
+        class="rounded-circle border"
+        style="width: 80px; height: 80px; object-fit: cover;"
+      >
+    </label>
+  </div>
+
+  <div class="col">
+    <h5 class="mb-1">{{ profile.personal_info.full_name }}</h5>
+    {% if profile.education.exists %}
+      <p class="mb-0 text-muted">
+        {{ profile.education.first.major.ar_name }}
+      </p>
+    {% endif %}
+  </div>
+</form>

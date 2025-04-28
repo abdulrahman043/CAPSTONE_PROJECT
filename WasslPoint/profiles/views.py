@@ -13,7 +13,6 @@ from django.core.exceptions import PermissionDenied
 @login_required
 def get_target_profile(request, user_id=None):
     if user_id:
-        print(user_id)
         if not request.user.is_staff:
             raise PermissionDenied
         user = get_object_or_404(User, pk=user_id)
@@ -33,6 +32,14 @@ def profile_view(request:HttpRequest,user_id=None):
         except StudentProfile.DoesNotExist:
             return redirect('main:home_view')
     if request.method=='POST':
+        if 'picture' in request.FILES:
+            personal, _ = PersonalInformation.objects.get_or_create(profile=profile)
+            personal.picture = request.FILES['picture']
+            personal.save()
+            if user_id:
+                return redirect('profiles:profile_view_admin', user_id=user_id)
+            else:
+                return redirect('profiles:profile_view')
         if 'personal-submit' in request.POST:
             personal, _ = PersonalInformation.objects.get_or_create(profile=profile)
             personal.full_name  = request.POST.get('name')
@@ -42,10 +49,10 @@ def profile_view(request:HttpRequest,user_id=None):
             if nat_id:
                 personal.nationality = Country.objects.get(pk=nat_id)
             personal.save()
-            return redirect(
-                'profiles:profile_view_admin' if user_id else 'profiles:profile_view',
-                user_id=profile.user.id if user_id else None
-            )
+            if user_id:
+                return redirect('profiles:profile_view_admin', user_id=user_id)
+            else:
+                return redirect('profiles:profile_view')
         if 'contact-submit' in request.POST:
             contact, _ = ContactInformation.objects.get_or_create(profile=profile)
 
@@ -56,10 +63,10 @@ def profile_view(request:HttpRequest,user_id=None):
             if city_id:
                 contact.city = City.objects.get(pk=city_id)
             contact.save()
-            return redirect(
-                'profiles:profile_view_admin' if user_id else 'profiles:profile_view',
-                user_id=profile.user.id if user_id else None
-            )  
+            if user_id:
+                return redirect('profiles:profile_view_admin', user_id=user_id)
+            else:
+                return redirect('profiles:profile_view')
     countries = Country.objects.filter(status=True) 
     majors = Major.objects.filter(status=True) 
     cities = City.objects.filter(status=True) 
@@ -414,10 +421,10 @@ def company_profile_view(request:HttpRequest,user_id=None):
 
 
 @login_required
-def export_cv_pdf(request):
-    
+def export_cv_pdf(request,user_id=None):
+    profile = get_target_profile(request, user_id)
     try:
-        html=render_to_string('profiles/cv_pdf.html',{'request':request})
+        html=render_to_string('profiles/cv_pdf.html',{'profile':profile})
         response=HttpResponse(content_type='application/pdf')
         response['Content-Disposition']=f'filename={request.user.username}_cv.pdf'
         HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf(response)

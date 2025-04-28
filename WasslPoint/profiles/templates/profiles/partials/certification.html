@@ -1,3 +1,5 @@
+{% now "Y-m" as max_month %}
+
 <div class="many-card-view ">
     <div class="top-many-card border d-flex justify-content-between align-items-center p-2 ">
         <h2 class="fs-6 p">الشهادات</h2>
@@ -59,26 +61,26 @@
                     <div class="container mt-3">
                         <div class="row mb-2">
                           <div class="col">
-                            <label for="cert-name">اسم الشهادة</label>
+                            <label class="required" for="cert-name">اسم الشهادة</label>
                           </div>
                           <div class="col">
-                            <p> <input id="cert-name" name="name" class="form-control" value="{{cert.name}}"></p>
+                            <p> <input id="cert-name" name="name" class="form-control" value="{{cert.name}}" required></p>
                           </div>
                         </div>
                         <div class="row mb-2">
                           <div class="col">
-                            <label for="issuer">الجهة المصدرة</label>
+                            <label class="required" for="issuer">الجهة المصدرة</label>
                           </div>
                           <div class="col">
-                            <p> <input id="issuer" name="issuer" class="form-control" value="{{cert.issuer}}"> </p>
+                            <p> <input id="issuer" name="issuer" class="form-control" value="{{cert.issuer}}" required> </p>
                           </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col">
-                              <label for="issue_date">تاريخ الاصدار</label>
+                              <label class="required" for="issue_date">تاريخ الاصدار</label>
                             </div>
                             <div class="col">
-                              <input type="month" id="issue_date" name="issue_date" class="form-control" value="{{cert.issue_date|date:'Y-m'}}">
+                              <input required max="{{max_month}}" type="month" id="issue_date" name="issue_date" class="form-control" value="{{cert.issue_date|date:'Y-m'}}">
                             </div>
                           </div>
                       
@@ -134,26 +136,26 @@
         <div class="container mt-3">
             <div class="row mb-2">
               <div class="col">
-                <label for="cert-name">اسم الشهادة</label>
+                <label class="required" for="cert-name">اسم الشهادة</label>
               </div>
               <div class="col">
-                <p> <input id="cert-name" name="name" class="form-control" value="{{cert.name}}"></p>
+                <p> <input required id="cert-name" name="name" class="form-control" value="{{cert.name}}"></p>
               </div>
             </div>
             <div class="row mb-2">
               <div class="col">
-                <label for="issuer">الجهة المصدرة</label>
+                <label class="required" for="issuer">الجهة المصدرة</label>
               </div>
               <div class="col">
-                <p> <input id="issuer" name="issuer" class="form-control" value="{{cert.issuer}}"> </p>
+                <p> <input required id="issuer" name="issuer" class="form-control" value="{{cert.issuer}}"> </p>
               </div>
             </div>
             <div class="row mb-2">
                 <div class="col">
-                  <label for="issue_date">تاريخ الاصدار</label>
+                  <label class="required" for="issue_date">تاريخ الاصدار</label>
                 </div>
                 <div class="col">
-                  <input type="month" id="issue_date" name="issue_date" class="form-control" value="{{cert.issue_date|date:'Y-m'}}">
+                  <input max="{{max_month}}"  required type="month" id="issue_date" name="issue_date" class="form-control" value="{{cert.issue_date|date:'Y-m'}}">
                 </div>
               </div>
           
