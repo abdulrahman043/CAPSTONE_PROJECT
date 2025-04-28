@@ -9,7 +9,7 @@
     </div>
     <div class="container mt-3">
         
-            {%for skill in request.user.student_profile.skill.all%}
+            {%for skill in profile.skill.all%}
             <div class="many-card border mb-3" data-exp-id="{{exp.id}}">
                 <div class="many-card-view p-3">
                     <div class="d-flex justify-content-between align-items-center ">
@@ -19,7 +19,7 @@
                             <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"></path>
                         </svg>
                     </a>
-                    <form class="d-inline" method="post" action="{%url 'profiles:delate_skill' skill.id %}">
+                    <form class="d-inline" method="post" {%if admin_view%} action="{%url 'profiles:delate_skill_admin' profile.user.id skill.id %}" {%else%} action="{%url 'profiles:delate_skill' skill.id %}" {%endif%}>
                         {%csrf_token%}
                         <button  class="edit-btn btn btn-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
@@ -38,7 +38,7 @@
 
                 </div>
                 <div class="many-card-edit p-3" style="display: none;">
-                    <form action="{%url 'profiles:edit_skill' skill.id%}" method="post">
+                    <form {%if admin_view%} action="{%url 'profiles:edit_skill_admin' profile.user.id skill.id%}" {%else%} action="{%url 'profiles:edit_skill' skill.id%}" {%endif%}  method="post">
                       {% csrf_token %}
                 
                       <div class="row mb-2">
@@ -53,10 +53,10 @@
                    
                     <div class="row mb-2">
                         <div class="col">
-                          <label for="exp-proficiency">المستوى</label>
+                          <label for="skill-proficiency">المستوى</label>
                         </div>
                         <div class="col">
-                          <select name="exp-proficiency" id="proficiency" class="form-select">
+                          <select name="proficiency" id="proficiency" class="form-select">
                             {% for value, label in proficiency_choices %}
                               <option value="{{ value }}" {% if skill.proficiency == value %}selected{% endif %}>
                                 {{ label }}
@@ -93,7 +93,7 @@
             <h2 class="fs-6">المهارات</h2>
 
     </div>
-    <form action="{%url 'profiles:add_skill'%}"  method="post" class="p-3">
+    <form {%if admin_view%} action="{%url 'profiles:add_skill_admin' profile.user.id%}"  {%else%} action="{%url 'profiles:add_skill'%}"{%endif%}  method="post" class="p-3">
         {% csrf_token %}
   
         <div class="row mb-2">

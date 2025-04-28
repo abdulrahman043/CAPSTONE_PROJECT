@@ -14,7 +14,7 @@
                 <p>الاسم</p>
             </div>
             <div class="col">
-                <p>{{request.user.student_profile.personal_info.full_name}}</p>
+                <p>{{profile.personal_info.full_name}}</p>
             </div>
         </div>
         <div class="row">
@@ -22,7 +22,7 @@
                 <p>تاريخ الميلاد</p>
             </div>
             <div class="col">
-                <p>{%if request.user.student_profile.personal_info.date_of_birth%} {{request.user.student_profile.personal_info.date_of_birth}} {%endif%}</p>
+                <p>{%if profile.personal_info.date_of_birth%} {{profile.personal_info.date_of_birth}} {%endif%}</p>
             </div>
         </div>
         <div class="row">
@@ -30,7 +30,7 @@
                 <p>الجنس</p>
             </div>
             <div class="col">
-                <p>{%if request.user.student_profile.personal_info.gender%}{{request.user.student_profile.personal_info.gender}}{%endif%}</p>
+                <p>{%if profile.personal_info.gender%}{{profile.personal_info.gender}}{%endif%}</p>
             </div>
         </div>
        
@@ -39,7 +39,7 @@
                 <p>الجنسية</p>
             </div>
             <div class="col">
-                <p>{{request.user.student_profile.personal_info.nationality.arabic_name}}</p>
+                <p>{{profile.personal_info.nationality.arabic_name}}</p>
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
         <h2 class="fs-6">المعلومات الشخصية</h2>
 
     </div>
-    <form method="post">
+    <form method="post" {%if admin_view%} action="{%url 'profiles:profile_view_admin' profile.user.id%}"{%endif%}>
         {%csrf_token%}
         <div class="container mt-3">
             <div class="row mb-2">
@@ -58,7 +58,7 @@
                     <label class="form-label" for="name">الاسم</label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="name" name="name" type="text" value="{{request.user.student_profile.personal_info.full_name}}"></p>
+                    <p><input class="form-control" id="name" name="name" type="text" value="{{profile.personal_info.full_name}}"></p>
                 </div>
             </div>
             <div class="row mb-2">
@@ -67,7 +67,7 @@
                 </div>
                 <div class="col">
                     <p> <input class="form-control" type="date" name="date_of_birth"
-                            id="date_of_birth" value="{{ request.user.student_profile.personal_info.date_of_birth|date:'Y-m-d' }}"
+                            id="date_of_birth" value="{{ profile.personal_info.date_of_birth|date:'Y-m-d' }}"
                             ></p>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                                  name="gender"
                                  id="gender_{{ forloop.counter }}"
                                  value="{{ value }}"
-                                 {% if request.user.student_profile.personal_info.gender == value %}checked{% endif %}>
+                                 {% if profile.personal_info.gender == value %}checked{% endif %}>
                           <label class="form-check-label" for="gender_{{ forloop.counter }}">
                             {{ label }}
                           </label>
@@ -100,7 +100,7 @@
                     <p> <select name="nationality" class="form-select" id="nationality">
                         <option disabled selected>اختر الجنسية</option>
                         {% for country in countries %}
-                          <option value="{{ country.id }}" {% if request.user.student_profile.personal_info.nationality.id == country.id %}selected{% endif %}>
+                          <option value="{{ country.id }}" {% if profile.personal_info.nationality.id == country.id %}selected{% endif %}>
                             {{ country.arabic_name }}
                           </option>
                         {% endfor %}

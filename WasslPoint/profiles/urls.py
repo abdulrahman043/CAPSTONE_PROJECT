@@ -2,22 +2,54 @@ from django.urls import path
 from . import views
 app_name = "profiles"
 urlpatterns = [path('profile/',views.profile_view,name='profile_view'),
+               path('profile/<user_id>',views.profile_view,name='profile_view_admin'),
                path('company_profile/',views.company_profile_view,name='company_profile_view'),
+                path('company_profile/<int:user_id>',views.company_profile_view,name='company_profile_view_admin'),
+
                path('delate_exp/<exp_id>',views.delate_exp,name='delate_exp'),
+                path('<int:user_id>/delate_exp/<exp_id>',views.delate_exp,name='delate_exp_admin'),
                path('edit_exp/<exp_id>',views.edit_exp,name='edit_exp'),
+                path('<int:user_id>/edit_exp/<exp_id>',views.edit_exp,name='edit_exp_admin'),
+
                 path('delate_skill/<skill_id>',views.delate_skill,name='delate_skill'),
+                path('<int:user_id>/delate_skill/<skill_id>',views.delate_skill,name='delate_skill_admin'),
+
                path('edit_skill/<skill_id>',views.edit_skill,name='edit_skill'),
+                path('<int:user_id>/edit_skill/<skill_id>',views.edit_skill,name='edit_skill_admin'),
+
                  path('delate_lan/<lan_id>',views.delate_language,name='delate_language'),
+                                  path('<int:user_id>/delate_lan/<lan_id>',views.delate_language,name='delate_language_admin'),
+
                path('edit_lan/<lan_id>',views.edit_language,name='edit_language'),
+                              path('<int:user_id>/edit_lan/<lan_id>',views.edit_language,name='edit_language_admin'),
+
                  path('delate_edu/<edu_id>',views.delate_edu,name='delate_edu'),
+                                  path('<int:user_id>/delate_edu/<edu_id>',views.delate_edu,name='delate_edu_admin'),
+
                path('edit_edu/<edu_id>',views.edit_edu,name='edit_edu'),
+                              path('<int:user_id>/edit_edu/<edu_id>',views.edit_edu,name='edit_edu_admin'),
+
                     path('delate_cert/<cert_id>',views.delate_cert,name='delate_cert'),
+                                        path('<int:user_id>/delate_cert/<cert_id>',views.delate_cert,name='delate_cert_admin'),
+
                path('edit_cert/<cert_id>',views.edit_cert,name='edit_cert'),
+                              path('<int:user_id>/edit_cert/<cert_id>',views.edit_cert,name='edit_cert_admin'),
+
                  path('add_cert/',views.add_cert,name='add_cert'),
+                                  path('<int:user_id>/add_cert/',views.add_cert,name='add_cert_admin'),
+
                                   path('add_exp/',views.add_exp,name='add_exp'),
+                                    path('<int:user_id>/add_exp/',views.add_exp,name='add_exp_admin'),
+
                                       path('add_skill/',views.add_skill,name='add_skill'),
+                                     path('<int:user_id>/add_skill/',views.add_skill,name='add_skill_admin'),
+
                                         path('add_edu/',views.add_edu,name='add_edu'),
+                                              path('<user_id>/add_edu/',views.add_edu,name='add_edu_admin'),
+
                                                 path('add_language/',views.add_language,name='add_language'),
+                                                path('<int:user_id>/add_language/',views.add_language,name='add_language_admin'),
+
 
     path('export/pdf/', views.export_cv_pdf, name='export_cv_pdf'),
 

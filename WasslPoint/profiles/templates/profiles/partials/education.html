@@ -10,9 +10,9 @@
         </a>
     </div>
     <div class="container mt-3">
-        {%if request.user.student_profile.education %}
+        {%if profile.education %}
 
-        {%for edu in request.user.student_profile.education.all%}
+        {%for edu in profile.education.all%}
         <div class="many-card border mb-3" data-exp-id="{{edu.id}}">
             <div class="many-card-view p-3">
                 <div class="d-flex justify-content-between align-items-center ">
@@ -26,7 +26,7 @@
                                 </path>
                             </svg>
                         </a>
-                        <form class="d-inline" method="post" action="{%url 'profiles:delate_edu' edu.id %}">
+                        <form class="d-inline" method="post" {%if admin_view%}action="{%url 'profiles:delate_edu_admin' profile.user.id edu.id %}" {%else%}action="{%url 'profiles:delate_edu' edu.id %}" {%endif%}>
                             {%csrf_token%}
                             <button class="edit-btn btn btn-link"><svg xmlns="http://www.w3.org/2000/svg" width="16"
                                     height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
@@ -50,7 +50,7 @@
 
             </div>
             <div class="many-card-edit p-3" style="display: none;">
-                <form action="{%url 'profiles:edit_edu' edu.id%}" method="post">
+                <form {%if admin_view%} action="{%url 'profiles:edit_edu_admin' profile.user.id edu.id%}" {%else%}  action="{%url 'profiles:edit_edu' edu.id%}" {%endif%} method="post">
                     {% csrf_token %}
                     <div class="container mt-3">
                         <div class="row mb-2">
@@ -69,7 +69,7 @@
                             <p> {% for value, label in degree_choices %}
                             <div class="form-check form-check-inline  ">
                               <input class="form-check-input" type="radio" name="degree" id="degree{{ forloop.counter }}" value="{{ value }}"
-                                {% if request.user.student_profile.education.degree == value %}checked{% endif %}>
+                                {% if edu.degree == value %}checked{% endif %}>
                               <label class="form-check-label" for="degree{{ forloop.counter }}">
                                 {{ label }}
                               </label>
@@ -85,7 +85,7 @@
                             <p><select name="major" class="form-select" id="major">
                                 <option disabled selected>اختر التخصص</option>
                                 {% for major in majors %}
-                                  <option value="{{ major.id }}" {% if request.user.student_profile.education.major.id == major.id %}selected{% endif %}>
+                                  <option value="{{ major.id }}" {% if edu.major.id == major.id %}selected{% endif %}>
                                     {{ major.ar_name }}
                                   </option>
                                 {% endfor %}
@@ -109,8 +109,9 @@
                             <div class="row">
                       
                               <div class="col">
+
                                 <select name="gpa_scale" id="gpa_scale" class="form-select">
-                                  <option disabled selected>اختر نظام الدرجات</option>
+                                  <option disabled >اختر نظام الدرجات</option>
                                   {% for value, label in gpa_scale_choices %}
                                   <option value="{{ value }}" {% if edu.gpa_scale == value %}selected{% endif %}>
                                     {{ label }}
@@ -119,7 +120,7 @@
                                 </select>
                               </div>
                               <div class="col">
-                                <input name="gpa" class="form-control" value="{{ edu.gpa }}">
+                                <input name="gpa" class="form-control" value="{{ edu.GPA }}">
                               </div>
                             </div>
                           </div>
@@ -154,7 +155,7 @@
         <h2 class="fs-6">التعليم</h2>
 
     </div>
-    <form action="{%url 'profiles:add_edu'%}" method="post" class="p-3">
+    <form {%if admin_view%} action="{%url 'profiles:add_edu_admin' profile.user.id%}" {%else%} action="{%url 'profiles:add_edu'%}" {%endif%} method="post" class="p-3">
         {% csrf_token %}
         <div class="container mt-3">
             <div class="row mb-2">
@@ -173,7 +174,7 @@
                 <p> {% for value, label in degree_choices %}
                 <div class="form-check form-check-inline  ">
                   <input class="form-check-input" type="radio" name="degree" id="degree{{ forloop.counter }}" value="{{ value }}"
-                    {% if request.user.student_profile.education.degree == value %}checked{% endif %}>
+                    {% if profile.education.degree == value %}checked{% endif %}>
                   <label class="form-check-label" for="degree{{ forloop.counter }}">
                     {{ label }}
                   </label>
@@ -189,7 +190,7 @@
                 <p><select name="major" class="form-select" id="major">
                     <option disabled selected>اختر التخصص</option>
                     {% for major in majors %}
-                      <option value="{{ major.id }}" {% if request.user.student_profile.education.major.id == major.id %}selected{% endif %}>
+                      <option value="{{ major.id }}" {% if profile.education.major.id == major.id %}selected{% endif %}>
                         {{ major.ar_name }}
                       </option>
                     {% endfor %}
