@@ -38,12 +38,13 @@ class Country(models.Model):
         return super().__str__()
 class PersonalInformation(models.Model):
     class Gender(models.TextChoices):
-        MALE = 'ذكر', 'ذكر'
-        FEMALE = 'انثى', 'انثى'
+        MALE   = 'MALE',   'ذكر'
+        FEMALE = 'FEMALE', 'أنثى'
+
     profile=models.OneToOneField(StudentProfile,models.CASCADE,related_name='personal_info')
     full_name=models.CharField(max_length=100)
     date_of_birth=models.DateField(blank=True,null=True)
-    gender=models.CharField(max_length=4,choices=Gender.choices,blank=True,null=True)
+    gender=models.CharField(max_length=6,choices=Gender.choices,blank=True,null=True)
     nationality=models.ForeignKey(Country,on_delete=models.SET_NULL,null=True)
     picture=models.ImageField(upload_to='profiles/' ,blank=True,null=True)
 class Experience(models.Model):
@@ -64,16 +65,18 @@ class Major(models.Model):
     status=models.BooleanField(default=True)
 class Education(models.Model):
     class Degree(models.TextChoices):
-        HIGH_SCHOOL= ' الثانوية العامة أو ما يعادلها',     ' الثانوية العامة أو ما يعادلها'
-        DIPLOMA= 'دبلوم', 'دبلوم'
-        BACHELOR='بكالوريوس',     'بكالوريوس'
-        POST_DIPLOMA='دبلوم عالي',     '  دبلوم عالي'
-        MASTER='ماجستير',     'ماجستير'
-        DOCTORATE=' دكتوراة',     '  دكتوراة'
+        HIGH_SCHOOL   = 'HIGH_SCHOOL',   'الثانوية العامة أو ما يعادلها'
+        DIPLOMA       = 'DIPLOMA',       'دبلوم'
+        BACHELOR      = 'BACHELOR',      'بكالوريوس'
+        POST_DIPLOMA  = 'POST_DIPLOMA',  'دبلوم عالي'
+        MASTER        = 'MASTER',        'ماجستير'
+        DOCTORATE     = 'DOCTORATE',     'دكتوراه'
+
     class GPA_SCALE(models.TextChoices):
-        SCALE_4='4','4'
-        SCALE_5='5','5'
-        SCALE_100='100','100'
+        FOUR_POINT    = '4',   '4.0'
+        FIVE_POINT    = '5',   '5.0'
+        HUNDRED_POINT = '100', '100.0'
+
     profile=models.ForeignKey(StudentProfile,models.CASCADE,related_name='education')
     university  =models.CharField(max_length=200)
     degree=models.CharField(max_length=100,choices=Degree.choices)
@@ -83,18 +86,19 @@ class Education(models.Model):
     GPA=models.DecimalField(max_digits=5,decimal_places=2,null=True)
 class Skill(models.Model):
     class Proficiency(models.TextChoices):
-        BEGINNER     = 'مبتدئ',     'مبتدئ'
-        INTERMEDIATE = 'متوسط', 'متوسط'
-        ADVANCED     = 'متقدم',     'متقدم'
+        BEGINNER     = 'BEGINNER',     'مبتدئ'
+        INTERMEDIATE = 'INTERMEDIATE', 'متوسط'
+        ADVANCED     = 'ADVANCED',     'متقدم'
     profile=models.ForeignKey(StudentProfile,models.CASCADE,related_name='skill')
     name=models.CharField(max_length=100)
     proficiency=models.CharField(max_length=20,choices=Proficiency.choices)
 class Language(models.Model):
     class Proficiency(models.TextChoices):
-        BEGINNER= 'مبتدئ',     'مبتدئ'
-        INTERMEDIATE= 'متوسط', 'متوسط'
-        ADVANCED='متقدم',     'متقدم'
-        NATIVE='اللغة الأم',     'اللغة الأم'
+        BEGINNER     = 'BEGINNER',     'مبتدئ'
+        INTERMEDIATE = 'INTERMEDIATE', 'متوسط'
+        ADVANCED     = 'ADVANCED',     'متقدم'
+        NATIVE       = 'NATIVE',       'اللغة الأم'
+
     profile=models.ForeignKey(StudentProfile,models.CASCADE,related_name='language')
     name=models.CharField(max_length=100,choices=LANGUAGE_CHOICES)
     proficiency=models.CharField(max_length=20,choices=Proficiency.choices)

@@ -1,3 +1,5 @@
+{% now "Y-m-d" as today %}
+
 <div class="many-card-view ">
     <div class="top-many-card border d-flex justify-content-between align-items-center p-2 ">
         <h2 class="fs-6 p">الخبرة</h2>
@@ -70,7 +72,7 @@
                             <label for="start_date-ex">تاريخ البدء</label>
                           </div>
                           <div class="col">
-                            <input id="start_date-ex" type="month" name="start_date" class="form-control" value="{{exp.start_date|date:'Y-m'}}">
+                            <input id="start_date-ex" max="{{today}}" type="month" name="start_date" class="form-control" value="{{exp.start_date|date:'Y-m'}}">
               
                           </div>
                         </div>
