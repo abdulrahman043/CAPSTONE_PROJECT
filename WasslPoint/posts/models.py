@@ -17,6 +17,7 @@ class CoopPosting(models.Model):
     description= models.TextField()
     
     
+    
 class Application(models.Model):
     student=models.ForeignKey(StudentProfile,on_delete=models.CASCADE)
     coop_posting=models.ForeignKey(CoopPosting,on_delete=models.CASCADE)
