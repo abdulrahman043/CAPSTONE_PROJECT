@@ -51,10 +51,10 @@ class StudentProfile(models.Model):
     @property
     def completion_percent(self):
         """
-        يحسب نسبة اكتمال الملف الشخصي بناءً على 6 أقسام
+        يحسب نسبة اكتمال الملف الشخصي بناءً على 7 أقسام
         ويعيد القيمة مؤشرًا مئويًا (0-100)
         """
-        total = 6
+        total = 7
         done = 0
 
         # القسم: المعلومات الشخصية
@@ -82,6 +82,8 @@ class StudentProfile(models.Model):
         # القسم: اللغات
         if self.language.exists():
             done += 1
+        if self.certification.exists():
+            done += 1
 
         return int(done / total * 100)
 
@@ -94,11 +96,11 @@ class StudentProfile(models.Model):
 
         pi = getattr(self, 'personal_info', None)
         if not (pi and pi.full_name and pi.date_of_birth and pi.gender and pi.nationality):
-            missing.append("المعلومات الشخصية")
+            missing.append("اكمال المعلومات الشخصية")
 
         ci = getattr(self, 'contact_info', None)
         if not (ci and ci.email and ci.phone and ci.address_line and ci.city):
-            missing.append("معلومات الاتصال")
+            missing.append("اكمال معلومات الاتصال")
 
         if not self.experience.exists():
             missing.append("إضافة خبرة واحدة على الأقل")
@@ -111,6 +113,8 @@ class StudentProfile(models.Model):
 
         if not self.language.exists():
             missing.append("إضافة لغة واحدة على الأقل")
+        if not self.certification.exists():
+            missing.append("إضافة شهادة واحدة على الأقل")
 
         return missing
 
