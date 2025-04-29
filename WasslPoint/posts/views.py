@@ -24,7 +24,8 @@ def training_detail_view(request: HttpRequest, training_id: int):
 # اضافة تدريب
 @login_required
 def add_training_view(request: HttpRequest):
-    if not hasattr(request.user, 'companyprofile'):
+   
+    if not hasattr(request.user, 'company_profile'):
         messages.error(request, "يجب إنشاء ملف شركة أولاً قبل إضافة تدريب.")
         return redirect("main:company_view") 
 
@@ -90,7 +91,7 @@ def delete_training_view(request: HttpRequest, training_id: int):
 # عرض تدريبات الشركة الحالية فقط (صفحة company.html)
 @login_required
 def company_view(request: HttpRequest):
-    if not hasattr(request.user, 'companyprofile'):
+    if not hasattr(request.user, 'company_profile'):
         messages.error(request, "لا يمكنك عرض تدريبات بدون حساب شركة.")
         return redirect("profiles:create_company_profile_view")
 
