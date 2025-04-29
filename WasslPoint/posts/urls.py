@@ -1,12 +1,16 @@
 from django.urls import path
 from . import views
 
-app_name = "post" 
+app_name = 'posts'
 
 urlpatterns = [
-    path('training/', views.training_list_view, name="training_list_view"),
-    path('training/<int:training_id>/', views.training_detail_view, name="training_detail_view"),
-    path('training/add/', views.add_training_view, name="add_training_view"),
-    path('training/update/<int:training_id>/', views.update_training_view, name="update_training_view"),
-    path('training/delete/<int:training_id>/', views.delete_training_view, name="delete_training_view"),
+    path('opportunities/', views.opportunity_list, name='opportunity_list'),
+    path('company/', views.company_opportunities, name='company_opportunities'), # Changed URL
+    path('company/opportunities/create/', views.create_opportunity, name='create_opportunity'),
+    path('opportunities/<int:opportunity_id>/', views.opportunity_detail, name='opportunity_detail'),
+    path('opportunities/<int:opportunity_id>/apply/', views.apply_opportunity, name='apply_opportunity'),
+    path('applications/', views.application_status, name='application_status'),
+    path('company/opportunities/<int:opportunity_id>/applications/', views.opportunity_applications, name='opportunity_applications'),
+    path('company/applications/<int:application_id>/update_status/', views.update_application_status, name='update_application_status'),
+    path('applications/<int:application_id>/chat/', views.application_chat, name='application_chat'),
 ]

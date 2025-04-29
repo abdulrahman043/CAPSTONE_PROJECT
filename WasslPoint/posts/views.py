@@ -1,101 +1,132 @@
+# WasslPoint/posts/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
-from django.contrib import messages
-from .models import CoopPosting, Application
-from profiles.models import Major
+from .models import TrainingOpportunity, Application, Message
+from profiles.models import CompanyProfile, StudentProfile, Major, City
+from django.core.exceptions import PermissionDenied
+from django.utils import timezone
 
-# عرض كل التدريبات لجميع المستخدمين
-def training_list_view(request: HttpRequest):
-    major_filter = request.GET.get('major')
-    trainings = CoopPosting.objects.all()
-    majors = Major.objects.all()
-
-    if major_filter:
-        trainings = trainings.filter(major__id=major_filter)
-
-    return render(request, "post/training.html", {"trainings": trainings, "majors": majors})
-
-# تفاصيل تدريب واحد
-def training_detail_view(request: HttpRequest, training_id: int):
-    training = get_object_or_404(CoopPosting, id=training_id)
-    return render(request, "post/post_details.html", {"training": training})
-
-# اضافة تدريب
 @login_required
-def add_training_view(request: HttpRequest):
-   
-    if not hasattr(request.user, 'company_profile'):
-        messages.error(request, "يجب إنشاء ملف شركة أولاً قبل إضافة تدريب.")
-        return redirect("main:company_view") 
+def opportunity_list(request):
+    opportunities = TrainingOpportunity.objects.filter(status=TrainingOpportunity.Status.ACTIVE)
+    return render(request, 'posts/opportunity_list.html', {'opportunities': opportunities})
 
-    if request.method == "POST":
-        company = request.user.companyprofile
-        new_training = CoopPosting(
-            company=company,
-            title=request.POST["title"],
-            coop_requirements=request.POST["coop_requirements"],
-            posting_date=request.POST["posting_date"],
-            expiration_date=request.POST["expiration_date"],
-            start_date=request.POST["start_date"],
-            description=request.POST["description"],
-        )
-        new_training.save()
-
-        majors_ids = request.POST.getlist("majors")
-        new_training.major.set(majors_ids)
-
-        messages.success(request, "تم إضافة التدريب بنجاح ✅")
-        return redirect("main:company_view")  # رجوع لصفحة الشركة بعد الاضافة
-
-    majors = Major.objects.all()
-    return render(request, "post/add_training.html", {"majors": majors})
-
-# تحديث تدريب
 @login_required
-def update_training_view(request: HttpRequest, training_id: int):
-    training = get_object_or_404(CoopPosting, id=training_id)
+def company_opportunities(request):
+    """
+    Displays all training opportunities.  Companies can also see their own.
+    """
+    opportunities = TrainingOpportunity.objects.filter(status=TrainingOpportunity.Status.ACTIVE)
+    return render(request, 'posts/company_opportunities.html', {'opportunities': opportunities})
 
-    if training.company.user != request.user:
-        return HttpResponse("غير مصرح", status=401)
-
-    if request.method == "POST":
-        training.title = request.POST["title"]
-        training.coop_requirements = request.POST["coop_requirements"]
-        training.posting_date = request.POST["posting_date"]
-        training.expiration_date = request.POST["expiration_date"]
-        training.start_date = request.POST["start_date"]
-        training.description = request.POST["description"]
-        majors_ids = request.POST.getlist("majors")
-        training.major.set(majors_ids)
-        training.save()
-
-        messages.success(request, "تم تحديث التدريب بنجاح ✅")
-        return redirect("main:company_view")
-
-    majors = Major.objects.all()
-    return render(request, "post/post_update.html", {"training": training, "majors": majors})
-
-# حذف تدريب
 @login_required
-def delete_training_view(request: HttpRequest, training_id: int):
-    training = get_object_or_404(CoopPosting, id=training_id)
+def create_opportunity(request):
+    try:
+        company_profile = request.user.company_profile
+        majors = Major.objects.filter(status=True)
+        cities = City.objects.filter(status=True)
+        if request.method == 'POST':
+            major_ids = request.POST.getlist('majors_needed')
+            city_id = request.POST.get('city')
+            start_date_str = request.POST.get('start_date')
+            duration = request.POST.get('duration')
+            application_deadline_str = request.POST.get('application_deadline')
+            requirements = request.POST.get('requirements')
+            benefits = request.POST.get('benefits')
+            status = request.POST.get('status')
 
-    if training.company.user != request.user:
-        return HttpResponse("غير مصرح", status=401)
+            if all([major_ids, city_id, start_date_str, duration, application_deadline_str, requirements]):
+                opportunity = TrainingOpportunity.objects.create(
+                    company=company_profile,
+                    city=City.objects.get(pk=city_id),
+                    start_date=timezone.datetime.strptime(start_date_str, '%Y-%m-%d').date(),
+                    duration=duration,
+                    application_deadline=timezone.datetime.strptime(application_deadline_str, '%Y-%m-%d').date(),
+                    requirements=requirements,
+                    benefits=benefits,
+                    status=status
+                )
+                opportunity.majors_needed.set(major_ids)
+                return redirect('posts:company_opportunities')
+            else:
+                return render(request, 'posts/create_opportunity.html', {'errors': 'All required fields must be filled.', 'majors': majors, 'cities': cities, 'statuses': TrainingOpportunity.Status.choices})
+        else:
+            return render(request, 'posts/create_opportunity.html', {'majors': majors, 'cities': cities, 'statuses': TrainingOpportunity.Status.choices})
+    except CompanyProfile.DoesNotExist:
+        return redirect('profiles:company_profile_view')
 
-    training.delete()
-    messages.success(request, "تم حذف التدريب بنجاح 🗑️")
-    return redirect("main:company_view")
-
-# عرض تدريبات الشركة الحالية فقط (صفحة company.html)
 @login_required
-def company_view(request: HttpRequest):
-    if not hasattr(request.user, 'company_profile'):
-        messages.error(request, "لا يمكنك عرض تدريبات بدون حساب شركة.")
-        return redirect("profiles:create_company_profile_view")
+def opportunity_detail(request, opportunity_id):
+    opportunity = get_object_or_404(TrainingOpportunity, pk=opportunity_id)
+    applied = False
+    if hasattr(request.user, 'student_profile'):
+        applied = Application.objects.filter(opportunity=opportunity, student=request.user.student_profile).exists()
+    return render(request, 'posts/opportunity_detail.html', {'opportunity': opportunity, 'applied': applied})
 
-    company = request.user.companyprofile
-    trainings = CoopPosting.objects.filter(company=company)
+@login_required
+def apply_opportunity(request, opportunity_id):
+    opportunity = get_object_or_404(TrainingOpportunity, pk=opportunity_id)
+    try:
+        student_profile = request.user.student_profile
+        if request.method == 'POST':
+            message = request.POST.get('message')
+            if not Application.objects.filter(opportunity=opportunity, student=student_profile).exists():
+                Application.objects.create(opportunity=opportunity, student=student_profile, message=message)
+                return redirect('posts:application_status')
+            else:
+                return render(request, 'posts/apply_opportunity.html', {'opportunity': opportunity, 'error': 'You have already applied for this opportunity.'})
+        else:
+            if Application.objects.filter(opportunity=opportunity, student=student_profile).exists():
+                return redirect('posts:application_status') # Or display a message
+            return render(request, 'posts/apply_opportunity.html', {'opportunity': opportunity})
+    except StudentProfile.DoesNotExist:
+        return redirect('profiles:profile_view') # Redirect to create student profile
 
-    return render(request, "main/company.html", {"trainings": trainings})
+@login_required
+def application_status(request):
+    try:
+        student_profile = request.user.student_profile
+        applications = Application.objects.filter(student=student_profile)
+        return render(request, 'posts/application_status.html', {'applications': applications})
+    except StudentProfile.DoesNotExist:
+        return redirect('profiles:profile_view')
+
+@login_required
+def opportunity_applications(request, opportunity_id):
+    opportunity = get_object_or_404(TrainingOpportunity, pk=opportunity_id)
+    try:
+        company_profile = request.user.company_profile
+        if opportunity.company != company_profile:
+            raise PermissionDenied
+        applications = Application.objects.filter(opportunity=opportunity).select_related('student__user')
+        return render(request, 'posts/opportunity_applications.html', {'opportunity': opportunity, 'applications': applications, 'statuses': Application.ApplicationStatus.choices})
+    except CompanyProfile.DoesNotExist:
+        raise PermissionDenied
+
+@login_required
+def update_application_status(request, application_id):
+    application = get_object_or_404(Application, pk=application_id)
+    try:
+        company_profile = request.user.company_profile
+        if application.opportunity.company != company_profile:
+            raise PermissionDenied
+        if request.method == 'POST':
+            new_status = request.POST.get('status')
+            if new_status in Application.ApplicationStatus.values:
+                application.status = new_status
+                application.save()
+                return redirect('posts:opportunity_applications', opportunity_id=application.opportunity.id)
+        return render(request, 'posts/update_application_status.html', {'application': application, 'statuses': Application.ApplicationStatus.choices})
+    except CompanyProfile.DoesNotExist:
+        raise PermissionDenied
+
+@login_required
+def application_chat(request, application_id):
+    application = get_object_or_404(Application, pk=application_id)
+    messages = Message.objects.filter(application=application).order_by('sent_at')
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            Message.objects.create(application=application, sender=request.user, content=content)
+            return redirect('posts:application_chat', application_id=application_id)
+    return render(request, 'posts/application_chat.html', {'application': application, 'messages': messages})
