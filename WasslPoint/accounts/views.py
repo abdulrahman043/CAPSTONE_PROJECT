@@ -23,12 +23,6 @@ def signup_view(request:HttpRequest):
                 profile=StudentProfile.objects.create(user=user)
                 PersonalInformation.objects.create(profile=profile,full_name=request.POST['full_name'])
                 ContactInformation.objects.create(profile=profile,email=request.POST["email"])
-
-                
-
-
-
-
                 return redirect('accounts:login_view')
             except Exception as e:
                 print(e)
