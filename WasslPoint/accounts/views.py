@@ -8,7 +8,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 
 # Create your views here.
 
@@ -62,8 +64,10 @@ def logout_view(request:HttpRequest):
 @staff_member_required
 def user_list(request: HttpRequest):
     user_qs=User.objects.all()
-   
-    context={"user_page":user_qs}
+    paginator=Paginator(user_qs,5)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"user_page":user_page}
 
     return render(request, 'accounts/user_list.html',context)
 def user_delete(request, user_id):
@@ -73,4 +77,16 @@ def user_delete(request, user_id):
     elif request.user!=user:
         user.delete()
     
+    return redirect('accounts:user_list')
+@login_required
+@staff_member_required
+@require_POST
+def delete_all(request:HttpRequest):
+    try:
+        if request.method=='POST':
+            ids=request.POST.getlist('selected_users')
+            if ids:
+                User.objects.filter(id__in=ids,is_staff=False, is_superuser=False).exclude(id=request.user.id).delete()
+    except:
+        pass
     return redirect('accounts:user_list')

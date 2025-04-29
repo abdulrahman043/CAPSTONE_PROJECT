@@ -5,66 +5,143 @@
 <link rel="stylesheet" href="{%static 'css/profiles.css'%}"> {%endblock%}
 {%block content%}
 <div class="container d-flex justify-content-center">
+
     <div class="row g-3 w-100 justify-content-center">
+      <div class="d-flex flex-row justify-content-between align-items-center mt-4">
+        <h1 class="fw-bold ">معلومات الشركة</h1>
+    
+        <div class="dropdown">
+          <a href="#" class="text-dark" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+            </svg>
+          </a>
         
-        <div class="col-5">
-          
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+            <li><a class="dropdown-item" href="{% url 'profiles:export_cv_pdf' %}">تصدير إلى PDF</a></li>
+          </ul>
+        </div>
+        
+      </div>
+
+        <div class="col-7 mb-4">
+        
             <div class="profile-flex ">
-                <div class="card-view border">
-                    <div class="top-card border d-flex justify-content-between align-items-center p-2 ">
-                        <h2 class="fs-6 p">معلومات الشركة</h2>
-                       
+
+                <div class="card border">
+                    <div class="card-view ">
+                        <div class="top-card border d-flex justify-content-between align-items-center p-2 ">
+                            <h2 class="fs-6 p">معلومات الشركة</h2>
+                            <a href="javascript:void(0)" class="edit-btn"><svg xmlns="http://www.w3.org/2000/svg"
+                                    width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                    <path
+                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="container mt-3">
+                            <div class="row">
+                                <div class="col">
+                                    <p>ايميل</p>
+                                </div>
+                                <div class="col">
+                                    <p>{{profile.user.username}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p>السجل التجاري</p>
+                                </div>
+                                <div class="col">
+                                    <p>{{profile.commercial_register}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p>المجال</p>
+                                </div>
+                                <div class="col">
+                                    <p>{{profile.industry}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p>company_address</p>
+                                </div>
+                                <div class="col">
+                                    <p>{{profile.company_address}}</p>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    
                     </div>
-                    <div class="container mt-3">
-                        <div class="row">
-                            <div class="col">
-                                <p>اسم الشركة</p>
-                            </div>
-                            <div class="col">
-                                <p>{{request.user.company_profile.company_name}}</p>
-                            </div>
+                    <div class="card-edit" style="display: none;">
+                        <div class="top-card border d-flex justify-content-between align-items-center p-2 ">
+                            <h2 class="fs-6">معلومات الشركه</h2>
+                    
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <p>السجل التجاري</p>
+                        <form method="post" {%if admin_view%} action="{%url 'profiles:company_profile_view_admin' profile.user.id%}" {%endif%}>
+                            {%csrf_token%}
+                            <div class="container mt-3">
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <label class="form-label" for="company_name">اسم الشركة</label>
+                                    </div>
+                                    <div class="col">
+                                        <p><input class="form-control" id="company_name" name="company_name" type="text" value="{{profile.company_name}}"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <label for="phone">commercial_register </label>
+                                    </div>
+                                    <div class="col">
+                                        <p> <input class="form-control" type="tel" name="phone"
+                                                id="phone"  value="{{profile.contact_info.phone}}"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <p> <label for="address_line-c">العنوان</label></p>
+                                    </div>
+                                    <div class="col">
+                                        <p><input class="form-control" type="text" name="address_line"
+                                            id="address_line-c"  value="{{profile.contact_info.address_line}}"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <label for="full_name_ar">المدينة</label>
+                                    </div>
+                                    <div class="col">
+                                        <p> <select name="city" class="form-select" id="city">
+                                            <option disabled selected>اختر المدينة</option>
+                                            {% for city in cities %}
+                                              <option value="{{ city.id }}" {% if profile.contact_info.city.id == city.id %}selected{% endif %}>
+                                                {{ city.arabic_name }}
+                                              </option>
+                                            {% endfor %}
+                                          </select></p>
+                                    </div>
+                                </div>
+                              
+                                <div class="row mb-2">
+                                    <div class="col">
+                                    </div>
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-primary" name="contact-submit">حفظ</button>
+                                        <button type="button"
+                                            class="btn btn-outline-secondary cancel-btn">الغاء</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col">
-                                <p>{{request.user.company_profile.commercial_register}}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <p>المجال</p>
-                            </div>
-                            <div class="col">
-                                <p>{{request.user.company_profile}}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <p>العنوان</p>
-                            </div>
-                            <div class="col">
-                                <p>{{request.user.company_profile}}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <p>ملف السجل التجاري</p>
-                            </div>
-                            <div class="col">
-                                {% if request.user.company_profile.certificate_file %}
-                <a href="{{ request.user.company_profile.certificate_file.url }}" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
-                    عرض الشهادة
-                </a>
-
-                {% endif %}
-
-                            </div>
-                        </div>
-                      
+                    
+                        </form>
+                    
                     </div>
                 </div>
+               
                
             </div>
         </div>
@@ -76,7 +153,55 @@
         </div>
     </div>
 </div>
-
+<script>
+    document.querySelectorAll('.many-card:not([data-exp-id])').forEach(x => {
+      const listView  = x.querySelector('.many-card-view');
+      const addForm   = x.querySelector('.many-card-add');
+      const addBtn    = x.querySelector('.add-btn');
+      const cancelAdd = addForm.querySelector('.cancel-btn');
+  
+      addBtn.addEventListener('click', () => {
+        listView.style.display = 'none';
+        addForm.style.display  = 'block';
+      });
+      cancelAdd.addEventListener('click', () => {
+        addForm.style.display  = 'none';
+        listView.style.display = 'block';
+      });
+  
+      x.querySelectorAll('.many-card[data-exp-id]').forEach(card => {
+        const viewPane  = card.querySelector('.many-card-view');
+        const editPane  = card.querySelector('.many-card-edit');
+        const editBtn   = card.querySelector('.edit-btn');
+        const cancelBtn = card.querySelector('.cancel-btn');
+  
+        editBtn.addEventListener('click', () => {
+          viewPane.style.display = 'none';
+          editPane.style.display = 'block';
+        });
+        cancelBtn.addEventListener('click', () => {
+          editPane.style.display = 'none';
+          viewPane.style.display = 'block';
+        });
+      });
+    });
+  
+    document.querySelectorAll('.card').forEach(card => {
+      const view      = card.querySelector('.card-view');
+      const edit      = card.querySelector('.card-edit');
+      const btnEdit   = card.querySelector('.edit-btn');
+      const btnCancel = card.querySelector('.cancel-btn');
+  
+      btnEdit.addEventListener('click', () => {
+        view.style.display = 'none';
+        edit.style.display = 'block';
+      });
+      btnCancel.addEventListener('click', () => {
+        view.style.display = 'block';
+        edit.style.display = 'none';
+      });
+    });
+  </script>
   
   
 {%endblock%}

@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>السيرة الذاتية - {{ request.user.student_profile.personal_info.full_name_ar }}</title>
+  <title>السيرة الذاتية - {{ profile.personal_info.full_name_ar }}</title>
   <style>
     @page { margin: 1in; }
     body {
@@ -66,20 +66,20 @@
 <body>
   <div class="container">
     <header>
-      <h1>{{ request.user.student_profile.personal_info.full_name_ar }}</h1>
-      {% if request.user.student_profile.personal_info.full_name_en %}<div class="subtitle">{{ request.user.student_profile.personal_info.full_name_en }}</div>{% endif %}
+      <h1>{{ profile.personal_info.full_name_ar }}</h1>
+      {% if profile.personal_info.full_name_en %}<div class="subtitle">{{ profile.personal_info.full_name_en }}</div>{% endif %}
       <div class="contact-info">
-        {% if request.user.student_profile.contact_info.city %}{{ request.user.student_profile.contact_info.city.name }}، {% endif %}
-        {% if request.user.student_profile.contact_info.phone %}{{ request.user.student_profile.contact_info.phone }} | {% endif %}
-        <a href="mailto:{{ request.user.student_profile.contact_info.email }}">{{ request.user.student_profile.contact_info.email }}</a>
+        {% if profile.contact_info.city %}{{ profile.contact_info.city.name }}، {% endif %}
+        {% if profile.contact_info.phone %}{{ profile.contact_info.phone }} | {% endif %}
+        <a href="mailto:{{ profile.contact_info.email }}">{{ profile.contact_info.email }}</a>
       </div>
     </header>
 
-    {% if request.user.student_profile.experience.exists %}
+    {% if profile.experience.exists %}
     <div class="section">
       <h2>الخبرات العملية</h2>
       <ul>
-        {% for exp in request.user.student_profile.experience.all %}
+        {% for exp in profile.experience.all %}
           <li>
             <span class="position">{{ exp.job_title }}</span>، {{ exp.company_name }} — {{ exp.start_date|date:'Y' }}{% if exp.end_date %} إلى {{ exp.end_date|date:'Y' }}{% else %} إلى الآن{% endif %}
             {% if exp.description %}<br>{{ exp.description }}{% endif %}
@@ -89,11 +89,11 @@
     </div>
     {% endif %}
 
-    {% if request.user.student_profile.education.exists %}
+    {% if profile.education.exists %}
     <div class="section">
       <h2>المؤهلات العلمية</h2>
       <ul>
-        {% for edu in request.user.student_profile.education.all %}
+        {% for edu in profile.education.all %}
           <li>
             <span class="institution">{{ edu.university }}</span>، {{ edu.get_degree_display }} — {{ edu.graduating_date|date:'Y' }}<br>
             التخصص: {{ edu.major.ar_name }}{% if edu.GPA %} | المعدل: {{ edu.GPA }}/{{ edu.gpa_scale }}{% endif %}
@@ -103,33 +103,33 @@
     </div>
     {% endif %}
 
-    {% if request.user.student_profile.skill.exists %}
+    {% if profile.skill.exists %}
     <div class="section">
       <h2>المهارات</h2>
       <ul>
-        {% for skill in request.user.student_profile.skill.all %}
+        {% for skill in profile.skill.all %}
           <li>{{ skill.name }}</li>
         {% endfor %}
       </ul>
     </div>
     {% endif %}
 
-    {% if request.user.student_profile.language.exists %}
+    {% if profile.language.exists %}
     <div class="section">
       <h2>اللغات</h2>
       <ul>
-        {% for lang in request.user.student_profile.language.all %}
+        {% for lang in profile.language.all %}
           <li>{{ lang.name }} - {{ lang.get_proficiency_display }}</li>
         {% endfor %}
       </ul>
     </div>
     {% endif %}
 
-    {% if request.user.student_profile.certification.exists %}
+    {% if profile.certification.exists %}
     <div class="section">
       <h2>الشهادات</h2>
       <ul>
-        {% for cert in request.user.student_profile.certification.all %}
+        {% for cert in profile.certification.all %}
           <li>{{ cert.name }}، {{ cert.issuer }}<br>
             تاريخ الإصدار: {{ cert.issue_date|date:'Y-m-d' }}{% if cert.expiry_date %} | تاريخ الانتهاء: {{ cert.expiry_date|date:'Y-m-d' }}{% endif %}
           </li>

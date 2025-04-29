@@ -6,88 +6,109 @@
 {%block content%}
 <div class="container d-flex justify-content-center">
 
-    <div class="row g-3 w-100 justify-content-center">
-      <div class="d-flex flex-row justify-content-between align-items-center mt-4">
-        <h1 class="fw-bold ">سيرتي الذاتية</h1>
-    
-        <div class="dropdown">
-          <a href="#" class="text-dark" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
-            </svg>
-          </a>
-        
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
-            <li><a class="dropdown-item" href="{% url 'profiles:export_cv_pdf' %}">تصدير إلى PDF</a></li>
-          </ul>
-        </div>
-        
+  <div class="row g-3 w-100 justify-content-center">
+    <div class="d-flex flex-row justify-content-between align-items-center mt-4">
+      <h1 class="fw-bold ">سيرتي الذاتية</h1>
+
+      <div class="dropdown">
+        <a href="#" class="text-dark" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown"
+          aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-three-dots"
+            viewBox="0 0 16 16">
+            <path
+              d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
+          </svg>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+          <li><a class="dropdown-item" {%if admin_view%}href="{% url 'profiles:export_cv_pdf_admin' profile.user.id %}"  {%else%}href="{% url 'profiles:export_cv_pdf' %}" {%endif%}>تصدير إلى PDF</a></li>
+        </ul>
       </div>
 
-        <div class="col-7 mb-4">
-        
-            <div class="profile-flex ">
-
-                <div class="card border">
-                  {%include 'profiles/partials/personal_info.html'%}
-                </div>
-                <div class="card border">
-                    {%include 'profiles/partials/contact_info.html'%}
-
-                </div>
-                <div class="many-card border">
-                    {%include 'profiles/partials/experince.html'%}
-
-                </div>
-                <div class="many-card border">
-                    {%include 'profiles/partials/skills.html'%}
-
-                </div>
-                <div class="many-card border">
-                    {%include 'profiles/partials/language.html'%}
-
-                </div>
-                <div class="many-card border">
-                  {%include 'profiles/partials/education.html'%}
-
-              </div>
-              <div class="many-card border">
-                {%include 'profiles/partials/certification.html'%}
-
-            </div>
-               
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="test border">
-                <p>complate profile</p>
-            </div>
-
-        </div>
     </div>
-</div>
-<script>
+
+    <div class="col-7 mb-4">
+
+      <div class="profile-flex ">
+        <div class="o border">
+          {%include 'profiles/partials/photo.html'%}
+        </div>
+        <div class="card border">
+          {%include 'profiles/partials/personal_info.html'%}
+        </div>
+        <div class="card border">
+          {%include 'profiles/partials/contact_info.html'%}
+
+        </div>
+        <div class="many-card border">
+          {%include 'profiles/partials/experince.html'%}
+
+        </div>
+        <div class="many-card border">
+          {%include 'profiles/partials/skills.html'%}
+
+        </div>
+        <div class="many-card border">
+          {%include 'profiles/partials/language.html'%}
+
+        </div>
+        <div class="many-card border">
+          {%include 'profiles/partials/education.html'%}
+
+        </div>
+        <div class="many-card border">
+          {%include 'profiles/partials/certification.html'%}
+
+        </div>
+
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="test border p-2 ">
+        <h5 class="mb-2">نسبة اكتمال الملف الشخصي</h5>
+        <div class="progress" dir="ltr">
+          <div class="progress-bar" role="progressbar" style="width: {{ profile.completion_percent }}%;"
+            aria-valuenow="{{ profile.completion_percent }}" aria-valuemin="0" aria-valuemax="100">
+            {{ profile.completion_percent }}%
+          </div>
+        </div>
+        {% if profile.missing_sections %}
+        <div class="alert alert-warning mt-2 p-3">
+          <strong>لإكمال ملفك يرجى:</strong>
+          <ul class="mb-0">
+            {% for section in profile.missing_sections %}
+            <li>{{ section }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+       
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+  <script>
     document.querySelectorAll('.many-card:not([data-exp-id])').forEach(x => {
-      const listView  = x.querySelector('.many-card-view');
-      const addForm   = x.querySelector('.many-card-add');
-      const addBtn    = x.querySelector('.add-btn');
+      const listView = x.querySelector('.many-card-view');
+      const addForm = x.querySelector('.many-card-add');
+      const addBtn = x.querySelector('.add-btn');
       const cancelAdd = addForm.querySelector('.cancel-btn');
-  
+
       addBtn.addEventListener('click', () => {
         listView.style.display = 'none';
-        addForm.style.display  = 'block';
+        addForm.style.display = 'block';
       });
       cancelAdd.addEventListener('click', () => {
-        addForm.style.display  = 'none';
+        addForm.style.display = 'none';
         listView.style.display = 'block';
       });
-  
+
       x.querySelectorAll('.many-card[data-exp-id]').forEach(card => {
-        const viewPane  = card.querySelector('.many-card-view');
-        const editPane  = card.querySelector('.many-card-edit');
-        const editBtn   = card.querySelector('.edit-btn');
+        const viewPane = card.querySelector('.many-card-view');
+        const editPane = card.querySelector('.many-card-edit');
+        const editBtn = card.querySelector('.edit-btn');
         const cancelBtn = card.querySelector('.cancel-btn');
-  
+
         editBtn.addEventListener('click', () => {
           viewPane.style.display = 'none';
           editPane.style.display = 'block';
@@ -98,13 +119,13 @@
         });
       });
     });
-  
+
     document.querySelectorAll('.card').forEach(card => {
-      const view      = card.querySelector('.card-view');
-      const edit      = card.querySelector('.card-edit');
-      const btnEdit   = card.querySelector('.edit-btn');
+      const view = card.querySelector('.card-view');
+      const edit = card.querySelector('.card-edit');
+      const btnEdit = card.querySelector('.edit-btn');
       const btnCancel = card.querySelector('.cancel-btn');
-  
+
       btnEdit.addEventListener('click', () => {
         view.style.display = 'none';
         edit.style.display = 'block';
@@ -115,6 +136,6 @@
       });
     });
   </script>
-  
-  
-{%endblock%}
+
+
+  {%endblock%}
