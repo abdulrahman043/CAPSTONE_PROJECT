@@ -35,3 +35,11 @@ label.required::after {
   content: " *";
   color: red;
 }
+.progress-bar[aria-valuenow="0"] {
+  background-color: transparent !important;
+}
+
+.progress-bar {
+  min-width: 2.5rem;       /* enough room for “0%” */
+  text-align: center;
+}

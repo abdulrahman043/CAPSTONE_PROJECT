@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<div class="title1">
+    <h1>UPDATE POST</h1>
+    <h2>{{post.title}}</h2>
+</div>
+<div class="row">
+
+    <div class="col-6">
+        <form class="d-flex flex-column gap-2" action="{% url 'post:post_update_view' post.id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="poster" class="form-control" value="{{post.poster}}"/>
+            <input type="text" placeholder="Title.." name="title" class="form-control" value="{{post.title}}"/>
+            <textarea placeholder="Comment.." name="description" class="form-control">{{post.description}}</textarea>
+            <div class="row">
+                <div class="col-3">
+                    <img src="{{post.poster.url}}" class="w-100" />
+                </div>
+                <div class="col">
+                    <input type="file" name="poster" class="form-control"/>
+                </div>
+            </div>
+            <input type="submit" value="POST" class="btn btn-primary"  />
+        </form>
+
+    </div>
+</div>
+
+
+
+{% endblock %}

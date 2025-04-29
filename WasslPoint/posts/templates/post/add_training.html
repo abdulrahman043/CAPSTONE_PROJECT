@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container d-flex flex-column justify-content-center align-items-center">
+    <h2 class="mb-4">اضافة تدريب</h2>
+
+    <form class="d-flex flex-column gap-3 w-50" action="{% url 'post:add_training_view' %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <input type="text" name="title" placeholder="عنوان التدريب.." class="form-control" required />
+
+      <textarea name="coop_requirements" placeholder="متطلبات التدريب.." class="form-control" required></textarea>
+
+      <div class="d-flex gap-2">
+        <input type="date" name="posting_date" class="form-control" required placeholder="تاريخ النشر" />
+        <input type="date" name="expiration_date" class="form-control" required placeholder="تاريخ الانتهاء" />
+        <input type="date" name="start_date" class="form-control" required placeholder="تاريخ البدء" />
+      </div>
+
+      <label for="majors" class="form-label">التخصصات المطلوبة:</label>
+      <select name="majors" multiple class="form-control" required>
+        {% for major in majors %}
+          <option value="{{ major.id }}">{{ major.name }}</option>
+        {% endfor %}
+      </select>
+
+      <textarea name="description" placeholder="الوصف الكامل للتدريب.." class="form-control"></textarea>
+
+      <button type="submit" class="btn btn-primary w-100">اضافة تدريب</button>
+    </form>
+</div>
+
+{% endblock %}

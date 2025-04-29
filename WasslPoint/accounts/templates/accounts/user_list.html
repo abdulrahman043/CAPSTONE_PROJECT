@@ -1,99 +1,119 @@
 {% extends "main/base.html" %}
-{%load static%}
-{%block style%}  <link rel="stylesheet" href="{% static 'css/accounts.css' %}">{%endblock%}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-  <div class="row mb-4">
-    <div class="col">
-      <h2>إدارة المستخدمين</h2>
+<div class="admin-page" dir="ltr">
+  <section class="ads">
+    <h2 class="mb-4" style="color: #009999; font-weight: bold;">
+        <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
+        ادمن
+        <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
+    </h2>
+</section>
+  <div class="admin-container">
+    {# ←── Sidebar on the left ──→ #}
+    <nav class="sidebar">
+      <button class="sidebar-btn teal">الحسابات</button>
+      <button class="sidebar-btn orange">التدريبات</button>
+      <button class="sidebar-btn teal">التقديمات</button>
+      <button class="sidebar-btn orange">الشركات</button>
+      <button class="sidebar-btn teal">السير الذاتية</button>
+      <button class="sidebar-btn orange">السجل التجاري</button>
+      <button class="sidebar-btn teal">الرسائل</button>
+    </nav>
+
+    {# ←── Main content on the right ──→ #}
+    <div class="main-content">
+      <form action="{% url 'accounts:delete_all' %}" method="post">
+        {% csrf_token %}
+        <div class="table-wrapper shadow-sm">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="select-all"></th>
+                <th>المعرّف</th>
+                <th>الاسم</th>
+                <th>الايميل</th>
+                <th>الرقم</th>
+                <th>النوع</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in user_page %}
+              <tr>
+                <td><input type="checkbox" class="select-row" name="selected_users" value="{{ user.id }}"></td>
+                <td>{{ user.id }}</td>
+                <td>
+                  {% if user.student_profile %}
+                    {{ user.student_profile.personal_info.full_name }}
+                  {% elif user.company_profile %}
+                    {{ user.company_profile.company_name }}
+                  {% else %}
+                    {{ user.username }}
+                  {% endif %}
+                </td>
+                <td><a  {%if user.student_profile%} href="{%url 'profiles:profile_view_admin' user.id%}"{%elif user.company_profile%}href="{%url 'profiles:company_profile_view_admin' user.id%}"{%else%} href='#' {%endif%}>{{ user.username }}</a></td>
+                <td>
+                  {% if user.student_profile and user.student_profile.contact_info %}
+                    {{ user.student_profile.contact_info.phone }}
+                  {% elif user.company_profile and user.company_profile.contactperson %}
+                    {{ user.company_profile.contactperson.phone }}
+                  {% else %}-{% endif %}
+                </td>
+                <td>
+                  {% if user.student_profile %}
+                  طالب
+                {% elif user.company_profile %}
+                  شركة
+                {% elif  user.is_staff %}
+                  مسؤول
+                {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center py-4">لا يوجد مستخدمون.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {# ←── Action buttons under table, aligned left ──→ #}
+        <div class="actions">
+          <a href="#" class="btn action-btn add">اضافة</a>
+          <a href="#" class="btn action-btn edit">تعديل</a>
+          <button type="submit" class="btn action-btn delete-all">حذف</button>
+        </div>
+      </form>
+
+      <div class="pagination">
+        {% if user_page.has_previous %}
+          <a href="?page=1">&laquo; الأولى</a>
+          <a href="?page={{ user_page.previous_page_number }}">&lsaquo; السابق</a>
+        {% endif %}
+        <span>صفحة {{ user_page.number }} من {{ user_page.paginator.num_pages }}</span>
+        {% if user_page.has_next %}
+          <a href="?page={{ user_page.next_page_number }}">التالي &rsaquo;</a>
+          <a href="?page={{ user_page.paginator.num_pages }}">الأخيرة &raquo;</a>
+        {% endif %}
+      </div>
     </div>
   </div>
-  <form action="{%url 'accounts:delete_all'%}" method="post">
-    {%csrf_token%}
-  <div class="table-responsive shadow-sm">
-    <table class="table table-striped table-hover mb-0">
-      <thead class="table-dark">
-        <tr>
-          <th> الاسم</th>
-
-          <th>البريد الإلكتروني</th>
-          <th>رقم الهاتف</th>
-          <th>النوع</th>
-          <th class="text-end"><input type="checkbox" id="select-all"></th>
-          
-        </tr>
-      </thead>
-      <tbody>
-        {% for user in user_page %}
-        <tr>
-          <td>
-            {% if user.student_profile  %}
-              {{ user.student_profile.personal_info.full_name}}
-            {% elif user.company_profile  %}
-              {{ user.company_profile.name }}
-            {% else %}
-                -
-            {% endif %}
-          <td><a href="{%url 'profiles:profile_view_admin' user.id%}">{{ user.username }}</a></td>
-          <td>
-            {% if user.student_profile and user.student_profile.contact_info %}
-              {{ user.student_profile.contact_info.phone }}
-            {% elif user.company_profile and user.company_profile.contactperson %}
-              {{ user.company_profile.contactperson.phone }}
-            {% else %}
-              -
-            {% endif %}
-          </td>
-          <td>
-            {% if user.student_profile %}
-              طالب
-            {% elif user.company_profile %}
-              شركة
-            {% else %}
-              مسؤول
-            {% endif %}
-          </td>
-          <td class="text-end"><input type="checkbox" class="select-row " name="selected_users" value="{{user.id}}"></td>
-
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="4" class="text-center py-4">
-            لا يوجد مستخدمون.
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <button>delate all</button>
-</form>
-<div>
-  {% if user_page.has_previous %}
-  <a href="?page=1">&laquo; الأولى</a>
-  <a href="?page={{ user_page.previous_page_number }}">&lsaquo; السابق</a>
-{% endif %}
-
-<!-- Current page indicator -->
-صفحة {{ user_page.number }} من {{ user_page.paginator.num_pages }}
-
-{% if user_page.has_next %}
-  <a href="?page={{ user_page.next_page_number }}">التالي &rsaquo;</a>
-  <a href="?page={{ user_page.paginator.num_pages }}">الأخيرة &raquo;</a>
-{% endif %}
-
- 
 </div>
 
-</div>
 <script>
- document.addEventListener('DOMContentLoaded',()=>{
-  const select_all=document.getElementById('select-all')
-  if(!select_all) return;
-  select_all.addEventListener('change',e=>{
-    document.querySelectorAll('.select-row').forEach(cb=> cb.checked=e.target.checked)
-  })
- })
+document.addEventListener('DOMContentLoaded', () => {
+  const selectAll = document.getElementById('select-all');
+  if (!selectAll) return;
+  selectAll.addEventListener('change', e => {
+    document.querySelectorAll('.select-row')
+            .forEach(cb => cb.checked = e.target.checked);
+  });
+});
 </script>
 {% endblock %}
