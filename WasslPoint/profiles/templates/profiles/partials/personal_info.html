@@ -1,3 +1,4 @@
+{% now "Y-m-d" as today %}
 <div class="card-view ">
     <div class="top-card border d-flex justify-content-between align-items-center p-2 ">
         <h2 class="fs-6 p">المعلومات الشخصية</h2>
@@ -22,7 +23,7 @@
                 <p>تاريخ الميلاد</p>
             </div>
             <div class="col">
-                <p>{%if profile.personal_info.date_of_birth%} {{profile.personal_info.date_of_birth}} {%endif%}</p>
+                <p>{%if profile.personal_info.date_of_birth%}  {{ profile.personal_info.date_of_birth|date:"Y F j" }} (العمر: {{ profile.personal_info.age }}) {%endif%}</p>
             </div>
         </div>
         <div class="row">
@@ -30,7 +31,7 @@
                 <p>الجنس</p>
             </div>
             <div class="col">
-                <p>{%if profile.personal_info.gender%}{{profile.personal_info.gender}}{%endif%}</p>
+                <p>{%if profile.personal_info.gender%}{{profile.personal_info.get_gender_display}}{%endif%}</p>
             </div>
         </div>
        
@@ -55,30 +56,31 @@
         <div class="container mt-3">
             <div class="row mb-2">
                 <div class="col">
-                    <label class="form-label" for="name">الاسم</label>
+                    <label class="form-label required" for="name">الاسم</label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="name" name="name" type="text" value="{{profile.personal_info.full_name}}"></p>
+                    <p><input class="form-control" id="name" name="name" type="text" value="{{profile.personal_info.full_name}}" required ></p>
                 </div>
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <label for="date_of_birth">تاريخ الميلاد</label>
+                    <label class="required" for="date_of_birth">تاريخ الميلاد</label>
                 </div>
                 <div class="col">
-                    <p> <input class="form-control" type="date" name="date_of_birth"
+                    <p> <input class="form-control" max="{{today}}" type="date" name="date_of_birth" required
                             id="date_of_birth" value="{{ profile.personal_info.date_of_birth|date:'Y-m-d' }}"
                             ></p>
                 </div>
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <p> <label for="gender">الجنس</label></p>
+                    <p> <label class="required" for="gender">الجنس</label></p>
                 </div>
                 <div class="col">
                     <p> {% for value, label in gender_choices %}
                         <div class="form-check form-check-inline  ">
                           <input class="form-check-input"
+                          required
                                  type="radio"
                                  name="gender"
                                  id="gender_{{ forloop.counter }}"
@@ -94,10 +96,10 @@
            
             <div class="row mb-2">
                 <div class="col">
-                    <label for="nationality">الجنسية</label>
+                    <label class="required" for="nationality">الجنسية</label>
                 </div>
                 <div class="col">
-                    <p> <select name="nationality" class="form-select" id="nationality">
+                    <p> <select name="nationality" class="form-select " id="nationality" required>
                         <option disabled selected>اختر الجنسية</option>
                         {% for country in countries %}
                           <option value="{{ country.id }}" {% if profile.personal_info.nationality.id == country.id %}selected{% endif %}>

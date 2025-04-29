@@ -15,6 +15,7 @@
   width: 100%;
   
 }
+
 .many-card{
   width: 100%;
   
@@ -28,4 +29,9 @@
 .test{
       margin-top: 30px;
 
+}
+label.required::after {
+  
+  content: " *";
+  color: red;
 }

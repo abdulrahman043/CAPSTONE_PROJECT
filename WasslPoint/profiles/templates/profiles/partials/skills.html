@@ -32,7 +32,7 @@
                     </form>
                     </div>
                 </div>
-                    <p> {{ skill.proficiency }}</p>
+                    <p> {{ skill.get_proficiency_display }}</p>
                     
                   
 
@@ -53,10 +53,10 @@
                    
                     <div class="row mb-2">
                         <div class="col">
-                          <label for="skill-proficiency">المستوى</label>
+                          <label class="required" for="skill-proficiency">المستوى</label>
                         </div>
                         <div class="col">
-                          <select name="proficiency" id="proficiency" class="form-select">
+                          <select required name="proficiency" id="proficiency" class="form-select">
                             {% for value, label in proficiency_choices %}
                               <option value="{{ value }}" {% if skill.proficiency == value %}selected{% endif %}>
                                 {{ label }}
@@ -98,20 +98,20 @@
   
         <div class="row mb-2">
             <div class="col">
-                <label for="exp-name">اسم المهاره</label>
+                <label class="required" for="exp-name">اسم المهاره</label>
             </div>
             <div class="col">
-                <p> <input class="form-control" type="text" name="name"
+                <p> <input required class="form-control" type="text" name="name"
                     id="exp-name"  value="{{skill.name}}"> </p>
             </div>
         </div>
        
         <div class="row mb-2">
             <div class="col">
-              <label for="exp-proficiency">المستوى</label>
+              <label class="required" for="exp-proficiency">المستوى</label>
             </div>
             <div class="col">
-              <select name="proficiency" id="exp-proficiency" class="form-select">
+              <select required name="proficiency" id="exp-proficiency" class="form-select">
                 {% for value, label in proficiency_choices %}
                   <option value="{{ value }}" {% if skill.proficiency == value %}selected{% endif %}>
                     {{ label }}

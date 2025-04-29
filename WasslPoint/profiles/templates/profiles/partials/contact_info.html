@@ -55,37 +55,37 @@
         <div class="container mt-3">
             <div class="row mb-2">
                 <div class="col">
-                    <label class="form-label" for="name-email">ايميل</label>
+                    <label class="form-label required" for="name-email">ايميل</label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="name-email" name="email" type="email" value="{{profile.contact_info.email}}"></p>
+                    <p><input class="form-control" id="name-email" name="email" type="email" value="{{profile.contact_info.email}}" required></p>
                 </div>
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <label for="phone">رقم الجوال </label>
+                    <label class="required" for="phone">رقم الجوال </label>
                 </div>
                 <div class="col">
                     <p> <input class="form-control" type="tel" name="phone"
-                            id="phone"  value="{{profile.contact_info.phone}}"></p>
+                            id="phone"  value="{{profile.contact_info.phone}}" required></p>
                 </div>
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <p> <label for="address_line-c">العنوان</label></p>
+                    <p> <label class="required" for="address_line-c">العنوان</label></p>
                 </div>
                 <div class="col">
                     <p><input class="form-control" type="text" name="address_line"
-                        id="address_line-c"  value="{{profile.contact_info.address_line}}"></p>
+                        id="address_line-c"  value="{{profile.contact_info.address_line}}" required></p>
                 </div>
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <label for="full_name_ar">المدينة</label>
+                    <label class="required" for="city-contact">المدينة</label>
                 </div>
                 <div class="col">
-                    <p> <select name="city" class="form-select" id="city">
-                        <option disabled selected>اختر المدينة</option>
+                    <p> <select name="city" class="form-select" id="city-contact" required>
+                        <option value="" disabled selected>اختر المدينة</option>
                         {% for city in cities %}
                           <option value="{{ city.id }}" {% if profile.contact_info.city.id == city.id %}selected{% endif %}>
                             {{ city.arabic_name }}

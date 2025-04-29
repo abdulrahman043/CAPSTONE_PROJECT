@@ -35,7 +35,7 @@
             {% else %}
                 -
             {% endif %}
-          <td>{{ user.username }}</td>
+          <td><a href="{%url 'profiles:profile_view_admin' user.id%}">{{ user.username }}</a></td>
           <td>
             {% if user.student_profile and user.student_profile.contact_info %}
               {{ user.student_profile.contact_info.phone }}
