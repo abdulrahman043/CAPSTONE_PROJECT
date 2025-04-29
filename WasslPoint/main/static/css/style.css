@@ -1,3 +1,530 @@
+
+#heroCarousel {
+  position: relative;
+}
+
+.carousel-inner {
+  height: 100vh;
+}
+
+.carousel-item {
+  height: 100vh;
+  position: relative;
+}
+
+.hero-slide {
+  height: 100vh;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  width: 100%;
+}
+
+/* ===== نص السلايدر ===== */
+.carousel-caption {
+  bottom: 20%;
+  text-align: center;
+}
+
+.carousel-caption h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.carousel-caption p {
+  font-size: 1.2rem;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.carousel-caption a.btn {
+  font-size: 1.1rem;
+  padding: 10px 20px;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+/* ===== الأسهم ===== */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 50px;
+  height: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  width: 24px;
+  height: 24px;
+  background-size: 100% 100%;
+  filter: brightness(0) invert(1);
+}
+
+/* ===== الإحصائيات ===== */
+.shadow-sm i,
+.bg-white i {
+  color: #FF7C34 !important; /* برتقالي ثابت */
+  font-size: 100px !important; /* تكبير الحجم */
+  width: 100px !important;
+  height: 100px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* ===== النص داخل الإحصائيات ===== */
+.stat-box h5 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #009999;
+}
+
+.stat-box span {
+  color: #009999;
+}
+
+/* ===== الفوتر ===== */
+.site-footer {
+  background-color: #f8f9fa;
+  color: #333;
+  font-size: 14px;
+  border-top: 1px solid #ddd;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer .footer-links a {
+  color: #009999;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.site-footer .footer-links a:hover {
+  text-decoration: underline;
+}
+
+.hero-slide-image {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+}
+
+/* لضبط خلفيات السلايدر الحديثة */
+.hero-slide-image {
+  height: 100vh;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  width: 100%;
+}
+
+.trainings-section {
+  background: #f8f8f8;
+}
+
+.section-title {
+  color: #009999;
+  font-size: 2.5rem;
+  font-weight: bold;
+  position: relative;
+}
+
+.orange-arrows {
+  color: #FF7C34;
+  font-size: 1.5rem;
+}
+
+.filter-btn {
+  font-size: 1rem;
+  color: #009999;
+  border: 2px solid #FF7C34;
+  border-radius: 8px;
+  padding: 5px 15px;
+  background: transparent;
+  margin-right: 20px;
+  float: right;
+}
+
+.training-card {
+  background: white;
+  border: 2px solid #009999;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+  height: 100%;
+}
+
+.training-card:hover {
+  transform: translateY(-5px);
+}
+
+.company-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.company-name {
+  color: #009999;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.training-opportunity {
+  color: #FF7C34;
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin-top: 10px;
+}
+
+.training-fields {
+  color: #555;
+  font-size: 0.95rem;
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+
+/* بحث صفحه التدريب */
+.hero-banner {
+  position: relative;
+  color: white;
+  
+}
+
+.search-container {
+  width: 90%;
+  max-width: 700px;
+  background: rgba(0, 0, 0, 0.0); /* شفاف بدون خلفية */
+  padding: 20px;
+  border-radius: 15px;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #009999; /* الأزرق المستخدم */
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 15px;
+  color: white;
+  font-size: 1.2rem;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: white;
+  opacity: 0.8;
+}
+
+.search-button {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 15px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.search-button:hover {
+  background-color: #FF7C34;
+  color: white;
+}
+
+
+/* ===== قسم البانر عن وصل ===== */
+.hero-banner-about {
+  height: 70vh;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  color: white;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  padding: 30px;
+}
+
+.hero-logo {
+  font-size: 6rem;
+  font-weight: bold;
+  color: #009999;
+}
+
+.hero-description {
+  max-width: 800px;
+  font-size: 1.5rem;
+  margin-top: 20px;
+  color: #FF7C34;
+  font-weight: bold;
+  line-height: 1.7;
+}
+
+/* ===== عنوان من نحن ===== */
+.section-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #009999;
+}
+
+/* ===== بطاقات الفريق ===== */
+.team-card {
+  border: 3px solid #009999;
+  border-radius: 15px;
+  background: #fff;
+  color: #009999;
+  transition: transform 0.3s;
+}
+
+.team-card:hover {
+  transform: translateY(-5px);
+}
+
+.team-card i {
+  font-size: 80px;
+  color: #FF7C34;
+}
+
+.team-card h5 {
+  margin-top: 10px;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+
+/* ===== صفحة اتصل بنا ===== */
+.contact-us-page {
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.contact-title {
+  font-size: 2.5rem;
+  color: #009999;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+.contact-form-container {
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: #FF7C34;
+  font-size: 1.3rem;
+}
+
+.form-control-contact {
+  width: 100%;
+  padding: 12px 20px 12px 40px;
+  font-size: 1rem;
+  border: 2px solid #009999;
+  border-radius: 10px;
+  background: transparent;
+  color: #009999;
+  outline: none;
+}
+
+.form-control-contact::placeholder {
+  color: #009999;
+  opacity: 0.8;
+  font-weight: bold;
+}
+
+/* لون الحدود حسب الخانة */
+.orange-border {
+  border-color: #FF7C34;
+}
+
+.blue-border {
+  border-color: #009999;
+}
+
+/* زر الارسال */
+.send-btn {
+  background: transparent;
+  border: 2px solid #009999;
+  color: #FF7C34;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 8px 25px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.send-btn:hover {
+  background: #FF7C34;
+  color: white;
+  border-color: #FF7C34;
+}
+
+
+/* ======= صفحة الشركات ======= */
+
+/* تنسيق العنوان الرئيسي */
+.ads h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+/* الحاوية التي تحتوي على كل الكروت */
+.ads-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+/* الكارد الواحد (التدريب) */
+.ad-card {
+  background-color: white;
+  border: 2px solid #FF7C34;
+  border-radius: 20px;
+  padding: 2rem;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* تأثير الهوفر على الكارد */
+.ad-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* اسم الشركة */
+.ad-card h1 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #009999;
+  margin-bottom: 1rem;
+}
+
+/* اللقب */
+.ad-card h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FF7C34;
+  margin-bottom: 1rem;
+}
+
+/* النصوص العادية */
+.ad-card p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+/* الوصف الطويل يتم قطعه */
+.description-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* عدد السطور اللي تبين */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* زر التفاصيل */
+.ad-card button {
+  margin-top: 1rem;
+  background-color: #FF7C34;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+/* زر التفاصيل عند الهوفر */
+.ad-card button:hover {
+  background-color: #009999;
+}
+
+/* زر إضافة تدريب */
+.btn a {
+  background-color: #009999;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn a:hover {
+  background-color: #FF7C34;
+}
+
+/* زر التصنيف */
+.dropdown-menu {
+  min-width: 10rem;
+  text-align: center;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+.dropdown-item {
+  padding: 10px;
+  color: #009999;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.dropdown-item:hover {
+  background-color: #FF7C34;
+  color: #ffffff;
+}
+=======
   #heroCarousel {
     position: relative;
   }
@@ -503,3 +1030,4 @@
   .btn a:hover {
     background-color: #FF7C34;
   }
+
