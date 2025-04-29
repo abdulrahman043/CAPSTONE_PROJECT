@@ -64,7 +64,7 @@ def logout_view(request:HttpRequest):
 @staff_member_required
 def user_list(request: HttpRequest):
     user_qs=User.objects.all()
-    paginator=Paginator(user_qs,5)
+    paginator=Paginator(user_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
     context={"user_page":user_page}
