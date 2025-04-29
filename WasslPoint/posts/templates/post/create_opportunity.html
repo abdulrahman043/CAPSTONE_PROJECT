@@ -1,0 +1,68 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/profiles.css' %}">
+<link rel="stylesheet" href="{% static 'css/posts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="fw-bold mb-4">إضافة فرصة تدريب جديدة</h1>
+    {% if errors %}
+        <div class="alert alert-danger">{{ errors }}</div>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="majors_needed" class="form-label required">التخصصات المطلوبة</label>
+            <select class="form-select" id="majors_needed" name="majors_needed" multiple required>
+                {% for major in majors %}
+                <option value="{{ major.id }}">{{ major.ar_name }}</option>
+                {% endfor %}
+            </select>
+            <small class="text-muted">يمكنك اختيار أكثر من تخصص.</small>
+        </div>
+        <div class="mb-3">
+            <label for="city" class="form-label required">المدينة</label>
+            <select class="form-select" id="city" name="city" required>
+                <option value="" selected disabled>اختر المدينة</option>
+                {% for city in cities %}
+                <option value="{{ city.id }}">{{ city.arabic_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="start_date" class="form-label required">تاريخ البدء</label>
+            <input type="date" class="form-control" id="start_date" name="start_date" required>
+        </div>
+        <div class="mb-3">
+            <label for="duration" class="form-label required">المدة</label>
+            <input type="text" class="form-control" id="duration" name="duration" required placeholder="مثال: 3 أشهر، فصل دراسي">
+        </div>
+        <div class="mb-3">
+            <label for="application_deadline" class="form-label required">آخر موعد للتقديم</label>
+            <input type="date" class="form-control" id="application_deadline" name="application_deadline" required>
+        </div>
+        <div class="mb-3">
+            <label for="requirements" class="form-label required">المتطلبات</label>
+            <textarea class="form-control" id="requirements" name="requirements" rows="4" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="benefits" class="form-label">المزايا (اختياري)</label>
+            <textarea class="form-control" id="benefits" name="benefits" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="status" class="form-label required">الحالة</label>
+            <select class="form-select" id="status" name="status" required>
+                <option value="{{ statuses.0.0 }}" selected>{{ statuses.0.1 }}</option>
+                {% for status_value, status_label in statuses|slice:"1:" %}
+                <option value="{{ status_value }}">{{ status_label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">نشر الفرصة</button>
+        <a href="{% url 'posts:company_opportunities' %}" class="btn btn-secondary ms-2">إلغاء</a>
+    </form>
+</div>
+{% endblock %}
