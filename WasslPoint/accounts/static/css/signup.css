@@ -1,0 +1,175 @@
+/* ===== صفحة التسجيل ===== */
+.signup-page {
+    padding: 40px 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+  }
+  
+  .signup-title {
+    font-size: 2.5rem;
+    color: #009999;
+    font-weight: bold;
+    margin-bottom: 40px;
+  }
+  
+  .signup-title span {
+    font-size: 1.2rem;
+  }
+  
+  .contact-form-container {
+    width: 90%;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .form-group {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  
+  .input-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #FF7C34;
+    font-size: 1.3rem;
+  }
+  
+  .form-control-contact {
+    width: 100%;
+    padding: 12px 20px 12px 40px;
+    font-size: 1rem;
+    border: 2px solid #009999;
+    border-radius: 10px;
+    background: transparent;
+    color: #009999;
+    outline: none;
+  }
+  
+  .form-control-contact::placeholder {
+    color: #009999;
+    opacity: 0.8;
+    font-weight: bold;
+  }
+  
+  /* لون الحدود حسب الحقل */
+  .orange-border {
+    border-color: #FF7C34;
+  }
+  
+  .blue-border {
+    border-color: #009999;
+  }
+  
+  /* زر الإرسال/التسجيل */
+  .send-btn {
+    background: transparent;
+    border: 2px solid #009999;
+    color: #FF7C34;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 8px 25px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .send-btn:hover {
+    background: #FF7C34;
+    color: white;
+    border-color: #FF7C34;
+  }
+  
+  /* تنسيق الشروط والأحكام */
+  .form-check {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    color: #009999;
+  }
+  
+  .form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0;
+    margin-right: 0.3rem;
+    border: 2px solid #FF7C34;
+  }
+  
+  .form-check-input:checked {
+    background-color: #FF7C34;
+    border-color: #FF7C34;
+  }
+  /* روابط “تسجيل الشركات” و “نسيت كلمة السر” */
+.extra-links a {
+    color: #009999;           /* تركواز */
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+  }
+  .extra-links a:hover {
+    color: #FF7C34;           /* برتقالي عند المرور */
+  }
+  .extra-links span {
+    color: #ccc;
+    font-weight: normal;
+  }
+  select.form-control-contact {
+    appearance: none;           /* standard */
+    -webkit-appearance: none;   /* Safari/Chrome */
+    -moz-appearance: none;      /* Firefox */
+  }
+  select.form-control-contact::-ms-expand {
+    display: none;              /* IE10+ */
+  }
+  /* وراثة ستايل بقية الحقول */
+.file-placeholder {
+    display: block;
+    width: 100%;
+    padding: 12px 20px 12px 40px; /* نفس padding للحقل */
+    font-size: 1rem;
+    border: 2px solid #009999;
+    border-radius: 10px;
+    background: transparent;
+    color: #009999;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  /* عند المرور */
+  .file-placeholder:hover {
+    background: rgba(0, 153, 153, 0.05);
+  }
+  
+  /* الإيقونة تبقى في مكانها */
+  .file-group .input-icon {
+    left: 10px;
+  }
+  /* make orange‐border inputs use orange text + placeholder */
+.form-control-contact.orange-border {
+    color: #FF7C34;            /* text color */
+  }
+  .form-control-contact.orange-border::placeholder {
+    color: #FF7C34;            /* placeholder color */
+    opacity: 0.8;
+  }
+  
+  /* keep blue‐border inputs in turquoise */
+  .form-control-contact.blue-border {
+    color: #009999;
+  }
+  .form-control-contact.blue-border::placeholder {
+    color: #009999;
+    opacity: 0.8;
+  }
+  .form-group:has(.form-control-contact.orange-border) .input-icon i {
+    color: #009999;  /* your turquoise */
+  }
+  
+  /* if the input has a blue border, make the icon orange */
+  .form-group:has(.form-control-contact.blue-border) .input-icon i {
+    color: #FF7C34;  /* your orange */
+  }
