@@ -27,4 +27,20 @@
                                 <p class="card-text"><i class="bi bi-hourglass-split"></i> المدة: {{ opportunity.duration }}</p>
                                  <p class="card-text">
                                     <strong>الحالة:</strong>
-                                    <span class="badge {% if opportunity.status == 'ACTIVE' %}bg-success{% elif opportunity.status == 'PENDING' %}bg-warning{% elif opportunity.status == 'CLOSED' %}bg
+                                    <span class="badge {% if opportunity.status == 'ACTIVE' %}bg-success{% elif opportunity.status == 'PENDING' %}bg-warning{% elif opportunity.status == 'CLOSED' %}bg-danger{% endif %}">
+                                        {{ opportunity.get_status_display }}
+                                    </span>
+                                </p>
+                                <div class="d-flex justify-content-end">
+                                    <a href="{% url 'posts:opportunity_detail' opportunity.id %}" class="btn btn-primary">عرض التفاصيل</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="mt-3">لا توجد فرص تدريب متاحة حاليًا لشركتك.</p>
+        {% endif %}
+    </div>
+{% endblock %}
