@@ -1,51 +1,30 @@
 {% extends 'main/base.html' %}
 {% load static %}
+
 {% block content %}
+    <div class="container mt-5">
+        <h1 class="fw-bold mb-4"> فرص التدريب المتاحة ل {{ company_profile.company_name }}</h1>
+        {% if request.user.is_authenticated and request.user.company_profile %}
+            <a href="{% url 'posts:create_opportunity' %}" class="btn btn-primary mb-3">إضافة فرصة تدريب</a>
+        {% endif %}
 
-<div class="btn" style="margin-top: 30px;">
-    <a href="{% url 'posts:create_opportunity' %}">اضف تدريب</a>  </div>
-
-<section class="ads">
-    <h2 class="mb-4" style="color: #009999; font-weight: bold;">
-        <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
-        فرص التدريب
-        <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
-    </h2>
-
-    <div class="ads-container">
-        {% if opportunities %}  {% for opportunity in opportunities %}
-                <div class="ad ad-card">
-
-                    <h1>{{ opportunity.company.company_name }}</h1>
-
-                    <h2> فرصة تدريب في: {{ opportunity.city.arabic_name }}</h2>
-
-                    <p class="description-clamp">
-                        <strong>المتطلبات:</strong> {{ opportunity.requirements }}
-                    </p>
-
-                    <p><strong>تاريخ النشر:</strong> {{ opportunity.created_at|date:"Y-m-d" }}</p>
-                    <p><strong>آخر موعد للتقديم:</strong> {{ opportunity.application_deadline|date:"Y-m-d" }}</p>
-                    <p><strong>تاريخ البدء:</strong> {{ opportunity.start_date|date:"Y-m-d" }}</p>
-
-                    <p><strong>التخصصات المطلوبة:</strong>
-                        {% for major in opportunity.majors_needed.all %}
-                            {{ major.ar_name }}{% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                    </p>
-
-                    <p class="description-clamp">
-                        <strong>الوصف:</strong> {{ opportunity.benefits }}
-                    </p>
-
-                    <a href="{% url 'posts:opportunity_detail' opportunity.id %}">  <button>التفاصيل</button>
-                    </a>
-
-                </div>
-            {% endfor %}
-        {% else %}
-             <p> لا يوجد فرص متاحة حاليا </p>
-        {% endif %}  </div>
-</section>
-
-{% endblock %}
+        {% if opportunities %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for opportunity in opportunities %}
+                    <div class="col">
+                        <div class="card border shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ opportunity.title }}</h5>
+                                <p class="card-text"><i class="bi bi-building"></i> {{ opportunity.city.arabic_name }}</p>
+                                <p class="card-text"><i class="bi bi-mortarboard"></i>
+                                    {% for major in opportunity.majors_needed.all %}
+                                        <span class="badge bg-secondary">{{ major.ar_name }}</span>
+                                    {% empty %}
+                                        <span class="text-muted">لم يتم تحديد التخصصات</span>
+                                    {% endfor %}
+                                </p>
+                                <p class="card-text"><i class="bi bi-calendar-event"></i> يبدأ في: {{ opportunity.start_date|date:"Y-m-d" }}</p>
+                                <p class="card-text"><i class="bi bi-hourglass-split"></i> المدة: {{ opportunity.duration }}</p>
+                                 <p class="card-text">
+                                    <strong>الحالة:</strong>
+                                    <span class="badge {% if opportunity.status == 'ACTIVE' %}bg-success{% elif opportunity.status == 'PENDING' %}bg-warning{% elif opportunity.status == 'CLOSED' %}bg
