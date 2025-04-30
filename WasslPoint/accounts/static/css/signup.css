@@ -102,34 +102,32 @@
     background-color: #FF7C34;
     border-color: #FF7C34;
   }
-  /* روابط “تسجيل الشركات” و “نسيت كلمة السر” */
 .extra-links a {
-    color: #009999;           /* تركواز */
+    color: #009999;           
     font-weight: bold;
     text-decoration: none;
     transition: color 0.2s;
     font-size: 0.95rem;
   }
   .extra-links a:hover {
-    color: #FF7C34;           /* برتقالي عند المرور */
+    color: #FF7C34;           
   }
   .extra-links span {
     color: #ccc;
     font-weight: normal;
   }
   select.form-control-contact {
-    appearance: none;           /* standard */
-    -webkit-appearance: none;   /* Safari/Chrome */
-    -moz-appearance: none;      /* Firefox */
+    appearance: none;           
+    -webkit-appearance: none;   
+    -moz-appearance: none;      
   }
   select.form-control-contact::-ms-expand {
-    display: none;              /* IE10+ */
+    display: none;              
   }
-  /* وراثة ستايل بقية الحقول */
 .file-placeholder {
     display: block;
     width: 100%;
-    padding: 12px 20px 12px 40px; /* نفس padding للحقل */
+    padding: 12px 20px 12px 40px; 
     font-size: 1rem;
     border: 2px solid #009999;
     border-radius: 10px;
@@ -139,25 +137,21 @@
     user-select: none;
   }
   
-  /* عند المرور */
   .file-placeholder:hover {
     background: rgba(0, 153, 153, 0.05);
   }
   
-  /* الإيقونة تبقى في مكانها */
   .file-group .input-icon {
     left: 10px;
   }
-  /* make orange‐border inputs use orange text + placeholder */
 .form-control-contact.orange-border {
-    color: #FF7C34;            /* text color */
+    color: #FF7C34;            
   }
   .form-control-contact.orange-border::placeholder {
-    color: #FF7C34;            /* placeholder color */
+    color: #FF7C34;           
     opacity: 0.8;
   }
   
-  /* keep blue‐border inputs in turquoise */
   .form-control-contact.blue-border {
     color: #009999;
   }
@@ -166,10 +160,9 @@
     opacity: 0.8;
   }
   .form-group:has(.form-control-contact.orange-border) .input-icon i {
-    color: #009999;  /* your turquoise */
+    color: #009999; 
   }
   
-  /* if the input has a blue border, make the icon orange */
   .form-group:has(.form-control-contact.blue-border) .input-icon i {
-    color: #FF7C34;  /* your orange */
+    color: #FF7C34;  
   }
