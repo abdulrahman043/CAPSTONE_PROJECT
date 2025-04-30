@@ -1,50 +1,30 @@
 {% extends 'main/base.html' %}
 {% load static %}
+
 {% block content %}
+    <div class="container mt-5">
+        <h1 class="fw-bold mb-4"> فرص التدريب المتاحة ل {{ company_profile.company_name }}</h1>
+        {% if request.user.is_authenticated and request.user.company_profile %}
+            <a href="{% url 'posts:create_opportunity' %}" class="btn btn-primary mb-3">إضافة فرصة تدريب</a>
+        {% endif %}
 
-<!-- زر إضافة تدريب -->
-<div class="btn" style="margin-top: 30px;">
-    <a href="{% url 'post:add_training_view' %}">اضف تدريب</a>
-</div>
-
-<!-- التدريبات -->
-<section class="ads">
-    <h2 class="mb-4" style="color: #009999; font-weight: bold;">
-        <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
-        الشركات
-        <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
-    </h2>
-</section>
-
-<section>
-  <div class="trainings-container">
-    {% if trainings %}
-      {% for training in trainings %}
-        <div class="training-card">
-          <h3>{{ training.title }}</h3>
-          <p><strong>متطلبات التعاون:</strong> {{ training.coop_requirements }}</p>
-          <p><strong>تاريخ النشر:</strong> {{ training.posting_date }}</p>
-          <p><strong>تاريخ الانتهاء:</strong> {{ training.expiration_date }}</p>
-          <p><strong>تاريخ البدء:</strong> {{ training.start_date }}</p>
-          <p><strong>الوصف:</strong> {{ training.description }}</p>
-          <p><strong>التخصصات المطلوبة:</strong> 
-            {% for major in training.major.all %}
-              {{ major.name }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-          </p>
-
-          <div class="mt-3">
-            <a href="{% url 'post:update_training_view' training.id %}" class="btn btn-primary btn-sm">تحديث</a>
-            <a href="{% url 'post:delete_training_view' training.id %}" class="btn btn-danger btn-sm">حذف</a>
-          </div>
-        </div>
-      {% endfor %}
-    {% else %}
-    <div class="d-flex justify-content-center align-items-center" style="height: 300px;">
-        <p class="text-muted" style="font-size: 2rem;">عذرا ، لا يوجد تدريب متاح الان.</p>
-    </div>
-    {% endif %}
-  </div>
-</section>
-
-{% endblock %}
+        {% if opportunities %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for opportunity in opportunities %}
+                    <div class="col">
+                        <div class="card border shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ opportunity.title }}</h5>
+                                <p class="card-text"><i class="bi bi-building"></i> {{ opportunity.city.arabic_name }}</p>
+                                <p class="card-text"><i class="bi bi-mortarboard"></i>
+                                    {% for major in opportunity.majors_needed.all %}
+                                        <span class="badge bg-secondary">{{ major.ar_name }}</span>
+                                    {% empty %}
+                                        <span class="text-muted">لم يتم تحديد التخصصات</span>
+                                    {% endfor %}
+                                </p>
+                                <p class="card-text"><i class="bi bi-calendar-event"></i> يبدأ في: {{ opportunity.start_date|date:"Y-m-d" }}</p>
+                                <p class="card-text"><i class="bi bi-hourglass-split"></i> المدة: {{ opportunity.duration }}</p>
+                                 <p class="card-text">
+                                    <strong>الحالة:</strong>
+                                    <span class="badge {% if opportunity.status == 'ACTIVE' %}bg-success{% elif opportunity.status == 'PENDING' %}bg-warning{% elif opportunity.status == 'CLOSED' %}bg
