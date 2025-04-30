@@ -1,0 +1,47 @@
+{# templates/accounts/verify_otp.html #}
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="signup-page text-center">
+  <h2 class="signup-title">
+    <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸</span>
+      تأكيد البريد الإلكتروني
+    <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
+  </h2>
+
+  <div class="contact-form-container">
+
+    <form method="post" action="{% url 'accounts:verify_signup_otp' %}">
+      {% csrf_token %}
+     
+
+      <div class="form-group">
+        <div class="input-icon"><i class="fi fi-rr-lock"></i></div>
+        <input
+          type="text"
+          name="otp"
+          class="form-control-contact orange-border"
+          placeholder="أدخل الرمز المكون من 6 أرقام"
+          maxlength="6"
+          required
+        >
+      </div>
+
+      <button type="submit" class="send-btn w-100">تحقق</button>
+    </form>
+
+   
+
+    <div class="extra-links text-center mt-3">
+      <a href="{% url 'accounts:signup_view' %}">عودة للتسجيل</a>
+      <span class="mx-2">|</span>
+      <a href="{% url 'accounts:login_view' %}">العودة لتسجيل الدخول</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

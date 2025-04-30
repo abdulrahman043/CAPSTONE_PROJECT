@@ -12,26 +12,30 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
-
+from .models import EmailOTP
+from django.core.mail   import send_mail
+import random
 # Create your views here.
 
 def signup_view(request: HttpRequest):
+   
     if request.method == 'POST':
-        full_name  = request.POST.get('full_name', '').strip()
-        email      = request.POST.get('email', '').strip().lower()
-        password   = request.POST.get('password', '')
-        password2  = request.POST.get('password2', '')
+        full_name   = request.POST.get('full_name', '').strip()
+        email       = request.POST.get('email', '').strip().lower()
+        password    = request.POST.get('password', '')
+        password2   = request.POST.get('password2', '')
         agree_terms = request.POST.get('terms')
 
         missing = []
-        if not full_name:   missing.append('الاسم الكامل')
-        if not email:       missing.append('البريد الإلكتروني')
-        if not password:    missing.append('كلمة السر')
-        if not password2:   missing.append('تأكيد كلمة السر')
-        if not agree_terms: missing.append('الموافقة على الشروط')
-
+        if not full_name:    missing.append('الاسم الكامل')
+        if not email:        missing.append('البريد الإلكتروني')
+        if not password:     missing.append('كلمة السر')
+        if not password2:    missing.append('تأكيد كلمة السر')
+        if not agree_terms:  missing.append('الموافقة على الشروط')
         if missing:
-            messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+            messages.error(request,
+                "هذه الحقول مطلوبة: " + ", ".join(missing)
+            )
             return render(request, 'accounts/signup.html')
 
         if password != password2:
@@ -42,22 +46,62 @@ def signup_view(request: HttpRequest):
             messages.error(request, "هذا البريد مسجل مسبقًا.")
             return render(request, 'accounts/signup.html')
 
-        with transaction.atomic():
-            user = User.objects.create_user(
-                username=email,
-                password=password,
-            )
-            profile = StudentProfile.objects.create(user=user)
-            PersonalInformation.objects.create(profile=profile, full_name=full_name)
-            ContactInformation.objects.create(profile=profile, email=email)
+        otp_code = f"{random.randint(0, 999999):06d}"
+        EmailOTP.objects.create(user_email=email, code=otp_code)
 
-        messages.success(request,
-           'تم انشاء الحساب بنجاح'
+        send_mail(
+            subject="رمز التحقق للتسجيل",
+            message=(
+                f"مرحبًا {full_name},\n\n"
+                f"الرمز الخاص بك لتفعيل الحساب هو: {otp_code}\n"
+                "سوف تنتهي صلاحيته خلال 10 دقائق."
+            ),
+            from_email=None,              
+            recipient_list=[email],
+            fail_silently=False,
         )
-        return redirect('accounts:login_view')
+
+        request.session['pending_signup'] = {
+            'type': 'student',
+            'full_name': full_name,
+            'email': email,
+            'password': password,
+        }
+
+        return redirect('accounts:verify_signup_otp')
 
     return render(request, 'accounts/signup.html')
+def verify_signup_otp(request:HttpRequest):
+    data=request.session.get('pending_signup')
+    if not data:
+        redirect('accounts:signup_view')
+    if request.method=='POST':
+        entered=request.POST.get('otp','').strip()
+        otp_qs=EmailOTP.objects.filter(user_email=data['email'],code=entered,used=False)
+        if otp_qs and not otp_qs.first().is_expired:
+            otp=otp_qs.first()
+            otp.used=True
+            otp.save
+            with transaction.atomic():
+                user=User.objects.create(username=data['email'],email=data['email'],password=data['password'])
+                profile = StudentProfile.objects.create(user=user)
+                PersonalInformation.objects.create(
+                        profile=profile,
+                        full_name=data['full_name']
+                    )
+                ContactInformation.objects.create(
+                        profile=profile,
+                        email=data['email']
+                    )
+                del request.session['pending_signup']
 
+            messages.success(request, "تم التحقق! يمكنك الآن تسجيل الدخول.")
+            return redirect('accounts:login_view')
+        else:
+            messages.error(request, "رمز غير صحيح أو منتهي الصلاحية.")
+
+    return render(request,'accounts/verify_otp.html')
+    
 def signup_company_view(request: HttpRequest):
     industries = Industry.objects.filter(status=True)
 
@@ -105,27 +149,57 @@ def signup_company_view(request: HttpRequest):
                 'industries': industries
             })
 
-        with transaction.atomic():
-            user = User.objects.create_user(
-                username = email,
-                email    = email,
-                password = password,
-                is_active= False   
-            )
-            CompanyProfile.objects.create(
-                user                        = user,
-                company_name                = company_name,
-                commercial_register         = commercial_register_number,
-                commercial_CRM_Certificate  = reg_file,
-                industry                    = industry,
-            )
+#         with transaction.atomic():
+#             user = User.objects.create_user(
+#                 username = email,
+#                 email    = email,
+#                 password = password,
+#                 is_active= False   
+#             )
+#             CompanyProfile.objects.create(
+#                 user                        = user,
+#                 company_name                = company_name,
+#                 commercial_register         = commercial_register_number,
+#                 commercial_CRM_Certificate  = reg_file,
+#                 industry                    = industry,
+#             )
 
-        messages.success(request,
-    "تم استلام طلب تسجيل شركتكم بنجاح! 📩\n"
-    "سيتولى مسؤول الموقع تفعيل حسابكم مباشرةً بعد التحقق من صحة البيانات."
-)
-        return redirect('accounts:login_view')
+#         messages.success(request,
+#     "تم استلام طلب تسجيل شركتكم بنجاح! 📩\n"
+#     "سيتولى مسؤول الموقع تفعيل حسابكم مباشرةً بعد التحقق من صحة البيانات."
+# )
+#         return redirect('accounts:login_view')
+    
+    
+        otp_code = f"{random.randint(0, 999999):06d}"
+        EmailOTP.objects.create(user_email=email, code=otp_code)
 
+        send_mail(
+            subject="رمز التحقق للتسجيل",
+            message=(
+                f"مرحبًا {company_name},\n\n"
+                f"الرمز الخاص بك لتفعيل الحساب هو: {otp_code}\n"
+                "سوف تنتهي صلاحيته خلال 10 دقائق."
+            ),
+            from_email=None,              
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+        request.session['pending_signup'] = {
+            'type': 'company',
+            'company_name': company_name,
+            'email': email,
+            'password': password,
+            'commercial_register':commercial_register_number,
+            'commercial_CRM_Certificate':reg_file,
+            'industry':industry,
+            'file_content':reg_file.read().decode('latin1'), 
+            'file_name': reg_file.name,
+
+        }
+
+        return redirect('accounts:verify_signup_otp')
     return render(request, 'accounts/signup_company.html', {
         'industries': industries
     })
