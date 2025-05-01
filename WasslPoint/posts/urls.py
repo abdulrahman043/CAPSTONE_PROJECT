@@ -4,6 +4,7 @@ from . import views
 app_name = 'posts'
 
 urlpatterns = [
+
     path('opportunities/', views.opportunity_list, name='opportunity_list'),
     path('company/', views.company_opportunities, name='company_opportunities'), # Changed URL
     path('company/opportunities/create/', views.create_opportunity, name='create_opportunity'),
