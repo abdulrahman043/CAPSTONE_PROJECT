@@ -9,6 +9,7 @@ from weasyprint import HTML
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.db import transaction
 
 # Create your views here.
 @login_required
@@ -126,6 +127,19 @@ def delate_exp(request:HttpRequest,exp_id,user_id=None):
 def edit_exp(request:HttpRequest,exp_id,user_id=None):
     try:
         if request.method=='POST':
+            start_str = request.POST.get('start_date')
+            end_str   = request.POST.get('end_date')
+            start_date = end_date = None
+            if start_str:
+                y, m = map(int, start_str.split('-'))
+                start_date = date(y, m, 1)
+            if end_str:
+                y, m = map(int, end_str.split('-'))
+                end_date = date(y, m, 1)
+            if start_date and end_date and start_date > end_date:
+                messages.error(request, "تاريخ البدء لا يمكن أن يكون بعد تاريخ الانتهاء.")
+                return (redirect('profiles:profile_view_admin', user_id=user_id)if user_id else redirect('profiles:profile_view'))
+
 
             profile = get_target_profile(request, user_id)
 
@@ -134,19 +148,10 @@ def edit_exp(request:HttpRequest,exp_id,user_id=None):
             experience.job_title  = request.POST.get('job_title')
             experience.company_name  = request.POST.get('company_name')
             experience.description  = request.POST.get('description')
-            start_date = request.POST.get('start_date')   
-            if start_date:
-                year, month = map(int, start_date.split('-'))
-                experience.start_date = date(year, month, 1)
-            end_date = request.POST.get('end_date')   
-            if end_date:
-                year, month = map(int, end_date.split('-'))
-                experience.end_date = date(year, month, 1)
-                    
+            experience.start_date = start_date
+            experience.end_date = end_date
             experience.save()
             messages.success(request, "تم التعديل على الخبرة بنجاح.")
-
-    
     except Exception as e:
         messages.error(request, "عذراً، حدث خطأ أثناء تعديل الخبرة. حاول مرة أخرى.")
 
@@ -301,20 +306,30 @@ def delate_cert(request:HttpRequest,cert_id,user_id=None):
 def edit_cert(request:HttpRequest,cert_id,user_id=None):
     try:
         if request.method=='POST':
+            issue_str  = request.POST.get('issue_date')
+            expiry_str = request.POST.get('expiry_date')
+            issue_dt  = None
+            expiry_dt = None
+            if issue_str:
+                y, m = map(int, issue_str.split('-'))
+                issue_dt = date(y, m, 1)
+            if expiry_str:
+                y, m = map(int, expiry_str.split('-'))
+                expiry_dt = date(y, m, 1)
+
+            if issue_dt and expiry_dt and issue_dt > expiry_dt:
+                messages.error(request, "تاريخ الإصدار لا يمكن أن يكون بعد تاريخ الانتهاء.")
+                return (
+                    redirect('profiles:profile_view_admin', user_id=user_id)
+                    if user_id else
+                    redirect('profiles:profile_view')
+                )
             profile = get_target_profile(request, user_id)
             certification = get_object_or_404(Certification, pk=cert_id, profile=profile)
             certification.name  = request.POST.get('name')
             certification.issuer  = request.POST.get('issuer')
-            issue_date = request.POST.get('issue_date') 
-           
-            if issue_date:
-                year, month = map(int, issue_date.split('-'))
-                certification.issue_date = date(year, month, 1)
-            expiry_date = request.POST.get('expiry_date') 
-           
-            if expiry_date:
-                year, month = map(int, expiry_date.split('-'))
-                certification.expiry_date = date(year, month, 1)
+            certification.issue_date = issue_dt
+            certification.expiry_date = expiry_dt
             if 'certificate_file' in request.FILES:
                 certification.certificate_file=request.FILES['certificate_file']
                     
@@ -332,22 +347,39 @@ def edit_cert(request:HttpRequest,cert_id,user_id=None):
 @login_required
 @require_POST
 def add_cert(request:HttpRequest,user_id=None):
+    
     try:
         if request.method=='POST':
+            issue_str  = request.POST.get('issue_date')
+            expiry_str = request.POST.get('expiry_date')
+            issue_dt  = None
+            expiry_dt = None
+            if issue_str:
+                y, m = map(int, issue_str.split('-'))
+                issue_dt = date(y, m, 1)
+            if expiry_str:
+                y, m = map(int, expiry_str.split('-'))
+                expiry_dt = date(y, m, 1)
+
+            if issue_dt and expiry_dt and issue_dt > expiry_dt:
+                messages.error(request, "تاريخ الإصدار لا يمكن أن يكون بعد تاريخ الانتهاء.")
+                return (
+                    redirect('profiles:profile_view_admin', user_id=user_id)
+                    if user_id else
+                    redirect('profiles:profile_view')
+                )
+
+
             certification = Certification.objects.create(profile = get_target_profile(request, user_id))
             certification.name  = request.POST.get('name')
             certification.issuer  = request.POST.get('issuer')
-            issue_date = request.POST.get('issue_date') 
            
-            if issue_date:
-                year, month = map(int, issue_date.split('-'))
-                certification.issue_date = date(year, month, 1)
-            expiry_date = request.POST.get('expiry_date') 
+            
+            certification.issue_date = issue_dt
+
            
-            if expiry_date:
-                year, month = map(int, expiry_date.split('-'))
-                certification.expiry_date = date(year, month, 1)
-            print(request.FILES)
+            
+            certification.expiry_date = expiry_dt  
             if 'certificate_file' in request.FILES:
                 certification.certificate_file=request.FILES['certificate_file']
                     
@@ -364,33 +396,45 @@ def add_cert(request:HttpRequest,user_id=None):
     return redirect('profiles:profile_view')
 @login_required
 @require_POST
-def add_exp(request:HttpRequest,user_id=None):
-    try:
-        if request.method=='POST':
-            experience = Experience.objects.create(profile = get_target_profile(request, user_id))
+def add_exp(request: HttpRequest, user_id=None):
+    profile = get_target_profile(request, user_id)
 
-            experience.job_title  = request.POST.get('job_title')
-            experience.company_name  = request.POST.get('company_name')
+    start_str = request.POST.get('start_date')
+    end_str   = request.POST.get('end_date')
+    start_date = end_date = None
+    if start_str:
+        y, m = map(int, start_str.split('-'))
+        start_date = date(y, m, 1)
+    if end_str:
+        y, m = map(int, end_str.split('-'))
+        end_date = date(y, m, 1)
+    if start_date and end_date and start_date > end_date:
+        messages.error(request, "تاريخ البدء لا يمكن أن يكون بعد تاريخ الانتهاء.")
+        return (redirect('profiles:profile_view_admin', user_id=user_id)if user_id else redirect('profiles:profile_view'))
+
+
+    try:
+        with transaction.atomic():
+            experience = Experience.objects.create(profile=profile)
+
+            experience.job_title    = request.POST.get('job_title')
+            experience.company_name = request.POST.get('company_name')
             experience.description  = request.POST.get('description')
-            start_date = request.POST.get('start_date')   
-            if start_date:
-                year, month = map(int, start_date.split('-'))
-                experience.start_date = date(year, month, 1)
-            end_date = request.POST.get('end_date')   
-            if end_date:
-                year, month = map(int, end_date.split('-'))
-                experience.end_date = date(year, month, 1)
-                        
+            experience.start_date   = start_date
+            experience.end_date     = end_date
+            
             experience.save()
             messages.success(request, "تم إضافة الخبرة بنجاح.")
 
     except Exception as e:
         messages.error(request, "عذراً، حدث خطأ أثناء إضافة الخبرة. حاول مرة أخرى.")
-
         print(e)
-    if user_id:
-        return redirect('profiles:profile_view_admin', user_id=user_id)
-    return redirect('profiles:profile_view')
+
+    return (
+        redirect('profiles:profile_view_admin', user_id=user_id)
+        if user_id else
+        redirect('profiles:profile_view')
+    )
 @login_required
 @require_POST
 def add_skill(request:HttpRequest,user_id=None):

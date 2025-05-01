@@ -257,7 +257,7 @@ class CompanyProfile(models.Model):
     crm_certificate               = models.FileField(upload_to='crm_certs/') # شهادة CRM
     commercial_register           = models.CharField(max_length=200)       # رقم السجل التجاري
     industry                       = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True) # الصناعة
-    address_line=models.CharField()
+    address_line=models.CharField(max_length=100)
     logo                = models.ImageField(
                               upload_to='company_logos/',
                               blank=True,

@@ -30,6 +30,9 @@
       margin-top: 30px;
 
 }
+.progress-bar-custom-orange {
+  background-color: #FF7C34 !important;
+}
 label.required::after {
   
   content: " *";
@@ -42,4 +45,37 @@ label.required::after {
 .progress-bar {
   min-width: 2.5rem;       /* enough room for “0%” */
   text-align: center;
+}
+.border-blue {
+  border: 2px solid #009999;
+}
+
+.border-orange {
+  border: 2px solid #FF7C34;
+}
+.bg-blue {
+  background-color: #009999;
+}
+
+.bg-orange {
+  background-color: #FF7C34;
+}
+
+/* Text-color utilities */
+.text-blue {
+  color: #009999;
+}
+
+.text-orange {
+  color: #FF7C34;
+}
+
+/* If you need hover variants */
+
+.text-blue:hover {
+  color: rgba(0, 153, 153, 0.8);
+}
+
+.text-orange:hover {
+  color: rgba(255, 124, 52, 0.8);
 }

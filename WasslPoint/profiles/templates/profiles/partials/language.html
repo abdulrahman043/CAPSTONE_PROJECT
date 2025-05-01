@@ -1,5 +1,5 @@
 <div class="many-card-view ">
-    <div class="top-many-card border d-flex justify-content-between align-items-center p-2 ">
+    <div class="top-many-card  border-orange bg-orange d-flex justify-content-between align-items-center p-2 ">
         <h2 class="fs-6 p">اللغة</h2>
         <a href="javascript:void(0)" class="add-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
@@ -10,7 +10,7 @@
     <div class="container mt-3">
         
             {%for lan in profile.language.all%}
-            <div class="many-card border mb-3" data-exp-id="{{lan.id}}">
+            <div class="many-card  border-orange  mb-3" data-exp-id="{{lan.id}}">
                 <div class="many-card-view p-3">
                     <div class="d-flex justify-content-between align-items-center ">
                     <h6>{{ lan.name }}  </h6>
@@ -96,7 +96,7 @@
 
 </div>
 <div class="many-card-add" style="display: none;">
-    <div class="top-many-card border d-flex justify-content-between align-items-center p-2 ">
+    <div class="top-many-card  border-orange bg-orange d-flex justify-content-between align-items-center p-2 ">
             <h2 class="fs-6">اللغة</h2>
 
     </div>
