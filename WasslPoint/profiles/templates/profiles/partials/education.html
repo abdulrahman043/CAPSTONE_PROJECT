@@ -1,7 +1,7 @@
 <div class="many-card-view ">
-    <div class="top-many-card  border-blue bg-blue d-flex justify-content-between align-items-center p-2 ">
-        <h2 class="fs-6 p">التعليم</h2>
-        <a href="javascript:void(0)" class="add-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+    <div class="top-many-card  bg-blue d-flex justify-content-between align-items-center p-2 ">
+        <h2 class="fs-6 p text-white">التعليم</h2>
+        <a href="javascript:void(0)" class="add-btn text-white"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                 fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
                 <path
@@ -13,7 +13,7 @@
         {%if profile.education %}
 
         {%for edu in profile.education.all%}
-        <div class="many-card border-blue  mb-3" data-exp-id="{{edu.id}}">
+        <div class="many-card radius border-blue  mb-3" data-exp-id="{{edu.id}}">
             <div class="many-card-view p-3">
                 <div class="d-flex justify-content-between align-items-center ">
                     <h6>{{edu.university }} </h6>
@@ -154,7 +154,7 @@
 </div>
 <div class="many-card-add" style="display: none;">
     <div class="top-many-card border-blue bg-blue d-flex justify-content-between align-items-center p-2 ">
-        <h2 class="fs-6">التعليم</h2>
+        <h2 class="fs-6 text-white">التعليم</h2>
 
     </div>
     <form {%if admin_view%} action="{%url 'profiles:add_edu_admin' profile.user.id%}" {%else%} action="{%url 'profiles:add_edu'%}" {%endif%} method="post" class="p-3">
