@@ -28,20 +28,10 @@ class Industry(models.Model):
     status = models.BooleanField(default=True) # علم التفعيل
 
 
-class CompanyAddress(models.Model):
-    # نموذج عنوان الشركة يتضمن سطرين ورمز بريدي ومدينة
-    address_line1 = models.TextField(max_length=255)     # السطر الأول للعنوان
-    address_line2 = models.TextField(max_length=255, blank=True)  # السطر الثاني (اختياري)
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True) # ربط بنموذج المدينة
-    postal_code = models.CharField(max_length=20)        # الرمز البريدي
+    # الرمز البريدي
 
 
-class ContactPerson(models.Model):
-    # نموذج لمنسق التواصل الخاص بالشركة
-    company_address = models.OneToOneField(CompanyAddress, models.CASCADE)
-    person_name = models.CharField(max_length=100)       # اسم الشخص
-    email = models.EmailField()                          # البريد الإلكتروني
-    phone = models.CharField(max_length=20)              # رقم الهاتف
+
 
 
 class StudentProfile(models.Model):
@@ -264,11 +254,19 @@ class CompanyProfile(models.Model):
     # ملف الشركة المرتبط بالمستخدم
     user                          = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company_profile')
     company_name                  = models.TextField(max_length=200) # اسم الشركة
-    commercial_CRM_Certificate     = models.FileField(upload_to='crm_certs/') # شهادة CRM
-    commercial_register            = models.CharField(max_length=200)       # رقم السجل التجاري
+    crm_certificate               = models.FileField(upload_to='crm_certs/') # شهادة CRM
+    commercial_register           = models.CharField(max_length=200)       # رقم السجل التجاري
     industry                       = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True) # الصناعة
-    company_address                = models.ForeignKey(CompanyAddress, on_delete=models.SET_NULL, null=True) # العنوان
-
+    address_line=models.CharField()
+    logo                = models.ImageField(
+                              upload_to='company_logos/',
+                              blank=True,
+                              null=True)
+class ContactPerson(models.Model):
+    company_profile = models.OneToOneField(CompanyProfile, on_delete=models.CASCADE, related_name="contact_person")
+    person_name     = models.CharField(max_length=100)
+    email           = models.EmailField()
+    phone           = models.CharField(max_length=20)
 
 class ContactInformation(models.Model):
     # نموذج معلومات الاتصال الخاصة بالطالب

@@ -103,6 +103,7 @@ def verify_signup_otp(request:HttpRequest):
 
     return render(request,'accounts/verify_otp.html')
     
+
 def signup_company_view(request: HttpRequest):
     industries = Industry.objects.filter(status=True)
 
@@ -150,57 +151,27 @@ def signup_company_view(request: HttpRequest):
                 'industries': industries
             })
 
-#         with transaction.atomic():
-#             user = User.objects.create_user(
-#                 username = email,
-#                 email    = email,
-#                 password = password,
-#                 is_active= False   
-#             )
-#             CompanyProfile.objects.create(
-#                 user                        = user,
-#                 company_name                = company_name,
-#                 commercial_register         = commercial_register_number,
-#                 commercial_CRM_Certificate  = reg_file,
-#                 industry                    = industry,
-#             )
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username = email,
+                email    = email,
+                password = password,
+                is_active= True   
+            )
+            CompanyProfile.objects.create(
+                user                        = user,
+                company_name                = company_name,
+                commercial_register         = commercial_register_number,
+                crm_certificate  = reg_file,
+                industry                    = industry,
+            )
 
-#         messages.success(request,
-#     "تم استلام طلب تسجيل شركتكم بنجاح! 📩\n"
-#     "سيتولى مسؤول الموقع تفعيل حسابكم مباشرةً بعد التحقق من صحة البيانات."
-# )
-#         return redirect('accounts:login_view')
-    
-    
-        otp_code = f"{random.randint(0, 999999):06d}"
-        EmailOTP.objects.create(user_email=email, code=otp_code)
+        messages.success(request,
+    "تم استلام طلب تسجيل شركتكم بنجاح! 📩\n"
+    "سيتولى مسؤول الموقع تفعيل حسابكم مباشرةً بعد التحقق من صحة البيانات."
+)
+        return redirect('accounts:login_view')
 
-        send_mail(
-            subject="رمز التحقق للتسجيل",
-            message=(
-                f"مرحبًا {company_name},\n\n"
-                f"الرمز الخاص بك لتفعيل الحساب هو: {otp_code}\n"
-                "سوف تنتهي صلاحيته خلال 10 دقائق."
-            ),
-            from_email=None,              
-            recipient_list=[email],
-            fail_silently=False,
-        )
-
-        request.session['pending_signup'] = {
-            'type': 'company',
-            'company_name': company_name,
-            'email': email,
-            'password': password,
-            'commercial_register':commercial_register_number,
-            'commercial_CRM_Certificate':reg_file,
-            'industry':industry,
-            'file_content':reg_file.read().decode('latin1'), 
-            'file_name': reg_file.name,
-
-        }
-
-        return redirect('accounts:verify_signup_otp')
     return render(request, 'accounts/signup_company.html', {
         'industries': industries
     })
