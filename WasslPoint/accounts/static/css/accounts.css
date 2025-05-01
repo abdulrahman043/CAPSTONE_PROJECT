@@ -1,4 +1,3 @@
-/* Page layout */
 .admin-page {
     margin: 20px;
   }
@@ -6,24 +5,22 @@
   .page-title {
     text-align: center;
     font-size: 2rem;
-    color: #009688; /* teal */
+    color: #009688; 
     margin-bottom: 1rem;
   }
   
-  /* Container: sidebar on left, content on right */
   .admin-container {
     display: flex;
-    border: 4px solid #009688; /* teal */
+    border: 4px solid #009688; 
     border-radius: 8px;
     overflow: hidden;
   }
   
-  /* Sidebar */
   .sidebar {
     flex: 0 0 150px;
     display: flex;
     flex-direction: column;
-    gap: 1rem;      /* vertical space between buttons */
+    gap: 1rem;      
     padding: 0.5rem;
     margin-top: 10px;
   }
@@ -42,26 +39,23 @@
     border-top: 2px solid white;
   }
   
-  /* Main content area */
   .main-content {
     flex: 1;
     padding: 1rem;
     background: white;
   }
   
-  /* Table wrapper with orange border */
   .table-wrapper {
-    border: 2px solid #ff9800; /* orange */
+    border: 2px solid #ff9800; 
     border-radius: 4px;
     overflow: hidden;
   }
   
-  /* Table styling: separate cells with horizontal gap */
   .admin-table {
     padding: 3px;
     width: 100%;
     border-collapse: separate;
-    border-spacing: 4px 0;   /* 4px gap between columns */
+    border-spacing: 4px 0;   
     color: #FF7C34;
   }
   .admin-table a {
@@ -69,21 +63,19 @@
    
   }
   
-  /* Remove background on thead container */
   .admin-table thead {
     background: transparent;
   }
   
-  /* Give each TH its own green background with gaps around */
+  
   .admin-table thead th {
-    background-color: #009688; /* green */
+    background-color: #009688;
     color: white;
     padding: 0.75rem;
     text-align: center;
-    border: none;              /* no extra borders */
+    border: none;             
   }
   
-  /* Body cells styling */
   .admin-table tbody td {
     background: white;
     padding: 0.5rem;
@@ -91,7 +83,6 @@
     border-bottom: 1px solid #eee;
   }
   
-  /* Thumbnail images */
   .thumb {
     width: 40px;
     height: 40px;
@@ -99,12 +90,11 @@
     border-radius: 4px;
   }
   
-  /* Action buttons row */
   .actions {
     margin-top: 0.75rem;
     display: flex;
-    justify-content: flex-start;  /* align left */
-    gap: 0.75rem;                  /* space between buttons */
+    justify-content: flex-start;  
+    gap: 0.75rem;                  
   }
   
   .action-btn {
@@ -119,13 +109,12 @@
   .action-btn.edit       { background: #009688; } /* teal */
   .action-btn.delete-all { background: #b71c1c; } /* dark red */
   
-  /* Pagination centered */
   .pagination {
     margin-top: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.5rem;   /* space between links */
+    gap: 0.5rem;   
   }
   
   .pagination a,
@@ -137,60 +126,52 @@
   .pagination span {
     font-weight: bold;
   }
-  /* ==== MOBILE / TABLET (up to 768px) ==== */
 @media (max-width: 768px) {
 
-    /* Stack sidebar and content vertically */
     .admin-container {
       flex-direction: column;
     }
   
-    /* Make sidebar a horizontal scroll bar */
     .sidebar {
       flex-direction: row;
       overflow-x: auto;
       width: 100%;
-      padding: 0.5rem 0; /* tighten top/bottom padding */
-      gap: 0.5rem;      /* smaller gap between buttons */
+      padding: 0.5rem 0; 
+      gap: 0.5rem;      
     }
     .sidebar-btn {
-      flex: 0 0 auto;   /* let buttons size to their content */
+      flex: 0 0 auto;   
       white-space: nowrap;
-      padding: 0.5rem 1rem; /* smaller padding */
+      padding: 0.5rem 1rem; 
       font-size: 0.9rem;
     }
   
-    /* Give some breathing room */
     .main-content {
       margin-top: 1rem;
       padding: 0 0.5rem;
     }
   
-    /* Allow table to scroll horizontally */
     .table-wrapper {
       overflow-x: auto;
     }
     .admin-table {
       width: 100%;
-      /* no change to border-spacing */
     }
     .admin-table th,
     .admin-table td {
-      padding: 0.4rem;   /* reduce cell padding */
+      padding: 0.4rem;   
       font-size: 0.85rem;
     }
   
-    /* Stack action buttons vertically */
     .actions {
       flex-direction: column;
       gap: 0.5rem;
     }
     .action-btn {
-      width: 100%;      /* full width buttons */
+      width: 100%;     
       text-align: center;
     }
   
-    /* Center pagination and wrap on small screens */
     .pagination {
       flex-wrap: wrap;
       gap: 0.25rem;
@@ -201,4 +182,4 @@
       font-size: 0.85rem;
     }
   }
-  
+

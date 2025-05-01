@@ -1,10 +1,12 @@
-# WasslPoint/posts/models.py
 from django.db import models
 from profiles.models import Major, City, CompanyProfile, StudentProfile
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+
+#مودل فرص التدريب
 class TrainingOpportunity(models.Model):
+    #حالات فرص التدريب
     class Status(models.TextChoices):
         ACTIVE = 'ACTIVE', 'Active'
         CLOSED = 'CLOSED', 'Closed'
@@ -25,7 +27,10 @@ class TrainingOpportunity(models.Model):
     def __str__(self):
         return f"{self.company.company_name} - {', '.join(major.ar_name for major in self.majors_needed.all())} - {self.city.arabic_name}"
 
+
+#مودل التقديمات
 class Application(models.Model):
+    #حالات التقديم
     class ApplicationStatus(models.TextChoices):
         PENDING = 'PENDING', 'Pending Review'
         ACCEPTED = 'ACCEPTED', 'Accepted'
@@ -49,11 +54,8 @@ class Application(models.Model):
     def __str__(self):
         return f"Application by {self.student.user.username} for {self.opportunity}"
 
+
+#مودل الرسائل مع الجهة المقدمة لفرصة التدريب
 class Message(models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE, related_name='messages')
-    sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
-    sent_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Message from {self.sender.username} at {self.sent_at}"
+    sender = models.ForeignKey(User, on_delete=models.CASCA

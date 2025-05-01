@@ -268,7 +268,6 @@ class CompanyProfile(models.Model):
     commercial_register            = models.CharField(max_length=200)       # رقم السجل التجاري
     industry                       = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True) # الصناعة
     company_address                = models.ForeignKey(CompanyAddress, on_delete=models.SET_NULL, null=True) # العنوان
-    is_active                      = models.BooleanField(default=False)      # حالة التفعيل
 
 
 class ContactInformation(models.Model):

@@ -44,7 +44,7 @@
                         </form>
                     </div>
                 </div>
-                <p>في {{ cert.issuer }}</p>
+                <p>من {{ cert.issuer }}</p>
                 <p>{{ cert.issue_date|date:"Y-m" }} {%if cert.expiry_date%} - {{ cert.expiry_date|date:"Y-m" }} {%endif%}</p>
                 {% if cert.certificate_file %}
                 <a href="{{ cert.certificate_file.url }}" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
