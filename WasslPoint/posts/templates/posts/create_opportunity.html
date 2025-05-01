@@ -1,0 +1,119 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/profiles.css' %}">
+<link rel="stylesheet" href="{% static 'css/posts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="fw-bold mb-4">إضافة فرصة تدريب جديدة</h1>
+    {% if errors %}
+        <div class="alert alert-danger">{{ errors }}</div>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="majors_needed" class="form-label required">التخصصات المطلوبة</label>
+            <select class="form-select" id="majors_needed" name="majors_needed" multiple required>
+                {% for major in majors %}
+                <option value="{{ major.id }}">{{ major.ar_name }}</option>
+                {% endfor %}
+            </select>
+            <small class="text-muted">يمكنك اختيار أكثر من تخصص.</small>
+        </div>
+        <div class="mb-3">
+            <label for="selected_majors" class="form-label">التخصصات المختارة:</label>
+            <ul id="selected_majors" class="list-group">
+                 {% if form.majors_needed.value %}
+                    {% for major_id in form.majors_needed.value %}
+                        {% for major in majors %}
+                            {% if major.id == major_id %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center" data-major-id="{{ major.id }}">
+                                    {{ major.ar_name }}
+                                    <button type="button" class="btn btn-sm btn-danger ms-2 remove-selected-major">x</button>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+        <div class="mb-3">
+            <label for="city" class="form-label required">المدينة</label>
+            <select class="form-select" id="city" name="city" required>
+                <option value="" selected disabled>اختر المدينة</option>
+                {% for city in cities %}
+                <option value="{{ city.id }}" {% if form.city.value == city.id %} selected {% endif %}>{{ city.arabic_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="start_date" class="form-label required">تاريخ البدء</label>
+            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ form.start_date.value|date:'Y-m-d' }}" name="start_date" required>
+        </div>
+        <div class="mb-3">
+            <label for="duration" class="form-label required">المدة</label>
+            <input type="text" class="form-control" id="duration" name="duration" value="{{ form.duration.value }}" required placeholder="مثال: 3 أشهر، فصل دراسي">
+        </div>
+        <div class="mb-3">
+            <label for="application_deadline" class="form-label required">آخر موعد للتقديم</label>
+            <input type="date" class="form-control" id="application_deadline" name="application_deadline" value="{{ form.application_deadline.value|date:'Y-m-d' }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="requirements" class="form-label required">المتطلبات</label>
+            <textarea class="form-control" id="requirements" name="requirements" rows="4" required>{{ form.requirements.value }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="benefits" class="form-label">المزايا (اختياري)</label>
+            <textarea class="form-control" id="benefits" name="benefits" rows="3">{{ form.benefits.value }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="status" class="form-label required">الحالة</label>
+            <select class="form-select" id="status" name="status" required>
+                {% for status_value, status_label in statuses %}
+                <option value="{{ status_value }}" {% if form.status.value == status_value %} selected {% endif %}>{{ status_label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">نشر الفرصة</button>
+        <a href="{% url 'posts:company_opportunities' %}" class="btn btn-secondary ms-2">إلغاء</a>
+    </form>
+</div>
+
+<script>
+    const majorsSelect = document.getElementById('majors_needed');
+    const selectedMajorsList = document.getElementById('selected_majors');
+
+    function updateSelectedMajorsList() {
+        selectedMajorsList.innerHTML = '';
+        const selectedOptions = Array.from(majorsSelect.selectedOptions);
+        selectedOptions.forEach(option => {
+            const listItem = document.createElement('li');
+            listItem.textContent = option.textContent;
+            listItem.dataset.majorId = option.value;
+            listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'x';
+            removeButton.classList.add('btn', 'btn-sm', 'btn-danger', 'ms-2', 'remove-selected-major');
+            removeButton.addEventListener('click', function() {
+                listItem.remove();
+                option.selected = false;
+                updateSelectedMajorsList();
+            });
+
+            listItem.appendChild(removeButton);
+            selectedMajorsList.appendChild(listItem);
+        });
+    }
+
+    majorsSelect.addEventListener('change', function() {
+        updateSelectedMajorsList();
+    });
+
+    // Initial population of the list on page load, in case some majors are pre-selected
+    updateSelectedMajorsList();
+</script>
+{% endblock %}

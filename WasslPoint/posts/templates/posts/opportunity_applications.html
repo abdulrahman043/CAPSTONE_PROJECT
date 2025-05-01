@@ -1,0 +1,47 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/profiles.css' %}">
+<link rel="stylesheet" href="{% static 'css/posts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="fw-bold mb-4">طلبات التقديم لفرصة التدريب</h1>
+    <h5 class="mb-3">{{ opportunity.city.arabic_name }} -
+        {% for major in opportunity.majors_needed.all %}
+            <span class="badge bg-secondary">{{ major.ar_name }}</span>
+        {% endfor %}
+    </h5>
+    {% if applications %}
+        <ul class="list-group">
+            {% for application in applications %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-1">{{ application.student.user.username }}</h6>
+                    <small class="text-muted">تم التقديم في: {{ application.applied_at|date:"Y-m-d H:i" }}</small>
+                    {% if application.message %}
+                    <p class="mt-1 fst-italic text-muted">{{ application.message }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <form method="post" action="{% url 'posts:update_application_status' application.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <select class="form-select form-select-sm" name="status" onchange="this.form.submit()">
+                            <option value="" disabled>تغيير الحالة</option>
+                            {% for status_value, status_label in statuses %}
+                                <option value="{{ status_value }}" {% if application.status == status_value %}selected{% endif %}>{{ status_label }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                    <a href="{% url 'posts:application_chat' application.id %}" class="btn btn-sm btn-outline-primary ms-2"><i class="bi bi-chat-dots-fill"></i></a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="mt-3">لا يوجد أي طلبات تقديم لهذه الفرصة حتى الآن.</p>
+    {% endif %}
+    <div class="mt-3">
+        <a href="{% url 'posts:company_opportunities' %}" class="btn btn-outline-secondary">العودة
