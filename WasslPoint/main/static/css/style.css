@@ -1,3 +1,33 @@
+/* === تكبير عناصر الـ Navigation Bar + تمييز الهوفر والعنصر النشط === */
+.navbar-nav .nav-link {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.navbar .btn {
+  font-size: 1.1rem;
+  padding: 10px 20px;
+}
+
+/* عند مرور الماوس */
+.navbar-nav .nav-link:hover {
+  color: white;
+  background-color: #FF7C34;
+  border-radius: 8px;
+}
+
+/* العنصر النشط (الصفحة الحالية) */
+.navbar-nav .nav-link.active {
+  background-color: #FF7C34;
+  color: white !important;
+  border-radius: 8px;
+}
+
+body {
+  background-color: #F8F9FA !important; /* أو أي لون رمادي فاتح تحبه */
+}
 
 #heroCarousel {
   position: relative;
@@ -1030,3 +1060,23 @@
     background-color: #FF7C34;
   }
 
+  @media (max-width: 576px) {
+    .stat-box h5,
+    .stat-box span {
+      font-size: 1.5rem !important;
+    }
+  
+    .shadow-sm i {
+      font-size: 60px !important;
+      width: 60px !important;
+      height: 60px !important;
+    }
+  
+    .bg-white.p-4 {
+      padding: 1rem !important;
+    }
+  
+    .stats-section h2 {
+      font-size: 1.3rem;
+    }
+  }
