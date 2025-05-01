@@ -1,7 +1,7 @@
 {% now "Y-m" as max_month %}
 
 <div class="many-card-view ">
-    <div class="top-many-card border d-flex justify-content-between align-items-center p-2 ">
+    <div class="top-many-card  border-orange bg-orange d-flex justify-content-between align-items-center p-2 ">
         <h2 class="fs-6 p">الشهادات</h2>
         <a href="javascript:void(0)" class="add-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                 fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
@@ -15,7 +15,7 @@
         {%if profile.certification %}
 
         {%for cert in profile.certification.all%}
-        <div class="many-card border mb-3" data-exp-id="{{cert.id}}">
+        <div class="many-card  border-orange  mb-3" data-exp-id="{{cert.id}}">
             <div class="many-card-view p-3">
                 <div class="d-flex justify-content-between align-items-center ">
                     <h6>{{cert.name }} </h6>
@@ -127,7 +127,7 @@
 
 </div>
 <div class="many-card-add" style="display: none;">
-    <div class="top-many-card border d-flex justify-content-between align-items-center p-2 ">
+    <div class="top-many-card  border-orange bg-orange d-flex justify-content-between align-items-center p-2 ">
         <h2 class="fs-6">الشهادات</h2>
 
     </div>
