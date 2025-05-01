@@ -1,92 +1,97 @@
-  {%extends 'main/base.html'%}
-  {%load static%}
+{% extends 'main/base.html' %}
+{% load static %}
 
-  {%block style%}
-  <link rel="stylesheet" href="{%static 'css/profiles.css'%}"> {%endblock%}
-  {%block content%}
-  <div class="container d-flex justify-content-center">
+{% block style %}
+  <link rel="stylesheet" href="{% static 'css/profiles.css' %}">
+{% endblock %}
 
-    <div class="row g-3 w-100 justify-content-center">
-      <div class="d-flex flex-row justify-content-between align-items-center mt-4">
-        <h1 class="fw-bold ">سيرتي الذاتية</h1>
+{% block content %}
+<div class="container py-4">
+  {# — Header — #}
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="contact-title text-center">
+        <span class="text-orange">▸▸▸▸▸▸▸▸▸▸</span>
+        الملف الشخصي
+        <span class="text-orange">◂◂◂◂◂◂◂◂◂◂</span>
+      </h2>
+    </div>
+  </div>
 
-        <div class="dropdown">
-          <a href="#" class="text-dark" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-three-dots"
-              viewBox="0 0 16 16">
-              <path
-                d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
-            </svg>
-          </a>
 
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
-            <li><a class="dropdown-item" {%if admin_view%}href="{% url 'profiles:export_cv_pdf_admin' profile.user.id %}"  {%else%}href="{% url 'profiles:export_cv_pdf' %}" {%endif%}>تصدير إلى PDF</a></li>
-          </ul>
+  {# — Main / Sidebar — #}
+  <div class="row g-4">
+    {# Main column: full-width on xs, 8/12 on md+ #}
+    <div class="col-12 col-md-8">
+      <div class="profile-flex">
+        <div class="o border-blue radius mb-4">
+          {% include 'profiles/partials/photo.html' %}
         </div>
 
-      </div>
+        <div class="card border-orange radius mb-4">
+          {% include 'profiles/partials/personal_info.html' %}
+        </div>
 
-      <div class="col-7 mb-4">
+        <div class="card border-blue radius mb-4">
+          {% include 'profiles/partials/contact_info.html' %}
+        </div>
 
-        <div class="profile-flex ">
-          <div class="o border-blue radius ">
-            {%include 'profiles/partials/photo.html'%}
-          </div>
-          <div class="card border-orange   ">
-            {%include 'profiles/partials/personal_info.html'%}
-          </div>
-          <div class="card border-blue ">
-            {%include 'profiles/partials/contact_info.html'%}
+        <div class="many-card border-orange radius mb-4">
+          {% include 'profiles/partials/experince.html' %}
+        </div>
 
-          </div>
-          <div class="many-card border-orange radius ">
-            {%include 'profiles/partials/experince.html'%}
+        <div class="many-card border-blue radius mb-4">
+          {% include 'profiles/partials/skills.html' %}
+        </div>
 
-          </div>
-          <div class="many-card border-blue radius ">
-            {%include 'profiles/partials/skills.html'%}
+        <div class="many-card border-orange radius mb-4">
+          {% include 'profiles/partials/language.html' %}
+        </div>
 
-          </div>
-          <div class="many-card border-orange  radius">
-            {%include 'profiles/partials/language.html'%}
+        <div class="many-card border-blue radius mb-4">
+          {% include 'profiles/partials/education.html' %}
+        </div>
 
-          </div>
-          <div class="many-card border-blue radius ">
-            {%include 'profiles/partials/education.html'%}
-
-          </div>
-          <div class="many-card border-orange radius ">
-            {%include 'profiles/partials/certification.html'%}
-
-          </div>
-
+        <div class="many-card border-orange radius mb-4">
+          {% include 'profiles/partials/certification.html' %}
         </div>
       </div>
-      <div class="col-3">
-        <div class="test border-orange p-2 radius ">
-          <h5 class="mb-2">نسبة اكتمال الملف الشخصي</h5>
-          <div class="progress " dir="ltr">
-            <div class="progress-bar progress-bar-custom-orange" role="progressbar" style="width: {{ profile.completion_percent }}%;"
-              aria-valuenow="{{ profile.completion_percent }}" aria-valuemin="0" aria-valuemax="100">
-              {{ profile.completion_percent }}%
-            </div>
+    </div>
+
+    {# Sidebar: full-width on xs, 4/12 on md+ #}
+    <div class="col-12 col-md-3">
+      <div class="test border-orange p-3 radius ">
+        <h5 class="mb-3">نسبة اكتمال الملف الشخصي</h5>
+        <div class="progress mb-3" dir="ltr">
+          <div
+            class="progress-bar progress-bar-custom-orange"
+            role="progressbar"
+            style="width: {{ profile.completion_percent }}%;"
+            aria-valuenow="{{ profile.completion_percent }}"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            {{ profile.completion_percent }}%
           </div>
-          {% if profile.missing_sections %}
-          <div class="alert alert-warning mt-2 p-3">
+        </div>
+        {% if profile.missing_sections %}
+          <div class="alert alert-warning">
             <strong>لإكمال ملفك يرجى:</strong>
             <ul class="mb-0">
               {% for section in profile.missing_sections %}
-              <li>{{ section }}</li>
+                <li>{{ section }}</li>
               {% endfor %}
             </ul>
           </div>
-        
-          {% endif %}
-        </div>
-
+        {% endif %}
       </div>
     </div>
+  </div>
+</div>
+
+{# your existing scripts… #}
+
+
     <script>
       document.querySelectorAll('.many-card:not([data-exp-id])').forEach(x => {
         const listView = x.querySelector('.many-card-view');
