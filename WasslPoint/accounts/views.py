@@ -74,16 +74,17 @@ def signup_view(request: HttpRequest):
 def verify_signup_otp(request:HttpRequest):
     data=request.session.get('pending_signup')
     if not data:
-        redirect('accounts:signup_view')
+        return redirect('accounts:signup_view')
     if request.method=='POST':
         entered=request.POST.get('otp','').strip()
         otp_qs=EmailOTP.objects.filter(user_email=data['email'],code=entered,used=False)
         if otp_qs and not otp_qs.first().is_expired:
             otp=otp_qs.first()
             otp.used=True
-            otp.save
+            otp.save()
             with transaction.atomic():
-                user=User.objects.create(username=data['email'],email=data['email'],password=data['password'])
+                print(data['password'])
+                user=User.objects.create_user(username=data['email'],email=data['email'],password=data['password'])
                 profile = StudentProfile.objects.create(user=user)
                 PersonalInformation.objects.create(
                         profile=profile,
@@ -208,6 +209,7 @@ def login_view(request: HttpRequest):
     if request.method == 'POST':
         email    = request.POST.get('email', '').strip().lower()
         password = request.POST.get('password', '')
+        print(password)
         missing = []
         if not email:    missing.append('البريد الإلكتروني')
         if not password: missing.append('كلمة السر')
