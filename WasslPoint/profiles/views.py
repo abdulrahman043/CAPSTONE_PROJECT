@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpRequest,HttpResponse
-from .models import StudentProfile,PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language,Education,Certification,Major,CompanyProfile,Industry
+from .models import StudentProfile,PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language,Education,Certification,Major,CompanyProfile,Industry,ContactPerson
 from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.db import transaction
+from django.contrib.admin.views.decorators import staff_member_required 
 
 # Create your views here.
 @login_required
@@ -23,7 +24,6 @@ def get_target_profile(request, user_id=None):
 @login_required
 def profile_view(request:HttpRequest,user_id=None):
     if user_id:
-        print(user_id)
         if not request.user.is_staff:
             messages.error(request, "عذراً، ليس لديك صلاحية للاطلاع على ملف مستخدم آخر.")
 
@@ -373,12 +373,7 @@ def add_cert(request:HttpRequest,user_id=None):
             certification = Certification.objects.create(profile = get_target_profile(request, user_id))
             certification.name  = request.POST.get('name')
             certification.issuer  = request.POST.get('issuer')
-           
-            
             certification.issue_date = issue_dt
-
-           
-            
             certification.expiry_date = expiry_dt  
             if 'certificate_file' in request.FILES:
                 certification.certificate_file=request.FILES['certificate_file']
@@ -517,24 +512,118 @@ def company_profile_view(request:HttpRequest,user_id=None):
             messages.error(request, "عذراً، لم يتم العثور على ملف الشركة.")
 
             return redirect('main:home_view')
-    if request.method=='POST':
-        if 'company-submit' in request.POST:
-            profile.company_name  = request.POST.get('company_name')
-            profile.commercial_register = request.POST.get('commercial_register')
-            industry_id = request.POST.get('industry')
-            if industry_id:
-                profile.industry = Industry.objects.get(pk=industry_id)
-            profile.save()
-            messages.success(request, "تم التعديل على بيانات الشركة بنجاح.")
-            if user_id:
-                return redirect('profiles:profile_company_view_admin', user_id=user_id)
-            return redirect('profiles:profile_company_view')
-   
+ 
+    industries = Industry.objects.filter(status=True)
 
         
-    return render(request,'profiles/company_profile.html',{'profile':profile,'admin_view':bool(user_id)})
+    return render(request,'profiles/company_profile.html',{'profile':profile,'admin_view':bool(user_id),'industries':industries})
+
+@login_required
+def add_edit_contact_person(request:HttpRequest,user_id=None):
+    if not request.user.is_authenticated:
+        return redirect('main:home_view')
+    if user_id:
+        if not request.user.is_staff:
+            return redirect("main:home_view")
+        user = get_object_or_404(User, pk=user_id)
+        profile=user.company_profile
+        
+    else:
+        try:
+            profile=request.user.company_profile
+        except CompanyProfile.DoesNotExist:
+            messages.error(request, "عذراً، لم يتم العثور على ملف الشركة.")
+        
+
+    if request.method=='POST':
+        try:
+            contact_person,_=ContactPerson.objects.get_or_create(company_profile=profile)
+            contact_person.person_name=request.POST.get('name')
+            contact_person.email=request.POST.get('email')
+            contact_person.phone=request.POST.get('phone')
+            contact_person.save()
+            if _:
+                messages.success(request, "تم إنشاء جهة الاتصال بنجاح.")
+            else:
+                messages.success(request, "تم تحديث بيانات جهة الاتصال بنجاح.")
+        except Exception as e:
+                messages.error(request, "حدث خطأ أثناء حفظ بيانات جهة الاتصال. حاول مرة أخرى.")
+
+        if user_id:
+            return redirect('profiles:company_profile_view_admin', user_id=user_id)
+        return redirect('profiles:company_profile_view')
+    if user_id:
+        return redirect('profiles:company_profile_view_admin', user_id=user_id)
+    return redirect('profiles:company_profile_view')
 
 
+
+        
+@login_required
+@require_POST
+@staff_member_required
+def add_edit_company_info(request:HttpRequest,user_id):
+    user = get_object_or_404(User, pk=user_id)
+    profile=user.company_profile
+    if request.method=='POST':
+        try:
+            profile.company_name=request.POST.get('company_name')
+            if 'crm_certificate' in request.FILES:
+                profile.crm_certificate=request.FILES['crm_certificate']
+            profile.commercial_register=request.POST.get('commercial_register')
+            ind_id=request.POST.get('industry').strip()
+            if ind_id:
+                industry=Industry.objects.get(pk=ind_id)
+                profile.industry=industry
+            profile.address_line=request.POST.get('address_line')
+            profile.save()
+            messages.success(request, "تم حفظ معلومات الشركة بنجاح.")
+
+        except Industry.DoesNotExist:
+            messages.error(request, "المجال المحدد غير صالح. يرجى الاختيار من القائمة.")
+        except Exception:
+            messages.error(request, "حدث خطأ أثناء حفظ معلومات الشركة. حاول مرة أخرى.")
+
+        if user_id:
+            return redirect('profiles:company_profile_view_admin', user_id=user_id)
+        return redirect('profiles:company_profile_view')
+    if user_id:
+        return redirect('profiles:company_profile_view_admin', user_id=user_id)
+    return redirect('profiles:company_profile_view')
+@require_POST
+@login_required
+def edit_logo(request:HttpRequest,user_id=None):
+    if not request.user.is_authenticated:
+        return redirect('main:home_view')
+    if user_id:
+        if not request.user.is_staff:
+            return redirect("main:home_view")
+        user = get_object_or_404(User, pk=user_id)
+        profile=user.company_profile
+        
+    else:
+        try:
+            profile=request.user.company_profile
+        except CompanyProfile.DoesNotExist:
+            messages.error(request, "عذراً، لم يتم العثور على ملف الشركة.")
+    if request.method=='POST':
+        try:
+            if 'logo' in request.FILES:
+
+                
+                profile.logo=request.FILES['logo']
+                profile.save()
+                messages.success(request, "تم تحديث الشعار بنجاح.")
+
+        except Exception:
+            messages.error(request, "حدث خطأ أثناء رفع الشعار. حاول مرة أخرى.")
+
+        if user_id:
+            return redirect('profiles:company_profile_view_admin', user_id=user_id)
+        return redirect('profiles:company_profile_view')
+    if user_id:
+        return redirect('profiles:company_profile_view_admin', user_id=user_id)
+    return redirect('profiles:company_profile_view')
 @login_required
 def export_cv_pdf(request,user_id=None):
     profile = get_target_profile(request, user_id)

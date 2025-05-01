@@ -7,21 +7,18 @@
 
 {% block content %}
 <div class="container py-4">
-  {# — Header — #}
   <div class="row mb-4">
     <div class="col-12">
       <h2 class="contact-title text-center">
-        <span class="text-orange">▸▸▸▸▸▸▸▸▸▸</span>
+        <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸</span> 
         الملف الشخصي
-        <span class="text-orange">◂◂◂◂◂◂◂◂◂◂</span>
+        <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
       </h2>
     </div>
   </div>
 
 
-  {# — Main / Sidebar — #}
   <div class="row g-4">
-    {# Main column: full-width on xs, 8/12 on md+ #}
     <div class="col-12 col-md-8">
       <div class="profile-flex">
         <div class="o border-blue radius mb-4">
@@ -58,9 +55,8 @@
       </div>
     </div>
 
-    {# Sidebar: full-width on xs, 4/12 on md+ #}
     <div class="col-12 col-md-3">
-      <div class="test border-orange p-3 radius ">
+      <div class="prog border-orange p-3 radius ">
         <h5 class="mb-3">نسبة اكتمال الملف الشخصي</h5>
         <div class="progress mb-3" dir="ltr">
           <div
@@ -84,63 +80,66 @@
             </ul>
           </div>
         {% endif %}
+        <a
+        {% if admin_view %}
+          href="{% url 'profiles:export_cv_pdf_admin' profile.user.id %}"
+        {% else %}
+          href="{% url 'profiles:export_cv_pdf' %}"
+        {% endif %}
+        class="export-pdf-btn btn w-100 mt-3 d-block text-center"
+      >
+        تصدير الCV الى PDF
+      </a>
       </div>
     </div>
   </div>
 </div>
+{% block script %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // toggle “many-card” add/edit
+  document.querySelectorAll('.many-card:not([data-exp-id])').forEach(x => {
+    const listView = x.querySelector('.many-card-view');
+    const addForm  = x.querySelector('.many-card-add');
+    const addBtn   = x.querySelector('.add-btn');
+    const cancel   = addForm.querySelector('.cancel-btn');
+    addBtn.addEventListener('click', e => {
+      e.preventDefault();
+      listView.style.display = 'none';
+      addForm.style.display  = 'block';
+    });
+    cancel.addEventListener('click', e => {
+      e.preventDefault();
+      addForm.style.display  = 'none';
+      listView.style.display = 'block';
+    });
+  });
 
-{# your existing scripts… #}
+  // toggle regular cards
+  document.querySelectorAll('.card').forEach(card => {
+    const viewBtn   = card.querySelector('.edit-btn');
+    const cancelBtn = card.querySelector('.cancel-btn');
+    const viewPane  = card.querySelector('.card-view');
+    const editPane  = card.querySelector('.card-edit');
 
-
-    <script>
-      document.querySelectorAll('.many-card:not([data-exp-id])').forEach(x => {
-        const listView = x.querySelector('.many-card-view');
-        const addForm = x.querySelector('.many-card-add');
-        const addBtn = x.querySelector('.add-btn');
-        const cancelAdd = addForm.querySelector('.cancel-btn');
-
-        addBtn.addEventListener('click', () => {
-          listView.style.display = 'none';
-          addForm.style.display = 'block';
-        });
-        cancelAdd.addEventListener('click', () => {
-          addForm.style.display = 'none';
-          listView.style.display = 'block';
-        });
-
-        x.querySelectorAll('.many-card[data-exp-id]').forEach(card => {
-          const viewPane = card.querySelector('.many-card-view');
-          const editPane = card.querySelector('.many-card-edit');
-          const editBtn = card.querySelector('.edit-btn');
-          const cancelBtn = card.querySelector('.cancel-btn');
-
-          editBtn.addEventListener('click', () => {
-            viewPane.style.display = 'none';
-            editPane.style.display = 'block';
-          });
-          cancelBtn.addEventListener('click', () => {
-            editPane.style.display = 'none';
-            viewPane.style.display = 'block';
-          });
-        });
+    if (viewBtn) {
+      viewBtn.addEventListener('click', e => {
+        e.preventDefault();
+        viewPane.style.display = 'none';
+        editPane.style.display = 'block';
       });
-
-      document.querySelectorAll('.card').forEach(card => {
-        const view = card.querySelector('.card-view');
-        const edit = card.querySelector('.card-edit');
-        const btnEdit = card.querySelector('.edit-btn');
-        const btnCancel = card.querySelector('.cancel-btn');
-
-        btnEdit.addEventListener('click', () => {
-          view.style.display = 'none';
-          edit.style.display = 'block';
-        });
-        btnCancel.addEventListener('click', () => {
-          view.style.display = 'block';
-          edit.style.display = 'none';
-        });
+    }
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', e => {
+        e.preventDefault();
+        editPane.style.display = 'none';
+        viewPane.style.display = 'block';
       });
-    </script>
+    }
+  });
+});
+</script>
+{% endblock %}
 
 
     {%endblock%}

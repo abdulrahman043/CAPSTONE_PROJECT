@@ -47,7 +47,7 @@
                 <p>من {{ cert.issuer }}</p>
                 <p>{{ cert.issue_date|date:"Y-m" }} {%if cert.expiry_date%} - {{ cert.expiry_date|date:"Y-m" }} {%endif%}</p>
                 {% if cert.certificate_file %}
-                <a href="{{ cert.certificate_file.url }}" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
+                <a href="{{ cert.certificate_file.url }}" target="_blank"  class="export-pdf-btn btn text-center" >
                     عرض الشهادة
                 </a>
 
@@ -97,7 +97,7 @@
                               <label for="certificate_file">ملف الشهادة</label>
                             </div>
                             <div class="col">
-                                <input id="certificate_file" type="file" class="form-control" name="certificate_file" id="certificate_file" value="{{cert.certificate_file}}">
+                                <input id="certificate_file" type="file" class="form-control" name="certificate_file" id="certificate_file" value="{{cert.certificate_file}}"   accept="application/pdf"                                >
                             </div>
                           </div>
                      

@@ -1,0 +1,90 @@
+<div class="card-view ">
+    <div class="top-card  bg-blue d-flex justify-content-between align-items-center p-2 ">
+        <h2 class="fs-6 p text-white">معلومات الاتصال</h2>
+        <a href="javascript:void(0)" class="edit-btn text-white"><svg xmlns="http://www.w3.org/2000/svg"
+                width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                <path
+                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
+            </svg>
+        </a>
+    </div>
+    <div class="container mt-3">
+        <div class="row mb-2">
+            <div class="col">
+                <p>الاسم</p>
+            </div>
+            <div class="col">
+                <p>{{profile.contact_person.person_name}}</p>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <p>الايميل</p>
+            </div>
+            <div class="col">
+                <p>{{profile.contact_person.email}}</p>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <p>رقم الجوال</p>
+            </div>
+            <div class="col">
+                <p>{{profile.contact_person.phone}}</p>
+            </div>
+        </div>
+       
+       
+    </div>
+
+</div>
+<div class="card-edit" style="display: none;">
+    <div class="top-card  border-blue bg-blue d-flex justify-content-between align-items-center p-2 ">
+        <h2 class="fs-6 text-white">معلومات الاتصال</h2>
+
+    </div>
+    <form method="post"  {%if admin_view%} action="{%url 'profiles:add_edit_contact_person_admin' profile.user.id %}" {%else%} action="{%url 'profiles:add_edit_contact_person'%}" {%endif%}>
+        {%csrf_token%}
+        <div class="container mt-3">
+            <div class="row mb-2">
+                <div class="col">
+                    <p> <label class="required" for="name-c">الاسم</label></p>
+                </div>
+                <div class="col">
+                    <p><input class="form-control" type="text" name="name"
+                        id="name-c"  value="{{profile.contact_person.person_name}}" required></p>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <label class="form-label required" for="name-email">الايميل</label>
+                </div>
+                <div class="col">
+                    <p><input class="form-control" id="name-email" name="email" type="email" value="{{profile.contact_person.email}}"  required></p>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <label class="required" for="phone">رقم الجوال </label>
+                </div>
+                <div class="col">
+                    <p> <input class="form-control" type="tel" name="phone"
+                            id="phone"  value="{{profile.contact_person.phone}}" required></p>
+                </div>
+            </div>
+           
+          
+            <div class="row mb-2">
+                <div class="col">
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary" name="contact-submit">حفظ</button>
+                    <button type="button"
+                        class="btn btn-outline-secondary cancel-btn">الغاء</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+</div>
