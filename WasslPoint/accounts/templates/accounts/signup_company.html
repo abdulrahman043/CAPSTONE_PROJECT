@@ -177,14 +177,12 @@
     }
   }
   function updateFileLabel(input) {
-    // find the matching label by `for`
     const lbl = document.querySelector(`label[for="${input.id}"]`);
     if (!lbl) return;
 
     if (input.files && input.files.length > 0) {
       lbl.textContent = input.files[0].name;
     } else {
-      // fallback to the original/default text
       lbl.textContent = lbl.dataset.default;
     }
   }

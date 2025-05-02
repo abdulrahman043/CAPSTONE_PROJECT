@@ -356,6 +356,7 @@ def delete_all(request:HttpRequest):
             ids=request.POST.getlist('selected_users')
             if ids:
                 User.objects.filter(id__in=ids,is_staff=False, is_superuser=False).exclude(id=request.user.id).delete()
+                messages.success(request,"✅ تم حذف المستخدمين المحددين بنجاح.")
     except:
         messages.error(
             request,
