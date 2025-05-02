@@ -18,7 +18,8 @@ import random
 # Create your views here.
 
 def signup_view(request: HttpRequest):
-   
+    if  request.user.is_authenticated:
+        return redirect('main:home_view')
     if request.method == 'POST':
         full_name   = request.POST.get('full_name', '').strip()
         email       = request.POST.get('email', '').strip().lower()
@@ -72,6 +73,8 @@ def signup_view(request: HttpRequest):
 
     return render(request, 'accounts/signup.html')
 def verify_signup_otp(request:HttpRequest):
+    if  request.user.is_authenticated:
+        return redirect('main:home_view')
     data=request.session.get('pending_signup')
     if not data:
         return redirect('accounts:signup_view')
@@ -105,6 +108,8 @@ def verify_signup_otp(request:HttpRequest):
     
 
 def signup_company_view(request: HttpRequest):
+    if  request.user.is_authenticated:
+        return redirect('main:home_view')
     industries = Industry.objects.filter(status=True)
 
     if request.method == 'POST':
@@ -177,6 +182,8 @@ def signup_company_view(request: HttpRequest):
     })
 
 def login_view(request: HttpRequest):
+    if  request.user.is_authenticated:
+        return redirect('main:home_view')
     if request.method == 'POST':
         email    = request.POST.get('email', '').strip().lower()
         password = request.POST.get('password', '')

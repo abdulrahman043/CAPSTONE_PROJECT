@@ -26,7 +26,7 @@
   align-items: center;
   
 }
-.test{
+.prog{
       margin-top: 30px;
 
 }
@@ -36,6 +36,23 @@
 .radius{
   border-radius: 9px;
 
+}
+.export-pdf-btn {
+  --bs-btn-padding-y: 0.5rem;
+  --bs-btn-padding-x: 1rem;
+  --bs-btn-border-radius: 0.375rem;
+  background-color: transparent;
+  border: 2px solid #FF7C34;
+  color: #FF7C34;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.export-pdf-btn:hover,
+.export-pdf-btn:focus {
+  background-color: #FF7C34;
+  color: white;
+  text-decoration: none;
 }
 
 label.required::after {
@@ -65,11 +82,14 @@ label.required::after {
   border-top-left-radius: 0.375rem;
   border-top-right-radius: 0.375rem;
 }
+.radius .top-card {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
 .bg-orange {
   background-color: #FF7C34;
 }
 
-/* Text-color utilities */
 .text-blue {
   color: #009999;
 }
@@ -78,7 +98,6 @@ label.required::after {
   color: #FF7C34;
 }
 
-/* If you need hover variants */
 
 .text-blue:hover {
   color: rgba(0, 153, 153, 0.8);

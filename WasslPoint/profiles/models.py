@@ -261,7 +261,8 @@ class CompanyProfile(models.Model):
     logo                = models.ImageField(
                               upload_to='company_logos/',
                               blank=True,
-                              null=True)
+                              null=True,
+                              default='company_logos/default.png')
 class ContactPerson(models.Model):
     company_profile = models.OneToOneField(CompanyProfile, on_delete=models.CASCADE, related_name="contact_person")
     person_name     = models.CharField(max_length=100)
