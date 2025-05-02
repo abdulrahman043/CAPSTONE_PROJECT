@@ -8,7 +8,7 @@ urlpatterns = [ path('profile/',views.profile_view,name='profile_view'),
                 path('company_profile/<int:user_id>/add_',views.add_edit_company_info,name='add_edit_company_info'),
                 path('company_profile/add_contact',views.add_edit_contact_person,name='add_edit_contact_person'),
                  path('company_profile/edit_logo',views.edit_logo,name='edit_logo'),
-                path('company_profile/<int:user_id/edit_logo',views.edit_logo,name='edit_logo_admin'),
+                path('company_profile/<int:user_id>/edit_logo',views.edit_logo,name='edit_logo_admin'),
 
 
                 path('company_profile/<int:user_id>/add_contact',views.add_edit_contact_person,name='add_edit_contact_person_admin'),

@@ -10,17 +10,16 @@
   <section class="ads">
     <h2 class="mb-4" style="color: #009999; font-weight: bold;">
         <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
-        ادمن
+        طلبات التفعيل
         <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
     </h2>
 </section>
   <div class="admin-container">
     {# ←── Sidebar on the left ──→ #}
     <nav class="sidebar">
-     
-      <a href="{%url 'accounts:company_user_list_view'%}" class="sidebar-btn teal text-center text-decoration-none">الشركات</a>
-      <a href="{%url 'accounts:student_user_list_view'%}" class="sidebar-btn orange text-center text-decoration-none">الطلاب</a>
-      <button class="sidebar-btn teal">الرسائل</button>
+        <a href="{%url 'accounts:user_list_view'%}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
+        <button class="sidebar-btn orange">الطلاب</button>
+      <a href="{%url 'accounts:pending_company_requests_view'%}" class="sidebar-btn teal text-center text-decoration-none"> طلبات التفعيل</a>
     </nav>
 
     {# ←── Main content on the right ──→ #}
@@ -33,10 +32,11 @@
               <tr>
                 <th><input type="checkbox" id="select-all"></th>
                 <th>المعرّف</th>
-                <th>الاسم</th>
+                <th>اسم الشركة</th>
                 <th>الايميل</th>
-                <th>الرقم</th>
-                <th>النوع</th>
+                <th>المجال</th>
+                <th>ملف السجل التجاري</th>
+                <th>الاجراءات</th>
               </tr>
             </thead>
             <tbody>
@@ -45,31 +45,29 @@
                 <td><input type="checkbox" class="select-row" name="selected_users" value="{{ user.id }}"></td>
                 <td>{{ user.id }}</td>
                 <td>
-                  {% if user.student_profile %}
-                    {{ user.student_profile.personal_info.full_name }}
-                  {% elif user.company_profile %}
+             
                     {{ user.company_profile.company_name }}
-                  {% else %}
-                    {{ user.username }}
-                  {% endif %}
+                    
                 </td>
                 <td><a  {%if user.student_profile%} href="{%url 'profiles:profile_view_admin' user.id%}"{%elif user.company_profile%}href="{%url 'profiles:company_profile_view_admin' user.id%}"{%else%} href='#' {%endif%}>{{ user.username }}</a></td>
                 <td>
-                  {% if user.student_profile and user.student_profile.contact_info %}
-                    {{ user.student_profile.contact_info.phone }}
-                  {% elif user.company_profile and user.company_profile.contactperson %}
-                    {{ user.company_profile.contactperson.phone }}
-                  {% else %}-{% endif %}
+                    {{ user.company_profile.industry.name }}
                 </td>
                 <td>
-                  {% if user.student_profile %}
-                  طالب
-                {% elif user.company_profile %}
-                  شركة
-                {% elif  user.is_staff %}
-                  مسؤول
-                {% endif %}
+                    {% if user.company_profile.crm_certificate %}
+                    <a href="{{ user.company_profile.crm_certificate.url }}" target="_blank"  class="btn export-pdf-btn btn-sm mb-2">
+                        عرض السجل التجاري
+                    </a>
+                  
+    
+                    {% endif %}
                 </td>
+                <td>
+                    <button formaction="{%url 'accounts:approve_company' user.id %}" class="btn action-btn add text-white">قبول</button>
+                <button formaction="{%url 'accounts:user_delete' user.id %}" class="btn action-btn delete-all text-white">رفض</button>
+                  </td>
+                  
+                  
               </tr>
               {% empty %}
               <tr>
@@ -80,11 +78,10 @@
           </table>
         </div>
 
-        {# ←── Action buttons under table, aligned left ──→ #}
         <div class="actions">
-          <a href="#" class="btn action-btn add">اضافة</a>
-          <a href="#" class="btn action-btn edit">تعديل</a>
-          <button type="submit" class="btn action-btn delete-all">حذف</button>
+          <a href="#" class="text-white btn action-btn add">اضافة</a>
+          <a href="#" class="text-white btn action-btn edit">تعديل</a>
+          <button type="submit" class="text-white btn action-btn delete-all">حذف</button>
         </div>
       </form>
 

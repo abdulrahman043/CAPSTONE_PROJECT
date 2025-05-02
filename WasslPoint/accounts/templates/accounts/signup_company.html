@@ -31,11 +31,9 @@
         >
       </div>
 
-      <!-- 2) رفع نسخة PDF من السجل التجاري -->
       <div class="form-group file-group">
         <div class="input-icon"><i class="fi fi-rr-file-pdf"></i></div>
       
-        <!-- هذا الـ label سيحلّ محل الـ placeholder -->
         <label
           for="commercial_register_file"
           class="form-control-contact blue-border file-placeholder text-start"
@@ -43,7 +41,6 @@
           ملف السجل التجاري
         </label>
       
-        <!-- الـ input الحَقِيقي مخفيّ -->
         <input
           type="file"
           id="commercial_register_file"
@@ -66,8 +63,37 @@
           required
         >
       </div>
+      <div class="form-group file-group">
+        <div class="input-icon"><i class="fi fi-rr-picture"></i></div>
+      
+        <label
+          for="logo"
+          class="form-control-contact blue-border file-placeholder text-start"
+        >
+          شعار الشركة (اختياري)
+        </label>
+      
+        <input
+          type="file"
+          id="logo"
+          name="logo"
+          accept="image/*"
+          style="display: none;"
+          onchange="updateFileLabel(this)"
+          
+        >
+      </div>
+      <div class="form-group">
+        <div class="input-icon"><i class="fi fi-rr-location-alt"></i></div>
+        <input
+          type="text"
+          name="address_line"
+          class="form-control-contact orange-border "
+          placeholder=" عنوان الشركة (اختياري)"
+          
+        >
+      </div>
 
-      <!-- 4) البريد الإلكتروني -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-envelope"></i></div>
         <input
@@ -79,7 +105,6 @@
         >
       </div>
 
-      <!-- 5) كلمة السر -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-lock"></i></div>
         <input
@@ -91,7 +116,6 @@
         >
       </div>
 
-      <!-- 6) تأكيد كلمة السر -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-lock"></i></div>
         <input
@@ -103,7 +127,6 @@
         >
       </div>
 
-      <!-- 7) مجال عمل الشركة -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-angle-down"></i></div>
         <select
@@ -118,7 +141,6 @@
         </select>
       </div>
       
-      <!-- الشروط والأحكام -->
       <div class="form-check form-check-inline justify-content-center mb-4">
         <input
           class="form-check-input"
@@ -154,6 +176,18 @@
       lbl.textContent = input.files[0].name;
     } else {
       lbl.textContent = 'ملف السجل التجاري';
+    }
+  }
+  function updateFileLabel(input) {
+    // find the matching label by `for`
+    const lbl = document.querySelector(`label[for="${input.id}"]`);
+    if (!lbl) return;
+
+    if (input.files && input.files.length > 0) {
+      lbl.textContent = input.files[0].name;
+    } else {
+      // fallback to the original/default text
+      lbl.textContent = lbl.dataset.default;
     }
   }
   </script>

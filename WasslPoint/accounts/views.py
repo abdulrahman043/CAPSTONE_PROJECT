@@ -14,6 +14,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from .models import EmailOTP
 from django.core.mail   import send_mail
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions                   import ValidationError
 import random
 # Create your views here.
 
@@ -46,6 +48,30 @@ def signup_view(request: HttpRequest):
         if User.objects.filter(username=email).exists():
             messages.error(request, "هذا البريد مسجل مسبقًا.")
             return render(request, 'accounts/signup.html')
+        try:
+            validate_password(password, user=None)
+
+        except ValidationError as error:
+            for e in error.error_list:
+                if e.code=='password_too_short':
+                    messages.error(request, 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.')
+                    return render(request, 'accounts/signup.html')
+                elif e.code == 'password_entirely_numeric':
+                    messages.error(request,"لا يمكن أن تكون كلمة المرور أرقامًا فقط.")
+                    return render(request, 'accounts/signup.html')
+
+                elif e.code == 'password_too_common':
+                    messages.error(request,"هذه كلمة مرور شائعة جدًا، اختر كلمة أخرى أكثر أمانًا.")
+                    return render(request, 'accounts/signup.html')
+
+                elif e.code == 'password_similar_to_username':
+                    messages.error(request,"كلمة المرور قريبة من البريد الإلكتروني أو الاسم، اختر كلمة أخرى.")
+                    return render(request, 'accounts/signup.html')
+
+                else:
+                    messages.error(request,error)
+                    return render(request, 'accounts/signup.html')
+
 
         otp_code = f"{random.randint(0, 999999):06d}"
         EmailOTP.objects.create(user_email=email, code=otp_code)
@@ -120,6 +146,8 @@ def signup_company_view(request: HttpRequest):
         commercial_register_number= request.POST.get('commercial_register_number', '').strip()
         reg_file                  = request.FILES.get('commercial_register_file')
         industry_id               = request.POST.get('industry')
+        address_line               = request.POST.get('address_line')
+        logo                       = request.FILES.get('logo')
 
         missing = []
         if not email:      missing.append('البريد الإلكتروني')
@@ -149,6 +177,29 @@ def signup_company_view(request: HttpRequest):
             })
 
         try:
+            validate_password(password, user=None)
+
+        except ValidationError as error:
+            for e in error.error_list:
+                if e.code=='password_too_short':
+                    messages.error(request, 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.')
+                    return render(request, 'accounts/signup_company.html')
+                elif e.code == 'password_entirely_numeric':
+                    messages.error(request,"لا يمكن أن تكون كلمة المرور أرقامًا فقط.")
+                    return render(request, 'accounts/signup_company.html')
+
+                elif e.code == 'password_too_common':
+                    messages.error(request,"هذه كلمة مرور شائعة جدًا، اختر كلمة أخرى أكثر أمانًا.")
+                    return render(request, 'accounts/signup_company.html')
+
+                elif e.code == 'password_similar_to_username':
+                    messages.error(request,"كلمة المرور قريبة من البريد الإلكتروني أو الاسم، اختر كلمة أخرى.")
+                    return render(request, 'accounts/signup_company.html')
+
+                else:
+                    messages.error(request,error)
+                    return render(request, 'accounts/signup_company.html')
+        try:
             industry = industries.get(pk=industry_id)
         except Industry.DoesNotExist:
             messages.error(request, "اختر مجالًا صالحًا للصناعة.")
@@ -161,7 +212,7 @@ def signup_company_view(request: HttpRequest):
                 username = email,
                 email    = email,
                 password = password,
-                is_active= True   
+                is_active= False   
             )
             CompanyProfile.objects.create(
                 user                        = user,
@@ -169,6 +220,8 @@ def signup_company_view(request: HttpRequest):
                 commercial_register         = commercial_register_number,
                 crm_certificate  = reg_file,
                 industry                    = industry,
+                address_line                = address_line,
+                logo                        = logo
             )
 
         messages.success(request,
@@ -211,7 +264,7 @@ def logout_view(request:HttpRequest):
 
 @login_required
 @staff_member_required
-def user_list(request: HttpRequest):
+def user_list_view(request: HttpRequest):
     user_qs=User.objects.all()
     paginator=Paginator(user_qs,10)
     page=request.GET.get('page')
@@ -226,7 +279,63 @@ def user_delete(request, user_id):
     elif request.user!=user:
         user.delete()
     
-    return redirect('accounts:user_list')
+    return redirect('accounts:user_list_view')
+
+@login_required
+@staff_member_required
+def company_user_list_view(request: HttpRequest):
+    user_qs = User.objects.filter(company_profile__isnull=False)
+    paginator=Paginator(user_qs,10)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"user_page":user_page}
+
+    return render(request, 'accounts/company_users_list.html',context)
+def student_user_list_view(request: HttpRequest):
+    user_qs = User.objects.filter(student_profile__isnull=False)
+    paginator=Paginator(user_qs,10)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"user_page":user_page}
+
+    return render(request, 'accounts/student_users_list.html',context)
+@login_required
+@staff_member_required
+def pending_company_requests_view(request: HttpRequest):
+    user_qs = User.objects.filter(is_active=False)
+    paginator=Paginator(user_qs,10)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"user_page":user_page}
+
+    return render(request, 'accounts/pending_company_requests.html',context)
+@login_required
+@staff_member_required
+@require_POST
+def user_delete(request, user_id):
+    user=User.objects.get(pk=user_id)
+    if user.is_superuser or user.is_staff:
+        messages.warning(request, "لا يمكنك تغيير صلاحيات مسؤول آخر.")
+    elif request.user!=user:
+        messages.success(request, f"✅ تم حذف المستخدم  بنجاح.")
+
+        user.delete()
+    
+    return redirect('accounts:pending_company_requests_view')
+@login_required
+@staff_member_required
+@require_POST
+def approve_company(request, user_id):
+    user=User.objects.get(pk=user_id)
+    if user.is_superuser or user.is_staff:
+        messages.warning(request, "لا يمكنك تغيير صلاحيات مسؤول آخر.")
+    elif request.user!=user:
+        user.is_active=True
+        user.save()
+        messages.success(request, f"تم تفعيل حساب {user.username} بنجاح.")
+
+    
+    return redirect('accounts:pending_company_requests_view')
 @login_required
 @staff_member_required
 @require_POST
@@ -237,5 +346,8 @@ def delete_all(request:HttpRequest):
             if ids:
                 User.objects.filter(id__in=ids,is_staff=False, is_superuser=False).exclude(id=request.user.id).delete()
     except:
-        pass
-    return redirect('accounts:user_list')
+        messages.error(
+            request,
+            "❌ حدث خطأ أثناء حذف المستخدمين. حاول مرة أخرى لاحقًا."
+        )
+    return redirect('accounts:user_list_view')
