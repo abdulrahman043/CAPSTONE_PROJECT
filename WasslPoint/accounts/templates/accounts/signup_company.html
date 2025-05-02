@@ -17,7 +17,6 @@
     <form method="post" action="{% url 'accounts:signup_company_view' %}" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <!-- 1) رقم السجل التجاري -->
       <div class="form-group">
         <div class="input-icon">
           <i class="fi fi-rr-pen-field"></i>
@@ -52,7 +51,6 @@
         >
       </div>
 
-      <!-- 3) اسم الشركة -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-user"></i></div>
         <input
@@ -179,14 +177,12 @@
     }
   }
   function updateFileLabel(input) {
-    // find the matching label by `for`
     const lbl = document.querySelector(`label[for="${input.id}"]`);
     if (!lbl) return;
 
     if (input.files && input.files.length > 0) {
       lbl.textContent = input.files[0].name;
     } else {
-      // fallback to the original/default text
       lbl.textContent = lbl.dataset.default;
     }
   }

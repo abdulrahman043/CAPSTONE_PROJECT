@@ -17,7 +17,6 @@
     <form method="POST" action="{% url 'accounts:signup_view' %}">
       {% csrf_token %}
 
-      <!-- الاسم الكامل -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-user"></i></div>
         <input
@@ -29,7 +28,6 @@
         >
       </div>
 
-      <!-- البريد الإلكتروني -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-envelope"></i></div>
         <input
@@ -41,7 +39,6 @@
         >
       </div>
 
-      <!-- كلمة السر -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-lock"></i></div>
         <input
@@ -53,7 +50,6 @@
         >
       </div>
 
-      <!-- تأكيد كلمة السر -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-lock"></i></div>
         <input
@@ -65,7 +61,6 @@
         >
       </div>
 
-      <!-- الشروط والأحكام -->
       <div class="form-check mb-4 text-center">
         <input
           class="form-check-input"
@@ -86,7 +81,6 @@
         <a href="{%url 'accounts:signup_company_view'%}">تسجيل الشركات</a>
 
       </div>
-      <!-- زر التسجيل -->
       <button type="submit" class="send-btn w-100">إنشاء حساب</button>
     </form>
   </div>
