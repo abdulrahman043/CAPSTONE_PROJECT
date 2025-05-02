@@ -15,14 +15,12 @@
     </h2>
 </section>
   <div class="admin-container">
-    {# ←── Sidebar on the left ──→ #}
     <nav class="sidebar">
         <a href="{%url 'accounts:user_list_view'%}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
         <button class="sidebar-btn orange">الطلاب</button>
       <a href="{%url 'accounts:pending_company_requests_view'%}" class="sidebar-btn teal text-center text-decoration-none"> طلبات التفعيل</a>
     </nav>
 
-    {# ←── Main content on the right ──→ #}
     <div class="main-content">
       <form action="{% url 'accounts:delete_all' %}" method="post">
         {% csrf_token %}

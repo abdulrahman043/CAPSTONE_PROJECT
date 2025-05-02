@@ -17,7 +17,6 @@
     <form method="post" action="{% url 'accounts:login_view' %}">
       {% csrf_token %}
 
-      <!-- البريد الإلكتروني -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-envelope"></i></div>
         <input
@@ -29,7 +28,6 @@
         >
       </div>
 
-      <!-- كلمة السر -->
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-lock"></i></div>
         <input
@@ -43,14 +41,12 @@
 
      
 
-      <!-- روابط مساعدة -->
       <div class="extra-links text-center mb-4">
         <a href="#">نسيت كلمة السر؟</a>
         <span class="mx-2">|</span>
         <a href="{% url 'accounts:signup_view' %}">إنشاء حساب جديد</a>
       </div>
 
-      <!-- زر الدخول -->
       <button type="submit" class="send-btn w-100">تسجيل دخول</button>
     </form>
   </div>

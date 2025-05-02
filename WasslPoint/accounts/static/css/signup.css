@@ -184,12 +184,10 @@
   font-weight: bold;
 }
 
-/* 2) Make the <select> default text bold too */
 select.form-control-contact {
   font-weight: bold;
 }
 
-/* 3) And your file-placeholder labels */
 .file-placeholder {
   font-weight: bold;
 }

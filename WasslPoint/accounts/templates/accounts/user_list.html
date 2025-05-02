@@ -15,7 +15,6 @@
     </h2>
 </section>
   <div class="admin-container">
-    {# ←── Sidebar on the left ──→ #}
     <nav class="sidebar">
      
       <a href="{%url 'accounts:company_user_list_view'%}" class="sidebar-btn teal text-center text-decoration-none">الشركات</a>
@@ -23,7 +22,6 @@
       <button class="sidebar-btn teal">الرسائل</button>
     </nav>
 
-    {# ←── Main content on the right ──→ #}
     <div class="main-content">
       <form action="{% url 'accounts:delete_all' %}" method="post">
         {% csrf_token %}
