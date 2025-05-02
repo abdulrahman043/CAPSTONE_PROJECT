@@ -150,6 +150,7 @@
   .form-control-contact.orange-border::placeholder {
     color: #FF7C34;           
     opacity: 0.8;
+    font-weight: bold;
   }
   
   .form-control-contact.blue-border {
@@ -166,3 +167,29 @@
   .form-group:has(.form-control-contact.blue-border) .input-icon i {
     color: #FF7C34;  
   }
+  /* 1) Bold all placeholders in inputs & textareas */
+.form-control-contact::placeholder {
+  font-weight: bold;
+}
+.form-control-contact::-webkit-input-placeholder {
+  font-weight: bold;
+}
+.form-control-contact::-moz-placeholder {
+  font-weight: bold;
+}
+.form-control-contact:-ms-input-placeholder {
+  font-weight: bold;
+}
+.form-control-contact::-ms-input-placeholder {
+  font-weight: bold;
+}
+
+/* 2) Make the <select> default text bold too */
+select.form-control-contact {
+  font-weight: bold;
+}
+
+/* 3) And your file-placeholder labels */
+.file-placeholder {
+  font-weight: bold;
+}
