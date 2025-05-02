@@ -27,19 +27,33 @@
         <!-- القوائم في النص -->
         <ul class="navbar-nav d-none d-lg-flex mx-auto">
           {% if request.user.is_authenticated %}
-            {%if request.user.student_profile%}
-          <li class="nav-item mx-2"><a class="nav-link text-white" href="{% url 'profiles:profile_view' %}">الملف الشخصي</a></li>
-            {%elif  request.user.company_profile %}
-            <li class="nav-item mx-2"><a class="nav-link text-white" href="{% url 'profiles:company_profile_view' %}">الملف الشخصي</a></li>
-
-          {%endif%}
+            {% if request.user.student_profile %}
+              <li class="nav-item mx-2">
+                <a class="nav-link text-white {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'profiles:profile_view' %}">الملف الشخصي</a>
+              </li>
+            {% elif request.user.company_profile %}
+              <li class="nav-item mx-2">
+                <a class="nav-link text-white {% if request.path == '/company-profile/' %}active{% endif %}" href="{% url 'profiles:company_profile_view' %}">الملف الشخصي</a>
+              </li>
+            {% endif %}
           {% endif %}
-          <li class="nav-item mx-2"><a class="nav-link text-white" href="{% url 'main:home_view' %}">الرئيسيه</a></li>
-          <li class="nav-item mx-2"><a class="nav-link text-white" href="{% url 'main:training_view' %}">التدريبات</a></li>
-          <li class="nav-item mx-2"><a class="nav-link text-white" href="{% url 'main:company_view' %}">الشركات</a></li>
-          <li class="nav-item mx-2"><a class="nav-link text-white" href="{% url 'main:about_view' %}">من نحن</a></li>
-          <li class="nav-item mx-2"><a class="nav-link text-white" href="{% url 'main:contact_view' %}">اتصل بنا</a></li>
+          <li class="nav-item mx-2">
+            <a class="nav-link text-white {% if request.path == '/' %}active{% endif %}" href="{% url 'main:home_view' %}">الرئيسيه</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link text-white {% if request.resolver_match.url_name == 'training_view' %}active{% endif %}" href="{% url 'main:training_view' %}">التدريبات</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link text-white {% if request.resolver_match.url_name == 'company_view' %}active{% endif %}" href="{% url 'main:company_view' %}">الشركات</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link text-white {% if request.path == '/about/' %}active{% endif %}" href="{% url 'main:about_view' %}">من نحن</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link text-white {% if request.path == '/contact/' %}active{% endif %}" href="{% url 'main:contact_view' %}">اتصل بنا</a>
+          </li>
         </ul>
+        
       
         <!-- زر تسجيل الدخول / الخروج -->
         <div class="d-none d-lg-block">
