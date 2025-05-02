@@ -252,9 +252,20 @@ def login_view(request: HttpRequest):
         if user is not None:
             login(request, user)
             return redirect('main:home_view')
-        else:
-            messages.error(request, "بيانات الدخول غير صحيحة.")
+        try:
+            existing = User.objects.get(username=email)
+        except User.DoesNotExist:
+            existing = None
+
+        if existing and existing.check_password(password) and not existing.is_active:
+            messages.error(request,
+        "🔒 لقد استلمنا طلب تسجيل شركتكم وهو الآن قيد الفحص والمراجعة لدى فريق الإدارة. "
+        "سيتم تفعيل الحساب تلقائيًا فور الانتهاء من المراجعة. شكرًا لصبركم وتفهمكم.")
             return render(request, 'accounts/login.html')
+
+        # 4) باقي الحالات (خطأ بالإيميل أو الباسوورد)
+        messages.error(request, "❌ البريد الإلكتروني أو كلمة السر غير صحيحة.")
+        return render(request, 'accounts/login.html')
 
     return render(request, 'accounts/login.html')
 def logout_view(request:HttpRequest):
