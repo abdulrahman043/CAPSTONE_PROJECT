@@ -260,8 +260,6 @@ class CompanyProfile(models.Model):
     address_line = models.CharField(max_length=255, null=True, blank=True)
     logo                = models.ImageField(
                               upload_to='company_logos/',
-                              blank=True,
-                              null=True,
                               default='company_logos/default.png')
 class ContactPerson(models.Model):
     company_profile = models.OneToOneField(

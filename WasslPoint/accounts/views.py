@@ -151,8 +151,8 @@ def signup_company_view(request: HttpRequest):
         commercial_register_number= request.POST.get('commercial_register_number', '').strip()
         reg_file                  = request.FILES.get('commercial_register_file')
         industry_id               = request.POST.get('industry')
-        address_line               = request.POST.get('address_line')
-        logo                       = request.FILES.get('logo')
+        address_line               = request.POST.get('address_line') 
+        logo                       = request.FILES.get('logo') 
 
         missing = []
         if not email:      missing.append('البريد الإلكتروني')
@@ -219,15 +219,26 @@ def signup_company_view(request: HttpRequest):
                 password = password,
                 is_active= False   
             )
-            CompanyProfile.objects.create(
-                user                        = user,
-                company_name                = company_name,
-                commercial_register         = commercial_register_number,
-                crm_certificate  = reg_file,
-                industry                    = industry,
-                address_line                = address_line,
-                logo                        = logo
-            )
+            if "logo" in request.FILES:
+                CompanyProfile.objects.create(
+                    user                        = user,
+                    company_name                = company_name,
+                    commercial_register         = commercial_register_number,
+                    crm_certificate  = reg_file,
+                    industry                    = industry,
+                    address_line                = address_line,
+                    logo                        = logo
+                )
+            else:
+                  CompanyProfile.objects.create(
+                    user                        = user,
+                    company_name                = company_name,
+                    commercial_register         = commercial_register_number,
+                    crm_certificate  = reg_file,
+                    industry                    = industry,
+                    address_line                = address_line,
+                )
+
 
         messages.success(request,
     "تم استلام طلب تسجيل شركتكم بنجاح! 📩\n"
@@ -371,6 +382,7 @@ def delete_all(request:HttpRequest):
             "❌ حدث خطأ أثناء حذف المستخدمين. حاول مرة أخرى لاحقًا."
         )
     return redirect('accounts:user_list_view')
+
 def resend_signup_otp(request):
     data = request.session.get('pending_signup')
     if not data:
