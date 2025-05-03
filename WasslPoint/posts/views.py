@@ -419,7 +419,7 @@ def update_application_status(request, application_id):
             application.status = new_status
             application.save()
             messages.success(request, f"Application status updated to {application.get_status_display()}.")
-            
+            # TODO: Notify the student via email? (Future enhancement)
     else:
         messages.error(request, "Invalid status selected.")
 
