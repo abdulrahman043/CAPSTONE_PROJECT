@@ -16,6 +16,7 @@ urlpatterns=[
     path('users/<int:user_id>/delete/', views.user_delete, name='user_delete'),
     path('users/<int:user_id>/approve_company/', views.approve_company, name='approve_company'),
     path('signup/verify-otp/', views.verify_signup_otp, name='verify_signup_otp'),
+    path('verify-otp/resend/', views.resend_signup_otp, name='resend_signup_otp'),
 
     path('users/delete_all/', views.delete_all, name='delete_all'),
    

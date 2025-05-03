@@ -17,6 +17,8 @@ from django.core.mail   import send_mail
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions                   import ValidationError
 import random
+from django.utils import timezone
+from datetime import timedelta
 # Create your views here.
 
 def signup_view(request: HttpRequest):
@@ -125,8 +127,10 @@ def verify_signup_otp(request:HttpRequest):
                     )
                 del request.session['pending_signup']
 
-            messages.success(request, "تم التحقق! يمكنك الآن تسجيل الدخول.")
-            return redirect('accounts:login_view')
+            login(request, user)
+
+            messages.success(request, "تم التحقق وتسجيل الدخول بنجاح!")            
+            return redirect('main:home_view')
         else:
             messages.error(request, "رمز غير صحيح أو منتهي الصلاحية.")
 
@@ -251,6 +255,8 @@ def login_view(request: HttpRequest):
         user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
+            messages.success(request, "✅ تم تسجيل الدخول بنجاح.")
+
             return redirect('main:home_view')
         try:
             existing = User.objects.get(username=email)
@@ -270,6 +276,7 @@ def login_view(request: HttpRequest):
     return render(request, 'accounts/login.html')
 def logout_view(request:HttpRequest):
     logout(request)
+    messages.success(request, "✅ تم تسجيل الخروج بنجاح.")
 
     return redirect('main:home_view')
 
@@ -363,3 +370,43 @@ def delete_all(request:HttpRequest):
             "❌ حدث خطأ أثناء حذف المستخدمين. حاول مرة أخرى لاحقًا."
         )
     return redirect('accounts:user_list_view')
+def resend_signup_otp(request):
+    data = request.session.get('pending_signup')
+    if not data:
+        return redirect('accounts:signup_view')
+
+    email = data['email']
+    now = timezone.now()
+    last_otp = EmailOTP.objects.filter(
+        user_email=email,
+        used=False
+    ).order_by('-created_at').first()
+
+    # إذا لم يمضِ أقل من دقيقتين على آخر إرسال
+    if last_otp and now - last_otp.created_at < timedelta(minutes=2):
+        remaining = 120 - int((now - last_otp.created_at).total_seconds())
+        messages.error(request, f"📥 يمكنك إعادة الإرسال بعد {remaining} ثانية.")
+        return redirect('accounts:verify_signup_otp')
+
+    # نجعل كل الرموز القديمة غير صالحة
+    EmailOTP.objects.filter(user_email=email, used=False).update(used=True)
+
+    # ننشئ رمزًا جديدًا
+    otp_code = f"{random.randint(0, 999999):06d}"
+    EmailOTP.objects.create(user_email=email, code=otp_code)
+
+    # نرسل الرمز الجديد عبر البريد
+    send_mail(
+        subject="رمز التحقق",
+        message=(
+            f"مرحبًا {data['full_name']},\n\n"
+            f"هذا رمز التحقق الجديد: {otp_code}\n"
+            "صالح لمدة 10 دقائق."
+        ),
+        from_email=None,
+        recipient_list=[email],
+        fail_silently=False,
+    )
+    messages.success(request, "📥 تم إعادة إرسال الرمز إلى بريدك الإلكتروني.")
+
+    return redirect('accounts:verify_signup_otp')
