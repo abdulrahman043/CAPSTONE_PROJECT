@@ -1,0 +1,52 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}My Applications{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>My Training Applications</h2>
+    <hr>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if applications %}
+        <div class="list-group">
+            {% for app in applications %}
+                <div class="list-group-item list-group-item-action flex-column align-items-start mb-3">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">
+                            <a href="{% url 'posts:opportunity_detail' app.opportunity.id %}" class="text-decoration-none">
+                                {{ app.opportunity.company.company_name }} - {{ app.opportunity.city.arabic_name }}
+                            </a>
+                        </h5>
+                        <small>Applied: {{ app.applied_at|date:"Y-m-d" }}</small>
+                    </div>
+                    <p class="mb-1">Status: <strong>{{ app.get_status_display }}</strong></p>
+                    <small>Last Updated: {{ app.updated_at|timesince }} ago</small>
+                    <div class="mt-2">
+                        {% if app.status == 'PENDING' or app.status == 'ACCEPTED' %}
+                            <form action="{% url 'posts:withdraw_application' app.id %}" method="post" class="d-inline me-2" onsubmit="return confirm('Are you sure you want to withdraw this application?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-warning">Withdraw</button>
+                            </form>
+                        {% endif %}
+                        {% if app.status != 'WITHDRAWN' %} {# Allow chat unless withdrawn #}
+                           <a href="{% url 'posts:application_chat' app.id %}" class="btn btn-sm btn-outline-primary">Chat</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have not applied for any training opportunities yet.</p>
+        <a href="{% url 'posts:opportunity_list' %}" class="btn btn-primary">Browse Opportunities</a>
+    {% endif %}
+</div>
+{% endblock %}

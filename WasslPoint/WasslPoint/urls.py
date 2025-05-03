@@ -20,10 +20,10 @@ from . import settings
 from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('main.urls')),
-    path('',include('accounts.urls')),
-    path('',include('profiles.urls')),
-    path('',include('posts.urls')),
+    path('', include('main.urls')),
+    path('accounts/', include('accounts.urls')), # Optional: Add prefix if desired
+    path('profiles/', include('profiles.urls')), # Optional: Add prefix if desired
+    path('opportunities/', include('posts.urls')), # Changed prefix for clarity
+    path('subscriptions/', include('subscriptions.urls')), # Add subscription urls
 
-
-]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT) 
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

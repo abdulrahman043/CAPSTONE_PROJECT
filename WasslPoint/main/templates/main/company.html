@@ -1,46 +1,55 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block content %}
-    <div class="container mt-5">
-        <h1 class="fw-bold mb-4"> فرص التدريب المتاحة ل {{ company_profile.company_name }}</h1>
-        {% if request.user.is_authenticated and request.user.company_profile %}
-            <a href="{% url 'posts:create_opportunity' %}" class="btn btn-primary mb-3">إضافة فرصة تدريب</a>
-        {% endif %}
+{% block title %}For Companies{% endblock %}
 
-        {% if opportunities %}
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                {% for opportunity in opportunities %}
-                    <div class="col">
-                        <div class="card border shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ opportunity.title }}</h5>
-                                <p class="card-text"><i class="bi bi-building"></i> {{ opportunity.city.arabic_name }}</p>
-                                <p class="card-text"><i class="bi bi-mortarboard"></i>
-                                    {% for major in opportunity.majors_needed.all %}
-                                        <span class="badge bg-secondary">{{ major.ar_name }}</span>
-                                    {% empty %}
-                                        <span class="text-muted">لم يتم تحديد التخصصات</span>
-                                    {% endfor %}
-                                </p>
-                                <p class="card-text"><i class="bi bi-calendar-event"></i> يبدأ في: {{ opportunity.start_date|date:"Y-m-d" }}</p>
-                                <p class="card-text"><i class="bi bi-hourglass-split"></i> المدة: {{ opportunity.duration }}</p>
-                                 <p class="card-text">
-                                    <strong>الحالة:</strong>
-                                    <span class="badge {% if opportunity.status == 'ACTIVE' %}bg-success{% elif opportunity.status == 'PENDING' %}bg-warning{% elif opportunity.status == 'CLOSED' %}bg-danger{% endif %}">
-                                        {{ opportunity.get_status_display }}
-                                    </span>
-                                </p>
-                                <div class="d-flex justify-content-end">
-                                    <a href="{% url 'posts:opportunity_detail' opportunity.id %}" class="btn btn-primary">عرض التفاصيل</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="mt-3">لا توجد فرص تدريب متاحة حاليًا لشركتك.</p>
-        {% endif %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="text-center mb-4">For Companies</h2>
+    <p class="text-center lead">Connect with talented students and find the perfect fit for your training programs.</p>
+    <div class="text-center mt-4">
+         {% if request.user.is_authenticated %}
+             {% if request.user.company_profile %}
+                <a href="{% url 'posts:company_dashboard' %}" class="btn btn-primary btn-lg mx-2">Go to Dashboard</a>
+             {% else %}
+                 <a href="{% url 'accounts:signup_company_view' %}" class="btn btn-outline-primary btn-lg mx-2">Register Your Company</a>
+             {% endif %}
+         {% else %}
+            <a href="{% url 'accounts:login_view' %}" class="btn btn-primary btn-lg mx-2">Company Login</a>
+            <a href="{% url 'accounts:signup_company_view' %}" class="btn btn-outline-primary btn-lg mx-2">Register Your Company</a>
+         {% endif %}
+
     </div>
+</div>
+
+<div class="container mt-5 mb-5">
+    <h3 class="text-center mb-4">Latest Training Opportunities</h3>
+    <div class="row">
+        {% for opp in opportunities %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ opp.company.company_name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ opp.city.arabic_name }}</h6>
+                     <p class="card-text flex-grow-1">
+                        Seeking students majoring in:
+                        {% for major in opp.majors_needed.all|slice:":2" %}
+                             {{ major.ar_name }}{% if not forloop.last %}, {% endif %}
+                         {% endfor %}
+                         {% if opp.majors_needed.count > 2 %}...{% endif %}
+                         <br>
+                         <small>Deadline: {{ opp.application_deadline|date:"Y-m-d" }}</small>
+                     </p>
+                    <a href="{% url 'posts:opportunity_detail' opp.id %}" class="btn btn-outline-primary mt-auto">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">No active training opportunities posted right now.</p>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-3">
+        <a href="{% url 'posts:opportunity_list' %}" class="btn btn-secondary">View All Opportunities</a>
+    </div>
+</div>
 {% endblock %}

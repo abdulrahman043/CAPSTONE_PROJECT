@@ -1,36 +1,51 @@
-# WasslPoint/posts/models.py
 from django.db import models
-from profiles.models import Major, City, CompanyProfile, StudentProfile
-from django.utils import timezone
-from django.contrib.auth.models import User
+from profiles.models import CompanyProfile, StudentProfile, City, Major
+from django.conf import settings
+
 
 class TrainingOpportunity(models.Model):
-    class Status(models.TextChoices):
-        ACTIVE = 'ACTIVE', 'Active'
-        CLOSED = 'CLOSED', 'Closed'
-        CANCELED = 'CANCELED', 'Canceled'
+    """
+    Represents a Co-op training opportunity posted by a company.
+    """
 
-    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='training_opportunities')
-    majors_needed = models.ManyToManyField(Major, related_name='training_opportunities')
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
-    start_date = models.DateField()
-    duration = models.CharField(max_length=50, help_text="e.g., 3 months, 1 semester")
-    application_deadline = models.DateField()
+    class Status(models.TextChoices):
+        ACTIVE = "ACTIVE", "Active"
+        EXPIRED = "EXPIRED", "Expired"
+        DRAFT = "DRAFT", "Draft"
+        CLOSED = "CLOSED", "Closed"
+
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='opportunities')
+    title = models.CharField(max_length=200, default="Co-op Opportunity")
+    city = models.ForeignKey(City, on_delete=models.CASCADE, default=1)
+    majors_needed = models.ManyToManyField(Major, related_name='opportunities')
+    description = models.TextField(default="Details of this opportunity will be added soon.")
     requirements = models.TextField()
-    benefits = models.TextField(blank=True)
-    status = models.CharField(max_length=10, choices=Status.choices, default=Status.ACTIVE)
+    benefits = models.TextField(blank=True, null=True)
+    start_date = models.DateField()
+    duration = models.CharField(
+        max_length=50, help_text="e.g., '3 months', '6 weeks'"
+    )
+    application_deadline = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.ACTIVE
+    )
 
     def __str__(self):
-        return f"{self.company.company_name} - {', '.join(major.ar_name for major in self.majors_needed.all())} - {self.city.arabic_name}"
+        # Simplified string representation
+        return f"{self.company.company_name} - Opportunity"
+
+    class Meta:
+        ordering = ['-created_at']
+
 
 class Application(models.Model):
     class ApplicationStatus(models.TextChoices):
         PENDING = 'PENDING', 'Pending Review'
         ACCEPTED = 'ACCEPTED', 'Accepted'
         REJECTED = 'REJECTED', 'Rejected'
-        WITHDRAWN = 'WITHDRAWN', 'Withdrawn'
+        WITHDRAWN = 'WITHDRAWN', 'Withdrawn' # Added status
 
     opportunity = models.ForeignKey(TrainingOpportunity, on_delete=models.CASCADE, related_name='applications')
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='applications')
@@ -41,19 +56,30 @@ class Application(models.Model):
     )
     applied_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    message = models.TextField(blank=True)
+    message = models.TextField(blank=True, help_text="Optional message to the company") # Added help_text
 
     class Meta:
-        unique_together = ('opportunity', 'student')
+        unique_together = ('opportunity', 'student') # Ensures student applies only once
+        ordering = ['-applied_at']
 
     def __str__(self):
         return f"Application by {self.student.user.username} for {self.opportunity}"
 
+
 class Message(models.Model):
-    application = models.ForeignKey(Application, on_delete=models.CASCADE, related_name='messages')
-    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    """
+    Represents a message in the communication between a student and a company
+    regarding a specific application.
+    """
+
+    application = models.ForeignKey(
+        Application, on_delete=models.CASCADE, related_name='messages'
+    )
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )  # Could be a student or a company user
     content = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Message from {self.sender.username} at {self.sent_at}"
+        return f"Message from {self.sender} on {self.application}"

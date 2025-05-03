@@ -257,14 +257,20 @@ class CompanyProfile(models.Model):
     crm_certificate               = models.FileField(upload_to='crm_certs/') # شهادة CRM
     commercial_register           = models.CharField(max_length=200)       # رقم السجل التجاري
     industry                       = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True) # الصناعة
-    address_line=models.CharField(max_length=100)
+    address_line = models.CharField(max_length=255, null=True, blank=True)
     logo                = models.ImageField(
                               upload_to='company_logos/',
                               blank=True,
                               null=True,
                               default='company_logos/default.png')
 class ContactPerson(models.Model):
-    company_profile = models.OneToOneField(CompanyProfile, on_delete=models.CASCADE, related_name="contact_person")
+    company_profile = models.OneToOneField(
+        to='profiles.CompanyProfile',
+        on_delete=models.CASCADE,
+        related_name='contact_person',
+        null=True,  # <-- أضف هذا
+        blank=True  # <-- وهذا إن كنت تستخدم النماذج
+    )
     person_name     = models.CharField(max_length=100)
     email           = models.EmailField()
     phone           = models.CharField(max_length=20)

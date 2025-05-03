@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Payment Cancelled{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+     <div class="alert alert-warning">
+        <h2>Payment Cancelled</h2>
+        <p>Your subscription process was cancelled. You have not been charged.</p>
+    </div>
+    <a href="{% url 'main:home_view' %}" class="btn btn-primary me-2">Go to Homepage</a>
+    <a href="{% url 'subscriptions:plans' %}" class="btn btn-secondary">Back to Plans</a>
+</div>
+{% endblock %}

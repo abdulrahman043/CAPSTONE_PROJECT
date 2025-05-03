@@ -1,45 +1,36 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block style %}
-<link rel="stylesheet" href="{% static 'css/profiles.css' %}">
-<link rel="stylesheet" href="{% static 'css/posts.css' %}">
-{% endblock %}
+{% block title %}{{ opportunity.title }}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="fw-bold mb-4">{{ opportunity.company.company_name }}</h1>
-    <p class="mb-1"><i class="bi bi-geo-alt-fill"></i> {{ opportunity.city.arabic_name }}</p>
-    <p class="mb-1"><i class="bi bi-mortarboard-fill"></i>
-        {% for major in opportunity.majors_needed.all %}
-            <span class="badge bg-secondary">{{ major.ar_name }}</span>
-        {% empty %}
-            <span class="text-muted">لم يتم تحديد التخصصات</span>
-        {% endfor %}
-    </p>
-    <p class="mb-1"><i class="bi bi-calendar-check-fill"></i> يبدأ في: {{ opportunity.start_date|date:"Y-m-d" }}</p>
-    <p class="mb-1"><i class="bi bi-hourglass-split"></i> المدة: {{ opportunity.duration }}</p>
-    <p class="mb-3"><i class="bi bi-calendar-x-fill"></i> آخر موعد للتقديم: {{ opportunity.application_deadline|date:"Y-m-d" }}</p>
-
-    <h2 class="fs-5 mb-2">المتطلبات</h2>
-    <p class="mb-3">{{ opportunity.requirements|linebreaksbr }}</p>
-
-    {% if opportunity.benefits %}
-    <h2 class="fs-5 mb-2">المزايا</h2>
-    <p class="mb-3">{{ opportunity.benefits|linebreaksbr }}</p>
-    {% endif %}
-
-    <div class="d-flex justify-content-between align-items-center mt-4">
-        {% if request.user.is_authenticated and request.user.student_profile and not applied %}
-            {% if opportunity.application_deadline >= today %}
-            <a href="{% url 'posts:apply_opportunity' opportunity.id %}" class="btn btn-success">قدم الآن</a>
-            {% else %}
-            <button class="btn btn-secondary" disabled>انتهى موعد التقديم</button>
-            {% endif %}
-        {% elif request.user.is_authenticated and request.user.student_profile and applied %}
-            <button class="btn btn-info" disabled><i class="bi bi-check-circle-fill"></i> لقد قدمت بالفعل</button>
-        {% endif %}
-        <a href="{% url 'posts:opportunity_list' %}" class="btn btn-outline-secondary">العودة إلى القائمة</a>
+<div class="container py-4">
+    <h1>{{ opportunity.title }}</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <p class="card-text"><strong>Company:</strong> {{ opportunity.company.company_name }}</p>
+            <p class="card-text"><strong>Location:</strong> {{ opportunity.city.arabic_name }}</p>
+            <p class="card-text"><strong>Description:</strong></p>
+            <p class="card-text">{{ opportunity.description }}</p>
+            <p class="card-text"><strong>Requirements:</strong></p>
+            <p class="card-text">{{ opportunity.requirements }}</p>
+             {% if opportunity.benefits %}
+                <p class="card-text"><strong>Benefits:</strong></p>
+                <p class="card-text">{{ opportunity.benefits }}</p>
+             {% endif %}
+            <p class="card-text"><strong>Start Date:</strong> {{ opportunity.start_date }}</p>
+            <p class="card-text"><strong>Duration:</strong> {{ opportunity.duration }}</p>
+            <p class="card-text"><strong>Application Deadline:</strong> {{ opportunity.application_deadline }}</p>
+            <p class="card-text"><strong>Status:</strong> {{ opportunity.get_status_display }}</p>
+        </div>
     </div>
+    {% if request.user.is_authenticated and request.user.student_profile and opportunity.application_deadline >= today and not applied %}
+        <a href="{% url 'posts:apply_opportunity' opportunity.id %}" class="btn btn-success">Apply Now</a>
+    {% elif applied %}
+        <p class="alert alert-success">You have already applied for this opportunity.</p>
+    {% elif opportunity.application_deadline < today %}
+        <p class = "alert alert-danger"> This opportunity is expired</p>
+    {% endif %}
+    <a href="{% url 'posts:opportunity_list' %}" class="btn btn-secondary">Back to List</a>
 </div>
 {% endblock %}
