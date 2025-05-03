@@ -21,7 +21,32 @@ from django.utils import timezone
 from datetime import timedelta
 import ssl
 # Create your views here.
+def signup_company_email(request):
+    if request.user.is_authenticated:
+        return redirect('main:home_view')
 
+    if request.method == 'POST':
+        email = request.POST.get('email','').strip().lower()
+        if not email:
+            messages.error(request, "يرجى إدخال البريد الإلكتروني.")
+            return render(request, 'accounts/signup_company_email.html')
+
+        # أرسل OTP
+        code = f"{random.randint(0,999999):06d}"
+        EmailOTP.objects.create(user_email=email, code=code)
+        send_mail(
+            subject="رمز التحقق لتسجيل الشركة",
+            message=f"رمز التحقق: {code}\nصالِح 10 دقائق.",
+            from_email=None,
+            recipient_list=[email],
+        )
+        request.session['pending_signup'] = {
+            'type': 'company',
+            'email': email
+        }
+        return redirect('accounts:verify_signup_otp')
+
+    return render(request, 'accounts/signup_company_email.html')
 def signup_view(request: HttpRequest):
     if  request.user.is_authenticated:
         return redirect('main:home_view')
@@ -82,7 +107,7 @@ def signup_view(request: HttpRequest):
         send_mail(
             subject="رمز التحقق للتسجيل",
             message=(
-                f"مرحبًا {full_name},\n\n"
+                f"مرحبًا بك بنقطة وصل,\n\n"
                 f"الرمز الخاص بك لتفعيل الحساب هو: {otp_code}\n"
                 "سوف تنتهي صلاحيته خلال 10 دقائق."
             ),
@@ -101,50 +126,71 @@ def signup_view(request: HttpRequest):
         return redirect('accounts:verify_signup_otp')
 
     return render(request, 'accounts/signup.html')
-def verify_signup_otp(request:HttpRequest):
-    if  request.user.is_authenticated:
+
+def verify_signup_otp(request):
+    if request.user.is_authenticated:
         return redirect('main:home_view')
-    data=request.session.get('pending_signup')
+
+    data = request.session.get('pending_signup')
     if not data:
         return redirect('accounts:signup_view')
-    if request.method=='POST':
-        entered=request.POST.get('otp','').strip()
-        otp_qs=EmailOTP.objects.filter(user_email=data['email'],code=entered,used=False)
-        if otp_qs and not otp_qs.first().is_expired:
-            otp=otp_qs.first()
-            otp.used=True
+
+    if request.method == 'POST':
+        entered = request.POST.get('otp','').strip()
+        cutoff  = timezone.now() - timedelta(minutes=10)
+
+        otp_qs = EmailOTP.objects.filter(
+            user_email=data['email'],
+            code=entered,
+            used=False,
+            created_at__gte=cutoff
+        )
+        if otp_qs.exists():
+            otp = otp_qs.first()
+            otp.used = True
             otp.save()
-            with transaction.atomic():
-                print(data['password'])
-                user=User.objects.create_user(username=data['email'],email=data['email'],password=data['password'])
-                profile = StudentProfile.objects.create(user=user)
-                PersonalInformation.objects.create(
+
+            if data['type'] == 'student':
+                with transaction.atomic():
+                    user = User.objects.create_user(
+                        username=data['email'],
+                        email=data['email'],
+                        password=data['password']
+                    )
+                    profile = StudentProfile.objects.create(user=user)
+                    PersonalInformation.objects.create(
                         profile=profile,
                         full_name=data['full_name']
                     )
-                ContactInformation.objects.create(
+                    ContactInformation.objects.create(
                         profile=profile,
                         email=data['email']
                     )
-                del request.session['pending_signup']
+                    del request.session['pending_signup']
 
-            login(request, user)
+                login(request, user)
+                messages.success(request, "تم التحقق وتسجيل الدخول بنجاح!")
+                return redirect('main:home_view')
 
-            messages.success(request, "تم التحقق وتسجيل الدخول بنجاح!")            
-            return redirect('main:home_view')
-        else:
-            messages.error(request, "رمز غير صحيح أو منتهي الصلاحية.")
+            elif data['type'] == 'company':  
+                return redirect('accounts:signup_company_detail_view')
 
-    return render(request,'accounts/verify_otp.html')
+        messages.error(request, "رمز غير صحيح أو منتهي الصلاحية.")
+
+    return render(request, 'accounts/verify_otp.html')
     
 
-def signup_company_view(request: HttpRequest):
+def signup_company_detail_view(request: HttpRequest):
     if  request.user.is_authenticated:
         return redirect('main:home_view')
+    data = request.session.get('pending_signup')
+    if not data or data.get('type') != 'company':
+        return redirect('accounts:signup_company_email')
     industries = Industry.objects.filter(status=True)
+    email                     = data['email']
 
     if request.method == 'POST':
-        email                     = request.POST.get('email', '').strip().lower()
+
         password                  = request.POST.get('password', '')
         password2                 = request.POST.get('password2', '')
         company_name              = request.POST.get('company_name', '').strip()
@@ -238,6 +284,8 @@ def signup_company_view(request: HttpRequest):
                     industry                    = industry,
                     address_line                = address_line,
                 )
+            del request.session['pending_signup']
+
 
 
         messages.success(request,
@@ -247,7 +295,8 @@ def signup_company_view(request: HttpRequest):
         return redirect('accounts:login_view')
 
     return render(request, 'accounts/signup_company.html', {
-        'industries': industries
+        'industries': industries,
+        'email':email
     })
 
 def login_view(request: HttpRequest):

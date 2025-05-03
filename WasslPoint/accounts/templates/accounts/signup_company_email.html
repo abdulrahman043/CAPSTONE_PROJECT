@@ -1,0 +1,47 @@
+{# templates/accounts/signup_company_email.html #}
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="signup-page text-center">
+  <h2 class="contact-title">
+    <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸</span>
+      تسجيل شركة
+    <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
+  </h2>
+
+  <div class="contact-form-container">
+    <form method="post" action="{% url 'accounts:signup_company_email' %}">
+      {% csrf_token %}
+      {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }} mb-3">{{ msg }}</div>
+      {% endfor %}
+
+      <div class="form-group">
+        <div class="input-icon"><i class="fi fi-rr-envelope"></i></div>
+        <input
+          type="email"
+          name="email"
+          class="form-control-contact orange-border text-start"
+          placeholder="أدخل بريد الشركة الإلكتروني"
+          required
+        >
+      </div>
+
+      <div class="extra-links text-center mb-4">
+        <a href="{% url 'accounts:login_view' %}"> 
+                      سجّل دخولك هنا
+        </a>
+        <span class="mx-2">|</span>
+        <a href="{% url 'accounts:signup_view' %}">تسجيل مستخدم جديد</a>
+      </div>
+
+      <button type="submit" class="send-btn w-100">إرسال رمز التحقق</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
