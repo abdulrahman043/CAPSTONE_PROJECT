@@ -1,107 +1,143 @@
 {% extends 'main/base.html' %}
 {% load static %}
-
-{% block style %}
-<link rel="stylesheet" href="{% static 'css/profiles.css' %}">
-<link rel="stylesheet" href="{% static 'css/posts.css' %}">
-{% endblock %}
-
 {% block content %}
-<div class="container mt-5">
-    <h1 class="fw-bold mb-4">إضافة فرصة تدريب جديدة</h1>
-    {% if errors %}
-        <div class="alert alert-danger">{{ errors }}</div>
-    {% endif %}
+<div class="container">
+    <h2>إنشاء فرصة تدريبية</h2>
     <form method="post">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="majors_needed" class="form-label required">التخصصات المطلوبة</label>
-            <select class="form-select" id="majors_needed" name="majors_needed" multiple required>
-                {% for major in majors %}
-                <option value="{{ major.id }}">{{ major.ar_name }}</option>
-                {% endfor %}
-            </select>
-            <small class="text-muted">يمكنك اختيار أكثر من تخصص.</small>
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">العنوان</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="text-danger">{{ form.title.errors.as_text }}</div>
+            {% endif %}
         </div>
-        <div class="mb-3">
-            <label for="selected_majors" class="form-label">التخصصات المختارة:</label>
-            <ul id="selected_majors" class="list-group">
-                 {% if form.majors_needed.value %}
-                    {% for major_id in form.majors_needed.value %}
-                        {% for major in majors %}
-                            {% if major.id == major_id %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center" data-major-id="{{ major.id }}">
-                                    {{ major.ar_name }}
-                                    <button type="button" class="btn btn-sm btn-danger ms-2 remove-selected-major">x</button>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                {% endif %}
-            </ul>
-        </div>
-        <div class="mb-3">
-            <label for="city" class="form-label required">المدينة</label>
-            <select class="form-select" id="city" name="city" required>
-                <option value="" selected disabled>اختر المدينة</option>
+
+        <div class="form-group">
+            <label for="{{ form.city.id_for_label }}">المدينة</label>
+            <select name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" class="form-control">
+                <option value="" disabled selected>اختر مدينة</option>
                 {% for city in cities %}
-                <option value="{{ city.id }}" {% if form.city.value == city.id %} selected {% endif %}>{{ city.arabic_name }}</option>
+                    <option value="{{ city.id }}">{{ city.arabic_name }}</option>
                 {% endfor %}
             </select>
+            {% if form.city.errors %}
+                <div class="text-danger">{{ form.city.errors.as_text }}</div>
+            {% endif %}
         </div>
-        <div class="mb-3">
-            <label for="start_date" class="form-label required">تاريخ البدء</label>
-            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ form.start_date.value|date:'Y-m-d' }}" name="start_date" required>
-        </div>
-        <div class="mb-3">
-            <label for="duration" class="form-label required">المدة</label>
-            <input type="text" class="form-control" id="duration" name="duration" value="{{ form.duration.value }}" required placeholder="مثال: 3 أشهر، فصل دراسي">
-        </div>
-        <div class="mb-3">
-            <label for="application_deadline" class="form-label required">آخر موعد للتقديم</label>
-            <input type="date" class="form-control" id="application_deadline" name="application_deadline" value="{{ form.application_deadline.value|date:'Y-m-d' }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="requirements" class="form-label required">المتطلبات</label>
-            <textarea class="form-control" id="requirements" name="requirements" rows="4" required>{{ form.requirements.value }}</textarea>
-        </div>
-        <div class="mb-3">
-            <label for="benefits" class="form-label">المزايا (اختياري)</label>
-            <textarea class="form-control" id="benefits" name="benefits" rows="3">{{ form.benefits.value }}</textarea>
-        </div>
-        <div class="mb-3">
-            <label for="status" class="form-label required">الحالة</label>
-            <select class="form-select" id="status" name="status" required>
-                {% for status_value, status_label in statuses %}
-                <option value="{{ status_value }}" {% if form.status.value == status_value %} selected {% endif %}>{{ status_label }}</option>
+
+        <div class="form-group">
+            <label for="{{ form.majors_needed.id_for_label }}">التخصصات المطلوبة</label>
+            <select name="{{ form.majors_needed.name }}" id="{{ form.majors_needed.id_for_label }}" class="form-control" multiple>
+                {% for major in majors %}
+                    <option value="{{ major.id }}">{{ major.arabic_name }}</option>
                 {% endfor %}
             </select>
+            {% if form.majors_needed.errors %}
+                <div class="text-danger">{{ form.majors_needed.errors.as_text }}</div>
+            {% endif %}
+            <div id="selected-majors-container" style="display: none;">
+                <p>التخصصات المختارة:</p>
+                <ul id="selected-majors-list" style="display: flex; flex-wrap: wrap; list-style: none; padding: 0;">
+                    </ul>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">نشر الفرصة</button>
-        <a href="{% url 'posts:company_opportunities' %}" class="btn btn-secondary ms-2">إلغاء</a>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">الوصف</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="text-danger">{{ form.description.errors.as_text }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.requirements.id_for_label }}">المتطلبات</label>
+            {{ form.requirements }}
+            {% if form.requirements.errors %}
+                <div class="text-danger">{{ form.requirements.errors.as_text }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.benefits.id_for_label }}">المزايا</label>
+            {{ form.benefits }}
+            {% if form.benefits.errors %}
+                <div class="text-danger">{{ form.benefits.errors.as_text }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.start_date.id_for_label }}">تاريخ البدء</label>
+            {{ form.start_date }}
+            {% if form.start_date.errors %}
+                <div class="text-danger">{{ form.start_date.errors.as_text }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.duration.id_for_label }}">المدة</label>
+            {{ form.duration }}
+            {% if form.duration.errors %}
+                <div class="text-danger">{{ form.duration.errors.as_text }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.application_deadline.id_for_label }}">آخر موعد للتقديم</label>
+            {{ form.application_deadline }}
+            {% if form.application_deadline.errors %}
+                <div class="text-danger">{{ form.application_deadline.errors.as_text }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.status.id_for_label }}">الحالة</label>
+            {{ form.status }}
+            {% if form.status.errors %}
+                <div class="text-danger">{{ form.status.errors.as_text }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">إنشاء فرصة</button>
     </form>
 </div>
 
 <script>
-    const majorsSelect = document.getElementById('majors_needed');
-    const selectedMajorsList = document.getElementById('selected_majors');
+    const majorsSelect = document.getElementById('{{ form.majors_needed.id_for_label }}');
+    const selectedMajorsList = document.getElementById('selected-majors-list');
+    const selectedMajorsContainer = document.getElementById('selected-majors-container');
 
-    function updateSelectedMajorsList() {
-        selectedMajorsList.innerHTML = '';
+    function updateSelectedMajors() {
+        selectedMajorsList.innerHTML = ''; // Clear the list
         const selectedOptions = Array.from(majorsSelect.selectedOptions);
+        if (selectedOptions.length > 0) {
+            selectedMajorsContainer.style.display = "block";
+        } else {
+            selectedMajorsContainer.style.display = "none";
+        }
+
         selectedOptions.forEach(option => {
             const listItem = document.createElement('li');
-            listItem.textContent = option.textContent;
-            listItem.dataset.majorId = option.value;
-            listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+            listItem.style.marginRight = '10px';
+            listItem.style.marginBottom = '5px';
+            listItem.style.display = 'inline-flex';
+            listItem.style.alignItems = 'center';
+            listItem.style.padding = '5px';
+            listItem.style.border = '1px solid #ccc';
+            listItem.style.borderRadius = '5px';
+            listItem.textContent = option.textContent; // Use option.textContent
 
             const removeButton = document.createElement('button');
             removeButton.textContent = 'x';
-            removeButton.classList.add('btn', 'btn-sm', 'btn-danger', 'ms-2', 'remove-selected-major');
-            removeButton.addEventListener('click', function() {
-                listItem.remove();
-                option.selected = false;
-                updateSelectedMajorsList();
+            removeButton.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');  // Added ml-2 for left margin
+            removeButton.style.lineHeight = '1';
+            removeButton.style.padding = '0px 4px';
+
+
+            removeButton.addEventListener('click', () => {
+                option.selected = false; // Deselect the option
+                updateSelectedMajors(); // Update the displayed list
             });
 
             listItem.appendChild(removeButton);
@@ -109,11 +145,7 @@
         });
     }
 
-    majorsSelect.addEventListener('change', function() {
-        updateSelectedMajorsList();
-    });
-
-    // Initial population of the list on page load, in case some majors are pre-selected
-    updateSelectedMajorsList();
+    majorsSelect.addEventListener('change', updateSelectedMajors);
+    updateSelectedMajors(); // Initial update on page load
 </script>
 {% endblock %}

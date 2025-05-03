@@ -7,12 +7,9 @@ urlpatterns = [ path('profile/',views.profile_view,name='profile_view'),
                 path('company_profile/<int:user_id>',views.company_profile_view,name='company_profile_view_admin'),
                 path('company_profile/<int:user_id>/add_',views.add_edit_company_info,name='add_edit_company_info'),
                 path('company_profile/add_contact',views.add_edit_contact_person,name='add_edit_contact_person'),
-                 path('company_profile/edit_logo',views.edit_logo,name='edit_logo'),
+                path('company_profile/edit_logo',views.edit_logo,name='edit_logo'),
                 path('company_profile/<int:user_id>/edit_logo',views.edit_logo,name='edit_logo_admin'),
-
-
                 path('company_profile/<int:user_id>/add_contact',views.add_edit_contact_person,name='add_edit_contact_person_admin'),
-
                 path('delate_exp/<exp_id>',views.delate_exp,name='delate_exp'),
                 path('<int:user_id>/delate_exp/<exp_id>',views.delate_exp,name='delate_exp_admin'),
                 path('edit_exp/<exp_id>',views.edit_exp,name='edit_exp'),

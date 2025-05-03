@@ -2,6 +2,8 @@ from django.shortcuts import render , redirect
 from django.http import HttpRequest
 from django.core.mail import send_mail
 from django.conf import settings
+from posts.models import TrainingOpportunity # Import Opportunity model
+from django.utils import timezone
 # Create your views here.
 def home_view(request:HttpRequest):
     return render(request,'main/home.html')
@@ -32,5 +34,14 @@ def contact_view(request):
     return render(request, 'main/contact.html')
 
 def company_view(request:HttpRequest):
-    return render(request,'main/company.html')
+    """ Displays general company info and lists active opportunities """
+    active_opportunities = TrainingOpportunity.objects.filter(
+        status=TrainingOpportunity.Status.ACTIVE,
+        application_deadline__gte=timezone.now().date()
+        ).select_related('company','city').order_by('-created_at')[:10] # Limit for display
+
+    context = {
+        'opportunities': active_opportunities
+    }
+    return render(request,'main/company.html', context)
 

@@ -1,0 +1,65 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}My Subscription{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="text-center mb-4">My Subscription Details</h2>
+
+     {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if subscription %}
+        <div class="card mb-4">
+            <div class="card-header {% if is_currently_active %}bg-success{% else %}bg-secondary{% endif %} text-white">
+                Current Status: {% if is_currently_active %} Active {% else %} Inactive {% endif %}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Plan: {{ subscription.plan.name }}</h5>
+                <p class="card-text">Start Date: {{ subscription.start_date|date:"Y-m-d H:i" }}</p>
+                <p class="card-text">End Date: {{ subscription.end_date|date:"Y-m-d H:i" }}</p>
+                 {% if not is_currently_active %}
+                     <p class="text-danger">Your subscription has expired.</p>
+                     <a href="{% url 'subscriptions:plans' %}" class="btn btn-primary">Renew / Choose Plan</a>
+                 {% endif %}
+            </div>
+        </div>
+
+        <h3 class="mt-5 mb-3">Subscription History</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Plan</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Payment ID (Ref)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in history %}
+                <tr>
+                    <td>{{ sub.plan.name }}</td>
+                    <td>{{ sub.start_date|date:"Y-m-d" }}</td>
+                    <td>{{ sub.end_date|date:"Y-m-d" }}</td>
+                    <td>{{ sub.payment_id|default:"N/A" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <div class="alert alert-warning text-center">
+            <p>You do not have any active or past subscriptions.</p>
+            <a href="{% url 'subscriptions:plans' %}" class="btn btn-primary">View Subscription Plans</a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

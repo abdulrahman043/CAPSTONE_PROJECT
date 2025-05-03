@@ -1,0 +1,31 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Update Application Status{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1>Update Application Status</h1>
+    <p>Application for: {{ application.opportunity.title }} by {{ application.student.user.username }}</p>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="{% url 'posts:update_application_status' application.id %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status" class="form-select" required>
+                {% for value, label in statuses %}
+                    <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Status</button>
+        <a href="{% url 'posts:opportunity_applications' application.opportunity.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
