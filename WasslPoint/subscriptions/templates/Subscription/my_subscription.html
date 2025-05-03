@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container py-5">
-    <h2 class="text-center mb-4">My Subscription Details</h2>
+    <h2 class="text-center mb-4">تفاصيل اشتراكاتي</h2>
 
      {% if messages %}
         {% for message in messages %}
@@ -22,24 +22,24 @@
                 Current Status: {% if is_currently_active %} Active {% else %} Inactive {% endif %}
             </div>
             <div class="card-body">
-                <h5 class="card-title">Plan: {{ subscription.plan.name }}</h5>
-                <p class="card-text">Start Date: {{ subscription.start_date|date:"Y-m-d H:i" }}</p>
-                <p class="card-text">End Date: {{ subscription.end_date|date:"Y-m-d H:i" }}</p>
+                <h5 class="card-title">خطة الاشتراك: {{ subscription.plan.name }}</h5>
+                <p class="card-text">تاريخ بداية الإشتراك: {{ subscription.start_date|date:"Y-m-d H:i" }}</p>
+                <p class="card-text">تاريخ نهاية الاشتراك: {{ subscription.end_date|date:"Y-m-d H:i" }}</p>
                  {% if not is_currently_active %}
-                     <p class="text-danger">Your subscription has expired.</p>
-                     <a href="{% url 'subscriptions:plans' %}" class="btn btn-primary">Renew / Choose Plan</a>
+                     <p class="text-danger">انتهاء اشتراكك</p>
+                     <a href="{% url 'subscriptions:plans' %}" class="btn btn-primary">تجديد الاشتراك / اختر احد الخطط</a>
                  {% endif %}
             </div>
         </div>
 
-        <h3 class="mt-5 mb-3">Subscription History</h3>
+        <h3 class="mt-5 mb-3">تاريخ الإشتراكات</h3>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Plan</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Payment ID (Ref)</th>
+                    <th>خطة</th>
+                    <th>تاريخ البدء</th>
+                    <th>تاريخ الانتهاء</th>
+                    <th>رقم عملية الدفع</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,8 +56,8 @@
 
     {% else %}
         <div class="alert alert-warning text-center">
-            <p>You do not have any active or past subscriptions.</p>
-            <a href="{% url 'subscriptions:plans' %}" class="btn btn-primary">View Subscription Plans</a>
+            <p>لاتملك اي اشتراك فعال</p>
+            <a href="{% url 'subscriptions:plans' %}" class="btn btn-primary">عرض خطط الإشتراك </a>
         </div>
     {% endif %}
 

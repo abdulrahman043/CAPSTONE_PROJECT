@@ -6,32 +6,27 @@ from .models import SubscriptionPlan, UserSubscription, has_active_subscription
 from django.utils import timezone
 from datetime import timedelta
 
+
 @login_required
 def subscription_plans_view(request):
-    # You can add logic here later to perhaps redirect users with active subscriptions
-    # or tailor the view based on their current subscription status.
-
     plans = SubscriptionPlan.objects.filter(status=True).order_by('price')
     current_subscription = UserSubscription.objects.filter(user=request.user, end_date__gte=timezone.now()).first()
     context = {
         'plans': plans,
         'current_subscription': current_subscription,
     }
-    # *** Use the specified template path ***
     return render(request, 'Subscription/plans.html', context)
+
 
 @login_required
 def payment_view(request, plan_id):
     plan = get_object_or_404(SubscriptionPlan, pk=plan_id, status=True)
 
-    # Prevent subscribing again if already active
     if has_active_subscription(request.user):
          messages.warning(request, "لديك اشتراك فعال بالفعل. الترقيات غير مدعومة بعد.") # "You already have an active subscription. Upgrades are not yet supported."
          return redirect('subscriptions:plans')
 
     if request.method == 'POST':
-        # --- Placeholder Payment Logic ---
-        # In a real application, integrate with a payment gateway here.
         try:
             # Simulate successful payment
             payment_reference = f"SIM_{timezone.now().strftime('%Y%m%d%H%M%S')}_{request.user.id}" # Dummy ID

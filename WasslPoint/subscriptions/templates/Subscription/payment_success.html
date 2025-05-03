@@ -1,15 +1,15 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}Subscription Successful{% endblock %}
+{% block title %}تم الاشتراك بنجاح{% endblock %}
 
 {% block content %}
 <div class="container py-5 text-center">
     <div class="alert alert-success">
-        <h2>Subscription Successful!</h2>
-        <p>Thank you for subscribing. Your access has been activated.</p>
+        <h2>تم الاشتراك بنجاح!</h2>
+        <p>شكرًا لاشتراكك. تم تفعيل وصولك.</p>
     </div>
-    <a href="{% url 'main:home_view' %}" class="btn btn-primary me-2">Go to Homepage</a>
-    <a href="{% url 'subscriptions:my_subscription' %}" class="btn btn-info">View My Subscription</a>
+    <a href="{% url 'main:home_view' %}" class="btn btn-primary me-2">اذهب إلى الصفحة الرئيسية</a>
+    <a href="{% url 'subscriptions:my_subscription' %}" class="btn btn-info">عرض اشتراكي</a>
 </div>
 {% endblock %}

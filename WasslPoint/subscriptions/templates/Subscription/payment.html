@@ -1,26 +1,26 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}Confirm Payment{% endblock %}
+{% block title %}تاكيد عملية الدفع{% endblock %}
 
 {% block content %}
 <div class="container py-5">
-    <h2 class="text-center mb-4">Confirm Subscription</h2>
+    <h2 class="text-center mb-4">تأكيد الإشتراك</h2>
 
     <div class="card w-50 mx-auto">
         <div class="card-body">
-            <h5 class="card-title">Plan: {{ plan.name }}</h5>
-            <p class="card-text">Duration: {{ plan.duration_days }} days</p>
-            <p class="card-text">Price: {{ plan.price }} SAR</p>
+            <h5 class="card-title">الخطة: {{ plan.name }}</h5>
+            <p class="card-text">المدة: {{ plan.duration_days }} days</p>
+            <p class="card-text">السعر: {{ plan.price }} SAR</p>
             <hr>
-            <p>Click the button below to simulate the payment process.</p>
-            <p><small class="text-muted">Note: This is a placeholder. No real payment will be processed.</small></p>
+            <p>انقر على الزر أدناه لمحاكاة عملية الدفع.</p>
+            <p><small class="text-muted">ملاحظة: هذا مجرد رمز مؤقت. لن تتم معالجة أي دفعات فعلية.</small></p>
 
             <form method="POST" action="{% url 'subscriptions:payment' plan.id %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-success w-100">Confirm and Pay {{ plan.price }} SAR</button>
+                <button type="submit" class="btn btn-success w-100">تأكيد والدفع {{ plan.price }} SAR</button>
             </form>
-            <a href="{% url 'subscriptions:plans' %}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+            <a href="{% url 'subscriptions:plans' %}" class="btn btn-secondary w-100 mt-2">إلغاء</a>
         </div>
     </div>
 </div>
