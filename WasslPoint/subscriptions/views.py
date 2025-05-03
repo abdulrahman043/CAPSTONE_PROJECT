@@ -8,10 +8,8 @@ from datetime import timedelta
 
 @login_required
 def subscription_plans_view(request):
-    # Redirect if already subscribed? Or allow upgrades? For now, just show plans.
-    # if has_active_subscription(request.user):
-    #     messages.info(request, "You already have an active subscription.")
-    #     return redirect('subscriptions:my_subscription') # Redirect to manage subscription page
+    # You can add logic here later to perhaps redirect users with active subscriptions
+    # or tailor the view based on their current subscription status.
 
     plans = SubscriptionPlan.objects.filter(status=True).order_by('price')
     current_subscription = UserSubscription.objects.filter(user=request.user, end_date__gte=timezone.now()).first()
@@ -19,20 +17,21 @@ def subscription_plans_view(request):
         'plans': plans,
         'current_subscription': current_subscription,
     }
-    return render(request, 'subscriptions/plans.html', context)
+    # *** Use the specified template path ***
+    return render(request, 'Subscription/plans.html', context)
 
 @login_required
 def payment_view(request, plan_id):
     plan = get_object_or_404(SubscriptionPlan, pk=plan_id, status=True)
 
+    # Prevent subscribing again if already active
     if has_active_subscription(request.user):
-         messages.warning(request, "You already have an active subscription. Upgrades are not yet supported.")
+         messages.warning(request, "لديك اشتراك فعال بالفعل. الترقيات غير مدعومة بعد.") # "You already have an active subscription. Upgrades are not yet supported."
          return redirect('subscriptions:plans')
 
     if request.method == 'POST':
         # --- Placeholder Payment Logic ---
-        # In a real application, you would integrate with a payment gateway here (Stripe, PayPal, etc.)
-        # Upon successful payment confirmation from the gateway:
+        # In a real application, integrate with a payment gateway here.
         try:
             # Simulate successful payment
             payment_reference = f"SIM_{timezone.now().strftime('%Y%m%d%H%M%S')}_{request.user.id}" # Dummy ID
@@ -40,6 +39,7 @@ def payment_view(request, plan_id):
             start_time = timezone.now()
             end_time = start_time + timedelta(days=plan.duration_days)
 
+            # Create the new subscription record
             UserSubscription.objects.create(
                 user=request.user,
                 plan=plan,
@@ -47,35 +47,41 @@ def payment_view(request, plan_id):
                 end_date=end_time,
                 payment_id=payment_reference # Store the dummy ID
             )
-            messages.success(request, f"Successfully subscribed to {plan.name}!")
-            # In a real app, redirect would come from gateway callback often
-            return redirect('subscriptions:payment_success')
+            messages.success(request, f"تم الاشتراك بنجاح في {plan.name}!") # Subscribed successfully to {plan.name}!
+            return redirect('subscriptions:payment_success') # Redirect to success page
         except Exception as e:
-             messages.error(request, f"An error occurred while processing your subscription: {e}")
+             # Log the error in a real app: log.error(f"Subscription error for user {request.user.id}: {e}")
+             messages.error(request, f"حدث خطأ أثناء معالجة اشتراكك: {e}") # "An error occurred while processing your subscription: {e}"
              return redirect('subscriptions:plans')
         # --- End Placeholder Payment Logic ---
 
     context = {'plan': plan}
-    return render(request, 'subscriptions/payment.html', context) # Simple confirmation/payment page
+    # *** Use the specified template path ***
+    return render(request, 'Subscription/payment.html', context)
 
 @login_required
 def payment_success_view(request):
     # Simple success page
-    return render(request, 'subscriptions/payment_success.html')
+    # *** Use the specified template path ***
+    return render(request, 'Subscription/payment_success.html')
 
 @login_required
 def payment_cancel_view(request):
     # Simple cancellation page
-    messages.info(request, "Your payment process was cancelled.")
-    return render(request, 'subscriptions/payment_cancel.html')
+    messages.info(request, "تم إلغاء عملية الدفع الخاصة بك.") # "Your payment process was cancelled."
+    # *** Use the specified template path ***
+    return render(request, 'Subscription/payment_cancel.html')
 
 @login_required
 def my_subscription_view(request):
+    # Get the most recent subscription (active or expired)
     subscription = UserSubscription.objects.filter(user=request.user).order_by('-end_date').first()
-    history = UserSubscription.objects.filter(user=request.user).order_by('-start_date') # Get all history
+    # Get all past subscriptions for history display
+    history = UserSubscription.objects.filter(user=request.user).order_by('-start_date')
     context = {
-        'subscription': subscription,
+        'subscription': subscription, # The latest one
         'history': history,
-         'is_currently_active': has_active_subscription(request.user),
+         'is_currently_active': has_active_subscription(request.user), # Check if the latest is actually active now
     }
-    return render(request, 'subscriptions/my_subscription.html', context)
+    # *** Use the specified template path ***
+    return render(request, 'Subscription/my_subscription.html', context)
