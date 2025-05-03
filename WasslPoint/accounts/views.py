@@ -345,7 +345,7 @@ def logout_view(request:HttpRequest):
 @login_required
 @staff_member_required
 def user_list_view(request):
-    q         = request.GET.get('q', '').strip()
+    q = request.GET.get('q', '').strip()
     user_type = request.GET.get('type', '').strip()   
     users     = User.objects.all()
 
@@ -371,7 +371,7 @@ def user_list_view(request):
     return render(request, 'accounts/user_list.html', {
         'user_page': user_page,
         'q': q,
-        'user_type': user_type,   # ← مرّر نوع المستخدم للقالب
+        'user_type': user_type,   
     })
 def user_delete(request, user_id):
     user=User.objects.get(pk=user_id)
@@ -385,7 +385,16 @@ def user_delete(request, user_id):
 @login_required
 @staff_member_required
 def company_user_list_view(request: HttpRequest):
+    q = request.GET.get('q', '').strip()
+
     user_qs = User.objects.filter(company_profile__isnull=False)
+
+    if q:
+        user_qs = user_qs.filter(
+            Q(username__icontains=q) |
+            Q(email__icontains=q) |
+            Q(company_profile__company_name__icontains=q)
+        ).distinct()
     paginator=Paginator(user_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
@@ -393,8 +402,15 @@ def company_user_list_view(request: HttpRequest):
 
     return render(request, 'accounts/company_users_list.html',context)
 def student_user_list_view(request: HttpRequest):
-    user_qs = User.objects.filter(student_profile__isnull=False)
-    paginator=Paginator(user_qs,10)
+    q = request.GET.get('q', '').strip()
+    users_qs = User.objects.filter(student_profile__isnull=False)
+    if q:
+        users_qs = users_qs.filter(
+            Q(username__icontains=q) |
+            Q(email__icontains=q) |
+            Q(student_profile__personal_info__full_name__icontains=q) 
+        ).distinct()
+    paginator=Paginator(users_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
     context={"user_page":user_page}
@@ -403,7 +419,14 @@ def student_user_list_view(request: HttpRequest):
 @login_required
 @staff_member_required
 def pending_company_requests_view(request: HttpRequest):
+    q = request.GET.get('q', '').strip()
     user_qs = User.objects.filter(is_active=False)
+    if q:
+        users = users.filter(
+            Q(username__icontains=q) |
+            Q(email__icontains=q) |
+            Q(company_profile__company_name__icontains=q)
+        ).distinct()
     paginator=Paginator(user_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)

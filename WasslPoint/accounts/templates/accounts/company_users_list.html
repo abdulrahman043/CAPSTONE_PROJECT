@@ -22,7 +22,7 @@
       <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
       <button class="sidebar-btn orange text-center text-decoration-none">التدريبات</button>
       <button class="sidebar-btn teal text-center text-decoration-none">التقديمات</button>
-      <button class="sidebar-btn orange text-center text-decoration-none">الطلاب</button>
+      <a href="{% url 'accounts:student_user_list_view' %}"  class="sidebar-btn orange text-center text-decoration-none">الطلاب</a>
       <a href="{% url 'accounts:pending_company_requests_view' %}" class="sidebar-btn teal text-center text-decoration-none">طلبات التفعيل</a>
     </nav>
 
@@ -37,10 +37,7 @@
             placeholder="ابحث عن شركة…"
             value="{{ q }}"
           >
-          <select name="industry" class="form-control-contact orange-border">
-            <option value="" {% if not selected_industry %}selected{% endif %}>كل المجالات</option>
-           
-          </select>
+         
           <button type="submit" class="action-btn edit text-white btn">بحث</button>
         </form>
       </div>
