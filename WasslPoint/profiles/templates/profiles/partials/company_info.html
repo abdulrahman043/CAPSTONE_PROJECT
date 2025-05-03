@@ -23,6 +23,14 @@
         </div>
         <div class="row mb-2">
             <div class="col">
+                <p> ايميل الشركة</p>
+            </div>
+            <div class="col">
+                <p>{{profile.user.username}}</p>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
                 <p>رقم السجل التجاري</p>
             </div>
             <div class="col">
@@ -78,6 +86,14 @@
                 </div>
                 <div class="col">
                     <p><input class="form-control" id="company_name" name="company_name" type="text" value="{{profile.company_name}}" required ></p>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <label class="form-label required" for="email_co"> ايميل الشركة</label>
+                </div>
+                <div class="col">
+                    <p><input class="form-control" id="email_co" name="email_co" type="text" value="{{profile.user.username}}" disabled required ></p>
                 </div>
             </div>
             <div class="row mb-2">
