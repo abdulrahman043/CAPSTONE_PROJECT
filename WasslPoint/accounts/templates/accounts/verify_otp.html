@@ -1,4 +1,3 @@
-{# templates/accounts/verify_otp.html #}
 {% extends 'main/base.html' %}
 {% load static %}
 
@@ -15,9 +14,9 @@
   </h2>
 
   <div class="contact-form-container">
-
     <form method="post" action="{% url 'accounts:verify_signup_otp' %}">
       {% csrf_token %}
+
      
 
       <div class="form-group">
@@ -35,9 +34,9 @@
       <button type="submit" class="send-btn w-100">تحقق</button>
     </form>
 
-   
-
     <div class="extra-links text-center mt-3">
+      <a href="{% url 'accounts:resend_signup_otp' %}">إعادة الإرسال</a>
+      <span class="mx-2">|</span>
       <a href="{% url 'accounts:signup_view' %}">عودة للتسجيل</a>
       <span class="mx-2">|</span>
       <a href="{% url 'accounts:login_view' %}">العودة لتسجيل الدخول</a>

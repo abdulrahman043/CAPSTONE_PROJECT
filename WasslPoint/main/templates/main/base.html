@@ -117,7 +117,7 @@
 
     <!-- رسائل التنبيهات -->
     {% if messages %}
-    <div class="container mt-3">
+    <div class="container">
       {% for message in messages %}
         <div
           class="alert alert-{% if message.tags == "error" %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"

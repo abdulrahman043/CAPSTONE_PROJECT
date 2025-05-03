@@ -1,11 +1,12 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
 
 app_name='accounts'
 urlpatterns=[
     path('Login/',views.login_view,name='login_view'),
     path('signup/',views.signup_view,name='signup_view'),
-    path('logout',views.logout_view,name='logout'),
+    path('logout/',views.logout_view,name='logout'),
     path('signup/company/',views.signup_company_view,name='signup_company_view'),
     path('users/',views.user_list_view,name='user_list_view'),
     path('company/users/',views.company_user_list_view,name='company_user_list_view'),
@@ -14,5 +15,7 @@ urlpatterns=[
     path('users/<int:user_id>/delete/', views.user_delete, name='user_delete'),
     path('users/<int:user_id>/approve_company/', views.approve_company, name='approve_company'),
     path('signup/verify-otp/', views.verify_signup_otp, name='verify_signup_otp'),
+    path('verify-otp/resend/', views.resend_signup_otp, name='resend_signup_otp'),
+
     path('users/delete_all/', views.delete_all, name='delete_all'),
-]
+   
