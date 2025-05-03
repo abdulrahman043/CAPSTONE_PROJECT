@@ -11,7 +11,7 @@
   <section class="ads">
     <h2 class="mb-4 page-title">
       <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
-      الطلاب
+      التدريبات
       <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
     </h2>
   </section>
@@ -20,8 +20,9 @@
     <!-- Sidebar -->
     <nav class="sidebar">
       <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
-      <a href="{% url 'accounts:company_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الشركات</a>
-      <a href="{%url 'accounts:applications_list_view'%}" class="sidebar-btn teal text-center text-decoration-none">التقديمات</a>
+      <a href="{%url 'accounts:applications_list_view'%}" class="sidebar-btn orange  text-center text-decoration-none">التقديمات</a>
+      <a href="{% url 'accounts:student_user_list_view' %}"  class="sidebar-btn teal text-center text-decoration-none">الطلاب</a>
+      <a href="{% url 'accounts:pending_company_requests_view' %}" class="sidebar-btn orange text-center text-decoration-none">طلبات التفعيل</a>
     </nav>
 
     <!-- Main content -->
@@ -34,7 +35,7 @@
             type="text"
             name="q"
             class="form-control-contact orange-border"
-            placeholder="ابحث عن طالب…"
+            placeholder="ابحث عن تدريب"
             value="{{ q }}"
           >
           <button type="submit" class="action-btn edit btn text-white">بحث</button>
@@ -42,7 +43,7 @@
       </div>
 
       <!-- Students table & bulk-delete form -->
-      <form action="{% url 'accounts:delete_all' %}" method="post">
+      <form action="{% url 'accounts:opp_delete_all' %}" method="post">
         {% csrf_token %}
         <div class="table-wrapper shadow-sm">
           <table class="admin-table">
@@ -50,33 +51,29 @@
               <tr>
                 <th><input type="checkbox" id="select-all"></th>
                 <th>المعرّف</th>
-                <th>الاسم</th>
+                <th>اسم الشركة</th>
                 <th>الايميل</th>
-                <th>الهاتف</th>
-                <th>السيرة الذاتية</th>
+                <th>المدينة </th>
+                <th>الحالة</th>
               </tr>
             </thead>
             <tbody>
-              {% for user in user_page %}
+              {% for opp in opportunity_page %}
               <tr>
                 <td>
                   <input type="checkbox" class="select-row"
-                         name="selected_users" value="{{ user.id }}">
+                         name="selected_users" value="{{ opp.id }}">
                 </td>
-                <td>{{ user.id }}</td>
-                <td>{{ user.student_profile.personal_info.full_name }}</td>
+                <td><a href="{%url 'posts:opportunity_detail' opp.id%}">{{ opp.id }}</a></td>
+                <td>{{ opp.company.company_name }}</td>
                 <td>
-                  <a href="{% url 'profiles:profile_view_admin' user.id %}">
-                    {{ user.username }}
+                  <a href="{% url 'profiles:company_profile_view_admin' opp.company.user.id %}">
+                    {{ opp.company.user.username }}
                   </a>
                 </td>
-                <td>{{ user.student_profile.contact_info.phone }}</td>
+                <td>{{ opp.city.arabic_name}}</td>
                 <td>
-                  <a target="_blank"
-                     href="{% url 'profiles:export_cv_pdf_admin' user.id %}"
-                     class="btn export-pdf-btn btn-sm mb-2">
-                    عرض السيرة الذاتية
-                  </a>
+                  {{opp.status}}
                 </td>
               </tr>
               {% empty %}
@@ -90,7 +87,7 @@
 
         <!-- Action buttons -->
         <div class="actions">
-           <!--
+         <!--
           <a href="#" class="action-btn add">اضافة</a>
           <a href="#" class="action-btn edit">تعديل</a>
           -->

@@ -21,7 +21,7 @@ from django.utils import timezone
 from datetime import timedelta
 import ssl
 from django.db.models       import Q
-
+from posts.models import Application,TrainingOpportunity
 # Create your views here.
 def signup_company_email(request):
     if request.user.is_authenticated:
@@ -351,6 +351,7 @@ def user_list_view(request):
 
     if q:
         users = users.filter(
+              Q(id__icontains=q) |
             Q(username__icontains=q) |
             Q(email__icontains=q) |
             Q(student_profile__personal_info__full_name__icontains=q) |
@@ -391,6 +392,8 @@ def company_user_list_view(request: HttpRequest):
 
     if q:
         user_qs = user_qs.filter(
+            Q(id__icontains=q) |
+
             Q(username__icontains=q) |
             Q(email__icontains=q) |
             Q(company_profile__company_name__icontains=q)
@@ -401,11 +404,15 @@ def company_user_list_view(request: HttpRequest):
     context={"user_page":user_page}
 
     return render(request, 'accounts/company_users_list.html',context)
+@login_required
+@staff_member_required
 def student_user_list_view(request: HttpRequest):
     q = request.GET.get('q', '').strip()
     users_qs = User.objects.filter(student_profile__isnull=False)
     if q:
         users_qs = users_qs.filter(
+            Q(id__icontains=q) |
+
             Q(username__icontains=q) |
             Q(email__icontains=q) |
             Q(student_profile__personal_info__full_name__icontains=q) 
@@ -416,6 +423,48 @@ def student_user_list_view(request: HttpRequest):
     context={"user_page":user_page}
 
     return render(request, 'accounts/student_users_list.html',context)
+@login_required
+@staff_member_required
+def applications_list_view(request: HttpRequest):
+    q = request.GET.get('q', '').strip()
+    applications_qs = Application.objects.all().order_by('-applied_at')
+    if q:
+        applications_qs = applications_qs.filter(
+            Q(opportunity__company__company_name__icontains=q) |
+            Q(id__icontains=q) |
+
+            Q(student__user__username__icontains=q) |
+            Q(student__user__email__icontains=q) |
+            Q(student__personal_info__full_name__icontains=q) 
+        ).distinct()
+    paginator=Paginator(applications_qs,10)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"applications_page":user_page}
+
+    return render(request, 'accounts/applications_list.html',context)
+@login_required
+@staff_member_required
+def opportunity_list_view(request: HttpRequest):
+    q = request.GET.get('q', '').strip()
+    opportunity_qs = TrainingOpportunity.objects.all().order_by('-created_at')
+    if q:
+        opportunity_qs = opportunity_qs.filter(
+            Q(company__company_name__icontains=q) |
+            Q(id__icontains=q) |
+                        Q(city__arabic_name__icontains=q) |
+
+
+            Q(company__user__username__icontains=q) |
+            Q(company__user__email__icontains=q) 
+            
+        ).distinct()
+    paginator=Paginator(opportunity_qs,10)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"opportunity_page":user_page}
+
+    return render(request, 'accounts/opportunity_list.html',context)
 @login_required
 @staff_member_required
 def pending_company_requests_view(request: HttpRequest):
@@ -476,6 +525,38 @@ def delete_all(request:HttpRequest):
             "❌ حدث خطأ أثناء حذف المستخدمين. حاول مرة أخرى لاحقًا."
         )
     return redirect('accounts:user_list_view')
+@login_required
+@staff_member_required
+@require_POST
+def app_delete_all(request:HttpRequest):
+    try:
+        if request.method=='POST':
+            ids=request.POST.getlist('selected_users')
+            if ids:
+                Application.objects.filter(id__in=ids).delete()
+                messages.success(request,"✅ تم حذف التقديمات المحددة بنجاح.")
+    except:
+        messages.error(
+            request,
+            "❌ حدث خطأ أثناء حذف المحددة. حاول مرة أخرى لاحقًا."
+        )
+    return redirect('accounts:applications_list_view')
+@login_required
+@staff_member_required
+@require_POST
+def opp_delete_all(request:HttpRequest):
+    try:
+        if request.method=='POST':
+            ids=request.POST.getlist('selected_users')
+            if ids:
+                TrainingOpportunity.objects.filter(id__in=ids).delete()
+                messages.success(request,"✅ تم حذف التدريبات المحددة بنجاح.")
+    except:
+        messages.error(
+            request,
+            "❌ حدث خطأ أثناء حذف التدريبات. حاول مرة أخرى لاحقًا."
+        )
+    return redirect('accounts:opportunity_list_view')
 
 def resend_signup_otp(request):
     data = request.session.get('pending_signup')

@@ -20,8 +20,8 @@
     <!-- Sidebar -->
     <nav class="sidebar">
       <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
-      <button class="sidebar-btn orange text-center text-decoration-none">التدريبات</button>
-      <button class="sidebar-btn teal text-center text-decoration-none">التقديمات</button>
+      <a href="{%url 'accounts:applications_list_view'%}" class="sidebar-btn orange text-center text-decoration-none">التدريبات</a>
+      <a href="{%url 'accounts:opportunity_list_view'%}" class="sidebar-btn teal text-center text-decoration-none">التقديمات</a>
       <a href="{% url 'accounts:student_user_list_view' %}"  class="sidebar-btn orange text-center text-decoration-none">الطلاب</a>
       <a href="{% url 'accounts:pending_company_requests_view' %}" class="sidebar-btn teal text-center text-decoration-none">طلبات التفعيل</a>
     </nav>
@@ -92,8 +92,10 @@
         </div>
 
         <div class="actions">
+          <!--
           <a href="#" class="action-btn add">اضافة</a>
           <a href="#" class="action-btn edit">تعديل</a>
+          -->
           <button type="submit" class="action-btn btn text-white delete-all">حذف</button>
         </div>
       </form>
