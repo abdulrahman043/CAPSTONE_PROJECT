@@ -20,6 +20,8 @@ import random
 from django.utils import timezone
 from datetime import timedelta
 import ssl
+from django.db.models       import Q
+
 # Create your views here.
 def signup_company_email(request):
     if request.user.is_authenticated:
@@ -340,17 +342,37 @@ def logout_view(request:HttpRequest):
     messages.success(request, "✅ تم تسجيل الخروج بنجاح.")
 
     return redirect('main:home_view')
-
 @login_required
 @staff_member_required
-def user_list_view(request: HttpRequest):
-    user_qs=User.objects.all()
-    paginator=Paginator(user_qs,10)
-    page=request.GET.get('page')
-    user_page=paginator.get_page(page)
-    context={"user_page":user_page}
+def user_list_view(request):
+    q         = request.GET.get('q', '').strip()
+    user_type = request.GET.get('type', '').strip()   
+    users     = User.objects.all()
 
-    return render(request, 'accounts/user_list.html',context)
+    if q:
+        users = users.filter(
+            Q(username__icontains=q) |
+            Q(email__icontains=q) |
+            Q(student_profile__personal_info__full_name__icontains=q) |
+            Q(company_profile__company_name__icontains=q)
+        ).distinct()
+
+    if user_type == 'student':
+        users = users.filter(student_profile__isnull=False)
+    elif user_type == 'company':
+        users = users.filter(company_profile__isnull=False)
+    elif user_type == 'staff':
+        users = users.filter(is_staff=True)
+
+    paginator = Paginator(users, 10)
+    page_num  = request.GET.get('page')
+    user_page = paginator.get_page(page_num)
+
+    return render(request, 'accounts/user_list.html', {
+        'user_page': user_page,
+        'q': q,
+        'user_type': user_type,   # ← مرّر نوع المستخدم للقالب
+    })
 def user_delete(request, user_id):
     user=User.objects.get(pk=user_id)
     if user.is_superuser or user.is_staff:

@@ -7,21 +7,44 @@
 
 {% block content %}
 <div class="admin-page" dir="ltr">
+
   <section class="ads">
-    <h2 class="mb-4" style="color: #009999; font-weight: bold;">
-        <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
-        طلبات التفعيل
-        <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
+    <h2 class="mb-4 page-title">
+      <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
+      طلبات التفعيل
+      <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
     </h2>
-</section>
+  </section>
+
   <div class="admin-container">
     <nav class="sidebar">
-        <a href="{%url 'accounts:user_list_view'%}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
-        <button class="sidebar-btn orange">الطلاب</button>
-      <a href="{%url 'accounts:pending_company_requests_view'%}" class="sidebar-btn teal text-center text-decoration-none"> طلبات التفعيل</a>
+      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
+      <a href="{% url 'accounts:company_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الشركات</a>
+      <button class="sidebar-btn teal text-center text-decoration-none">التقديمات</button>
     </nav>
 
     <div class="main-content">
+
+      <div class="search-filter" style="margin-bottom:1rem;">
+        <form method="get" class="d-flex align-items-center" style="gap:0.5rem;">
+          <input
+            type="text"
+            name="q"
+            class="form-control-contact orange-border"
+            placeholder="ابحث عن مستخدم…"
+            value="{{ q }}"
+          >
+          <select name="type" class="form-control-contact orange-border">
+            <option value=""        {% if not user_type %}selected{% endif %}>الكل</option>
+            <option value="student" {% if user_type == 'student' %}selected{% endif %}>طالب</option>
+            <option value="company" {% if user_type == 'company' %}selected{% endif %}>شركة</option>
+            <option value="staff"   {% if user_type == 'staff'   %}selected{% endif %}>مسؤول</option>
+          </select>
+          <button type="submit" class="action-btn btn edit text-white">بحث</button>
+        </form>
+      </div>
+
+
       <form action="{% url 'accounts:delete_all' %}" method="post">
         {% csrf_token %}
         <div class="table-wrapper shadow-sm">
@@ -33,8 +56,8 @@
                 <th>اسم الشركة</th>
                 <th>الايميل</th>
                 <th>المجال</th>
-                <th>ملف السجل التجاري</th>
-                <th>الاجراءات</th>
+                <th>السجل التجاري</th>
+                <th>الإجراءات</th>
               </tr>
             </thead>
             <tbody>
@@ -42,69 +65,72 @@
               <tr>
                 <td><input type="checkbox" class="select-row" name="selected_users" value="{{ user.id }}"></td>
                 <td>{{ user.id }}</td>
+                <td>{{ user.company_profile.company_name }}</td>
                 <td>
-             
-                    {{ user.company_profile.company_name }}
-                    
+                  <a href="{% url 'profiles:company_profile_view_admin' user.id %}">
+                    {{ user.username }}
+                  </a>
                 </td>
-                <td><a  {%if user.student_profile%} href="{%url 'profiles:profile_view_admin' user.id%}"{%elif user.company_profile%}href="{%url 'profiles:company_profile_view_admin' user.id%}"{%else%} href='#' {%endif%}>{{ user.username }}</a></td>
+                <td>{{ user.company_profile.industry.name }}</td>
                 <td>
-                    {{ user.company_profile.industry.name }}
+                  {% if user.company_profile.crm_certificate %}
+                  <a href="{{ user.company_profile.crm_certificate.url }}"
+                     target="_blank"
+                     class="btn export-pdf-btn btn-sm mb-2">
+                    عرض السجل التجاري
+                  </a>
+                  {% else %}-{% endif %}
                 </td>
-                <td>
-                    {% if user.company_profile.crm_certificate %}
-                    <a href="{{ user.company_profile.crm_certificate.url }}" target="_blank"  class="btn export-pdf-btn btn-sm mb-2">
-                        عرض السجل التجاري
-                    </a>
-                  
-    
-                    {% endif %}
+                <td class="d-flex gap-2 justify-content-center">
+                  <button
+                    formaction="{% url 'accounts:approve_company' user.id %}"
+                    class="btn action-btn add text-white">
+                    قبول
+                  </button>
+                  <button
+                    formaction="{% url 'accounts:user_delete' user.id %}"
+                    class="btn action-btn delete-all text-white">
+                    رفض
+                  </button>
                 </td>
-                <td>
-                    <button formaction="{%url 'accounts:approve_company' user.id %}" class="btn action-btn add text-white">قبول</button>
-                <button formaction="{%url 'accounts:user_delete' user.id %}" class="btn action-btn delete-all text-white">رفض</button>
-                  </td>
-                  
-                  
               </tr>
               {% empty %}
               <tr>
-                <td colspan="6" class="text-center py-4">لا يوجد مستخدمون.</td>
+                <td colspan="7" class="text-center py-4">لا توجد طلبات.</td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
 
-        <div class="actions">
-          <a href="#" class="text-white btn action-btn add">اضافة</a>
-          <a href="#" class="text-white btn action-btn edit">تعديل</a>
-          <button type="submit" class="text-white btn action-btn delete-all">حذف</button>
+         <div class="actions">
+          <a href="#" class="action-btn add">اضافة</a>
+          <a href="#" class="action-btn edit text-white">تعديل</a>
+          <button type="submit" class="btn action-btn delete-all text-white">حذف</button>
         </div>
       </form>
 
       <div class="pagination">
         {% if user_page.has_previous %}
-          <a href="?page=1">&laquo; الأولى</a>
-          <a href="?page={{ user_page.previous_page_number }}">&lsaquo; السابق</a>
+          <a href="?q={{ q }}&page=1">&laquo; الأولى</a>
+          <a href="?q={{ q }}&page={{ user_page.previous_page_number }}">&lsaquo; السابق</a>
         {% endif %}
         <span>صفحة {{ user_page.number }} من {{ user_page.paginator.num_pages }}</span>
         {% if user_page.has_next %}
-          <a href="?page={{ user_page.next_page_number }}">التالي &rsaquo;</a>
-          <a href="?page={{ user_page.paginator.num_pages }}">الأخيرة &raquo;</a>
+          <a href="?q={{ q }}&page={{ user_page.next_page_number }}">التالي &rsaquo;</a>
+          <a href="?q={{ q }}&page={{ user_page.paginator.num_pages }}">الأخيرة &raquo;</a>
         {% endif %}
       </div>
+
     </div>
   </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const selectAll = document.getElementById('select-all');
-  if (!selectAll) return;
-  selectAll.addEventListener('change', e => {
+  document.getElementById('select-all')?.addEventListener('change', e => {
     document.querySelectorAll('.select-row')
-            .forEach(cb => cb.checked = e.target.checked);
+      .forEach(cb => cb.checked = e.target.checked);
   });
 });
 </script>

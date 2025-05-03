@@ -12,11 +12,11 @@
              {% if request.user.company_profile %}
                 <a href="{% url 'posts:company_dashboard' %}" class="btn btn-primary btn-lg mx-2">Go to Dashboard</a>
              {% else %}
-                 <a href="{% url 'accounts:signup_company_view' %}" class="btn btn-outline-primary btn-lg mx-2">Register Your Company</a>
+                 <a href="{% url 'accounts:signup_company_email' %}" class="btn btn-outline-primary btn-lg mx-2">Register Your Company</a>
              {% endif %}
          {% else %}
             <a href="{% url 'accounts:login_view' %}" class="btn btn-primary btn-lg mx-2">Company Login</a>
-            <a href="{% url 'accounts:signup_company_view' %}" class="btn btn-outline-primary btn-lg mx-2">Register Your Company</a>
+            <a href="{% url 'accounts:signup_company_email' %}" class="btn btn-outline-primary btn-lg mx-2">Register Your Company</a>
          {% endif %}
 
     </div>
