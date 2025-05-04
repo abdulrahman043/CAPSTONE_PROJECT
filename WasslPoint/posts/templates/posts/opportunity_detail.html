@@ -60,7 +60,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill me-1" viewBox="0 0 16 16">
                           <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
                         </svg>
-                        <strong>الموثع:</strong> {{ opportunity.city.arabic_name }}
+                        <strong>الموقع:</strong> {{ opportunity.city.arabic_name }}
                     </p>
                     <p>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-mortarboard-fill me-1" viewBox="0 0 16 16">
@@ -132,7 +132,7 @@
                             {% comment %} Student has an existing application for this opportunity {% endcomment %}
                             <div class="mb-3 p-3 bg-light border rounded">
                                 <p class="mb-2">
-                                    <strong>Your Application Status:</strong>
+                                    <strong>حالة طلبك:</strong>
                                     <span class="fw-bold ms-2">{{ application.get_status_display }}</span>
                                     {% if application.status != 'WITHDRAWN' and application.status != 'REJECTED' %} {# Allow chat unless withdrawn/rejected #}
                                     <a href="{% url 'posts:application_chat' application.id %}" class="btn btn-sm btn-outline-secondary ms-3">
@@ -147,7 +147,7 @@
                                 {% if can_withdraw %} {# can_withdraw is set in the view if status allows #}
                                     <form action="{% url 'posts:withdraw_application' application.id %}" method="post" onsubmit="return confirm('هل انت متاكد من الإنسحاب من التقديم على الفرصة الوضيفية');">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-warning">Wسحب الطلب</button>
+                                        <button type="submit" class="btn btn-warning">سحب الطلب</button>
                                     </form>
                                 {% elif application.status == 'WITHDRAWN' %}
                                     {% comment %} Option to re-apply shown via the apply form below {% endcomment %}

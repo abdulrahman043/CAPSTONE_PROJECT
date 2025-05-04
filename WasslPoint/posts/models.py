@@ -9,10 +9,10 @@ class TrainingOpportunity(models.Model):
     """
 
     class Status(models.TextChoices):
-        ACTIVE = "ACTIVE", "Active"
-        EXPIRED = "EXPIRED", "Expired"
-        DRAFT = "DRAFT", "Draft"
-        CLOSED = "CLOSED", "Closed"
+        ACTIVE = "ACTIVE", "فعال"
+        EXPIRED = "EXPIRED", "منتهي الصلاحية"
+        DRAFT = "DRAFT", "مسودة"
+        CLOSED = "CLOSED", "مغلق"
 
     company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='opportunities')
     title = models.CharField(max_length=200, default="Co-op Opportunity")
@@ -42,10 +42,10 @@ class TrainingOpportunity(models.Model):
 
 class Application(models.Model):
     class ApplicationStatus(models.TextChoices):
-        PENDING = 'PENDING', 'Pending Review'
-        ACCEPTED = 'ACCEPTED', 'Accepted'
-        REJECTED = 'REJECTED', 'Rejected'
-        WITHDRAWN = 'WITHDRAWN', 'Withdrawn' # Added status
+        PENDING = 'PENDING', 'تحت المراجعة'
+        ACCEPTED = 'ACCEPTED', 'مقبول'
+        REJECTED = 'REJECTED', 'مرفوض'
+        WITHDRAWN = 'WITHDRAWN', 'تم الانسحاب' # Added status
 
     opportunity = models.ForeignKey(TrainingOpportunity, on_delete=models.CASCADE, related_name='applications')
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='applications')
