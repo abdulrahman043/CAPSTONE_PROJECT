@@ -1,6 +1,6 @@
 <form method="post"
       enctype="multipart/form-data"
-      class="row align-items-center gy-2"
+      class="row align-items-center gy-2 p-4"
       style="max-width: 500px;"
       {% if admin_view %}
         action="{% url 'profiles:profile_view_admin' profile.user.id %}"
@@ -22,7 +22,7 @@
         src="{% if profile.personal_info.picture %}{{ profile.personal_info.picture.url }}{% else %}/static/default-avatar.png{% endif %}"
         alt="الصورة الشخصية"
         class="rounded-circle border"
-        style="width: 80px; height: 80px; object-fit: cover;"
+        style="width: 80px; height: 80px; object-fit: cover; "
       >
     </label>
   </div>
