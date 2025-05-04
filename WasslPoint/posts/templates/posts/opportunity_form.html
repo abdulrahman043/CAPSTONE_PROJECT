@@ -1,11 +1,11 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}{% if is_edit %}Edit{% else %}Create{% endif %} Opportunity{% endblock %}
+{% block title %}{% if is_edit %}تعديل{% else %}إنشاء{% endif %} الفرص{% endblock %}
 
 {% block content %}
 <div class="container mt-4 mb-5">
-    <h2>{% if is_edit %}Edit{% else %}Create{% endif %} Training Opportunity</h2>
+    <h2>{% if is_edit %}تعديل{% else %}إنشاء{% endif %} فرص التدريب</h2>
     <hr>
     {% if messages %}
         {% for message in messages %}
@@ -20,49 +20,49 @@
         {% csrf_token %}
         <div class="row g-3">
             <div class="col-md-6">
-                <label for="majors_needed" class="form-label required">Majors Needed</label>
+                <label for="majors_needed" class="form-label required">التخصصات المطلوبة</label>
                 <select multiple class="form-select" id="majors_needed" name="majors_needed" required size="5">
                     {% for major in majors %}
-                        <option value="{{ major.id }}" {% if major.id in form_data.majors_needed %}selected{% endif %}>
+                        <option value="{{ major.id }}" {% if major.id in form_data.majors_needed %}التخصصات المختارة{% endif %}>
                             {{ major.ar_name }}
                         </option>
                     {% endfor %}
-                </select>
-                <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple.</small>
+                </select>Hold Ctrl/Cmd to select multiple.
+                <small class="form-text text-muted"></small>
             </div>
             <div class="col-md-6">
                 <label for="city" class="form-label required">City</label>
                 <select class="form-select" id="city" name="city" required>
                     <option value="">Select City...</option>
                     {% for city in cities %}
-                        <option value="{{ city.id }}" {% if form_data.city|add:"0" == city.id %}selected{% endif %}>
+                        <option value="{{ city.id }}" {% if form_data.city|add:"0" == city.id %}تم التحديد{% endif %}>
                             {{ city.arabic_name }}
                         </option>
                     {% endfor %}
                 </select>
             </div>
             <div class="col-md-4">
-                <label for="start_date" class="form-label required">Start Date</label>
+                <label for="start_date" class="form-label required">بداية التدريب</label>
                 <input type="date" class="form-control" id="start_date" name="start_date" value="{{ form_data.start_date }}" required>
             </div>
             <div class="col-md-4">
-                <label for="duration" class="form-label required">Duration</label>
+                <label for="duration" class="form-label required">مدة التدريب</label>
                 <input type="text" class="form-control" id="duration" name="duration" value="{{ form_data.duration }}" placeholder="e.g., 3 months, 1 semester" required>
             </div>
             <div class="col-md-4">
-                <label for="application_deadline" class="form-label required">Application Deadline</label>
+                <label for="application_deadline" class="form-label required">موعد اتنهاء التقديم</label>
                 <input type="date" class="form-control" id="application_deadline" name="application_deadline" value="{{ form_data.application_deadline }}" required>
             </div>
              <div class="col-12">
-                <label for="requirements" class="form-label required">Requirements</label>
+                <label for="requirements" class="form-label required">المتطلبات</label>
                 <textarea class="form-control" id="requirements" name="requirements" rows="5" required>{{ form_data.requirements }}</textarea>
             </div>
              <div class="col-12">
-                <label for="benefits" class="form-label">Benefits (Optional)</label>
+                <label for="benefits" class="form-label">المميزات (إختياري)</label>
                 <textarea class="form-control" id="benefits" name="benefits" rows="3">{{ form_data.benefits }}</textarea>
             </div>
              <div class="col-md-6">
-                <label for="status" class="form-label">Status</label>
+                <label for="status" class="form-label">الحالة</label>
                  <select class="form-select" id="status" name="status">
                      {% for value, label in statuses %}
                         <option value="{{ value }}" {% if form_data.status == value %}selected{% endif %}>{{ label }}</option>
@@ -70,8 +70,8 @@
                  </select>
             </div>
              <div class="col-12 mt-4">
-                <button type="submit" class="btn btn-primary">{% if is_edit %}Update{% else %}Create{% endif %} Opportunity</button>
-                <a href="{% if is_edit %}{% url 'posts:opportunity_detail' opportunity.id %}{% else %}{% url 'posts:company_dashboard' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">{% if is_edit %}تحديث{% else %}إنشاء{% endif %} الفرصة</button>
+                <a href="{% if is_edit %}{% url 'posts:opportunity_detail' opportunity.id %}{% else %}{% url 'posts:company_dashboard' %}{% endif %}" class="btn btn-secondary">إلغاء</a>
             </div>
         </div>
     </form>

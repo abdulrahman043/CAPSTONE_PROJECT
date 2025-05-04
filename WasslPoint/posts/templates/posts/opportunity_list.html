@@ -1,11 +1,11 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}Training Opportunities{% endblock %}
+{% block title %}الفرص التدريبية{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center mb-4">Available Training Opportunities</h2>
+    <h2 class="text-center mb-4">الفرص التدريبية المتاحة</h2>
 
     {% if messages %}
         {% for message in messages %}
@@ -37,7 +37,7 @@
                     </h6>
                     <p class="card-text flex-grow-1">
                         <small>
-                            <strong>Majors:</strong>
+                            <strong>التخصصات المطلوبة:</strong>
                              {% for major in opp.majors_needed.all|slice:":2" %}
                                  {{ major.ar_name }}{% if not forloop.last %}, {% endif %}
                              {% endfor %}
@@ -46,20 +46,20 @@
                             <strong>Deadline:</strong> {{ opp.application_deadline|date:"Y-m-d" }}
                         </small>
                     </p>
-                    <a href="{% url 'posts:opportunity_detail' opp.id %}" class="btn btn-primary mt-auto">View Details</a>
+                    <a href="{% url 'posts:opportunity_detail' opp.id %}" class="btn btn-primary mt-auto">عرض التفاصيل </a>
                      {# This is the link that should be present, not opportunity_applications #}
                 </div>
                  <div class="card-footer text-muted">
-                    <small>Posted: {{ opp.created_at|timesince }} ago</small>
+                    <small>تم النشر من قبل: {{ opp.created_at|timesince }} </small>
                 </div>
             </div>
         </div>
         {% empty %}
         <div class="col-12">
-            <p class="text-center text-muted fs-5 mt-5">No active training opportunities found matching your criteria.</p>
+            <p class="text-center text-muted fs-5 mt-5">لم يتم العثور على فرص تدريبية نشطة تتوافق مع معاييرك. </p>
             {% if request.user.is_authenticated and request.user.company_profile %}
                  <div class="text-center">
-                     <a href="{% url 'posts:create_opportunity' %}" class="btn btn-success">Post an Opportunity</a>
+                     <a href="{% url 'posts:create_opportunity' %}" class="btn btn-success">أضف فرصة تدريبية</a>
                  </div>
             {% endif %}
         </div>

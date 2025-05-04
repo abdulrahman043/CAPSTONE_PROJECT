@@ -1,29 +1,29 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}For Companies{% endblock %}
+{% block title %}للشركات{% endblock %}
 
 {% block content %}
 <div class="container py-5">
-    <h2 class="text-center mb-4">For Companies</h2>
-    <p class="text-center lead">Connect with talented students and find the perfect fit for your training programs.</p>
+    <h2 class="text-center mb-4">للشركات</h2>
+    <p class="text-center lead">تواصل مع الطلاب الموهوبين وابحث عن الطلاب المناسبين لبرامج التدريب الخاصة بك.</p>
     <div class="text-center mt-4">
          {% if request.user.is_authenticated %}
              {% if request.user.company_profile %}
-                <a href="{% url 'posts:company_dashboard' %}" class="btn btn-primary btn-lg mx-2">Go to Dashboard</a>
+                <a href="{% url 'posts:company_dashboard' %}" class="btn btn-primary btn-lg mx-2">الذهاب الى صفحة التحكم</a>
              {% else %}
-                 <a href="{% url 'accounts:signup_company_email' %}" class="btn btn-outline-primary btn-lg mx-2">Register Your Company</a>
+                 <a href="{% url 'accounts:signup_company_email' %}" class="btn btn-outline-primary btn-lg mx-2">قم بتسجيل شركتك معنا</a>
              {% endif %}
          {% else %}
-            <a href="{% url 'accounts:login_view' %}" class="btn btn-primary btn-lg mx-2">Company Login</a>
-            <a href="{% url 'accounts:signup_company_email' %}" class="btn btn-outline-primary btn-lg mx-2">Register Your Company</a>
+            <a href="{% url 'accounts:login_view' %}" class="btn btn-primary btn-lg mx-2">تسجيل دخولل الشركات</a>
+            <a href="{% url 'accounts:signup_company_email' %}" class="btn btn-outline-primary btn-lg mx-2">قم بإنشاء حساب شركتك معنا</a>
          {% endif %}
 
     </div>
 </div>
 
 <div class="container mt-5 mb-5">
-    <h3 class="text-center mb-4">Latest Training Opportunities</h3>
+    <h3 class="text-center mb-4">أخر الفرص الوظيفية التي تم طرحها</h3>
     <div class="row">
         {% for opp in opportunities %}
         <div class="col-md-6 col-lg-4 mb-4">
@@ -40,16 +40,16 @@
                          <br>
                          <small>Deadline: {{ opp.application_deadline|date:"Y-m-d" }}</small>
                      </p>
-                    <a href="{% url 'posts:opportunity_detail' opp.id %}" class="btn btn-outline-primary mt-auto">View Details</a>
+                    <a href="{% url 'posts:opportunity_detail' opp.id %}" class="btn btn-outline-primary mt-auto">عرض التفاصيل</a>
                 </div>
             </div>
         </div>
         {% empty %}
-        <p class="text-center text-muted">No active training opportunities posted right now.</p>
+        <p class="text-center text-muted">لم يتم نشر اي فرصة تدريب النشطة في الوقت الحالي.</p>
         {% endfor %}
     </div>
     <div class="text-center mt-3">
-        <a href="{% url 'posts:opportunity_list' %}" class="btn btn-secondary">View All Opportunities</a>
+        <a href="{% url 'posts:opportunity_list' %}" class="btn btn-secondary">عرض جميع الفرص </a>
     </div>
 </div>
 {% endblock %}

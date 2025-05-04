@@ -15,19 +15,20 @@
                         <div class="card-body">
                             <h2 class="card-title">{{ opportunity.title }}</h2>
                             <p class="card-text">{{ opportunity.description }}</p>
-                            <p class="card-text"><strong>Location:</strong> {{ opportunity.city.arabic_name }}</p>
-                            <p class="card-text"><strong>Start Date:</strong> {{ opportunity.start_date }}</p>
-                            <p class="card-text"><strong>Application Deadline:</strong> {{ opportunity.application_deadline }}</p>
-                            <p class="card-text"><strong>Status:</strong> {{ opportunity.get_status_display }}</p>
-                            <a href="{% url 'posts:opportunity_detail' opportunity.id %}" class="btn btn-primary">View Details</a>
-                            <a href="{% url 'posts:opportunity_applications' opportunity.id %}" class="btn btn-secondary">View Applications</a>
+                            <p class="card-text"><strong>الموقع:</strong> {{ opportunity.city.arabic_name }}</p>
+                            <p class="card-text"><strong>تاريخ بداية التدريب:</strong> {{ opportunity.start_date }}</p>
+                            <p class="card-text"><strong>الموعد النهائي للتقديم</strong> {{ opportunity.application_deadline }}</p>
+                            <p class="card-text"><strong>حالة التقديم:</strong> {{ opportunity.get_status_display }}</p>
+                            <a href="{% url 'posts:opportunity_detail' opportunity.id %}" class="btn btn-primary">عرض التفاصيل:</a>
+                            <a href="{% url 'posts:opportunity_applications' opportunity.id %}" class="btn btn-secondary">عرض المتقدمين</a>
                         </div>
                     </div>
                 </div>
+                
             {% endfor %}
         </div>
     {% else %}
-        <p>You have not created any co-op opportunities yet.</p>
+        <p>لم تقم بإنشاء اي فرصة تدريبية حتى الأن</p>
     {% endif %}
 </div>
 {% endblock %}

@@ -22,11 +22,11 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Applicant</th>
-                    <th>Applied At</th>
-                    <th>Current Status</th>
-                    <th>Actions</th>
-                    <th>Chat</th> {# Added Chat Column #}
+                    <th>المتقدمين</th>
+                    <th>تم التقديم في</th>
+                    <th>حالة الطلب</th>
+                    <th>أجراء</th>
+                    <th>محادثة</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,39 +43,39 @@
                         <td>{{ app.applied_at|date:"Y-m-d H:i" }}</td>
                         <td>{{ app.get_status_display }}</td>
                         <td>
-                            {% if app.status != 'WITHDRAWN' %} {# Don't allow update if withdrawn #}
+                            {% if app.status != 'WITHDRAWN' %}
                                 <form action="{% url 'posts:update_application_status' app.id %}" method="post" class="d-inline">
                                     {% csrf_token %}
                                     <div class="input-group input-group-sm">
                                         <select name="status" class="form-select form-select-sm">
                                             {% for value, label in statuses %}
-                                                {% if value != 'WITHDRAWN' %} {# Exclude withdrawn as company choice #}
+                                                {% if value != 'WITHDRAWN' %}
                                                     <option value="{{ value }}" {% if app.status == value %}selected{% endif %}>{{ label }}</option>
                                                 {% endif %}
                                             {% endfor %}
                                         </select>
-                                        <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">تحديث</button>
                                     </div>
                                 </form>
                             {% else %}
-                                <span class="text-muted">Withdrawn by student</span>
+                                <span class="text-muted">تم سحب الطلب من قبل الطالب</span>
                             {% endif %}
                         </td>
                          <td> {# Chat Button #}
-                             <a href="{% url 'posts:application_chat' app.id %}" class="btn btn-sm btn-outline-secondary">Chat</a>
+                             <a href="{% url 'posts:application_chat' app.id %}" class="btn btn-sm btn-outline-secondary">مراسلة</a>
                          </td>
                     </tr>
                     {% if app.message %}
                     <tr class="table-light">
-                       <td colspan="5"><small><strong>Applicant Message:</strong> {{ app.message|linebreaksbr }}</small></td>
+                       <td colspan="5"><small><strong>مراسلة المتقدم</strong> {{ app.message|linebreaksbr }}</small></td>
                     </tr>
                     {% endif %}
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p>No applications received for this opportunity yet.</p>
+        <p>لا يوجد اي متقدمين حتى الأن</p>
     {% endif %}
-     <a href="{% url 'posts:company_dashboard' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+     <a href="{% url 'posts:company_dashboard' %}" class="btn btn-secondary mt-3">العودة الى صفحة التحكم</a>
 </div>
 {% endblock %}

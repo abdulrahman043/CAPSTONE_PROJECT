@@ -1,22 +1,35 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}Apply for {{ opportunity.title }}{% endblock %}
+{% block title %}تقديم على {{ opportunity.title }}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-    <h1>Apply for {{ opportunity.title }}</h1>
+    <h1>تقديم على {{ opportunity.title }}</h1>
     {% if error %}
         <div class="alert alert-danger">{{ error }}</div>
     {% endif %}
     <form method="post" action="{% url 'posts:apply_opportunity' opportunity.id %}">
+          ملف خطاب التدريب
+        </label>
+            <div>
+            <input
+              type="file"
+              id="training_letter"
+              name="training_letter"
+              accept="training_letter/pdf"
+              style="display: none;"
+              onchange="updateFileLabel(this)"
+              required
+            />
+          </div>
         {% csrf_token %}
         <div class="mb-3">
-            <label for="message" class="form-label">Message to the Company (Optional)</label>
+            <label for="message" class="form-label">مراسلة الشركة (إختياري)</label>
             <textarea name="message" id="message" class="form-control" rows="3"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Submit Application</button>
-        <a href="{% url 'posts:opportunity_detail' opportunity.id %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">رفع الطلب</button>
+        <a href="{% url 'posts:opportunity_detail' opportunity.id %}" class="btn btn-secondary">إلغاء</a>
     </form>
 </div>
 {% endblock %}

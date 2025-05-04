@@ -1,14 +1,14 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}Application Chat{% endblock %}
+{% block title %}مراسلة ممثل الشركة عن التقديم{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-    <h1>Chat with {% if request.user == application.student.user %}Company{% else %}Student{% endif %}</h1>
+    <h1>Chat with {% if request.user == application.student.user %}الشركة{% else %}الطالب{% endif %}</h1>
     <div class="chat-messages">
         {% for message in messages %}
-            <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+            <div class="message {% if message.sender == request.user %}مرسل{% else %}مستقبل{% endif %}">
                 <p><strong>{{ message.sender.username }}:</strong> {{ message.content }}</p>
                 <small>{{ message.sent_at }}</small>
             </div>
@@ -17,11 +17,11 @@
     <form method="post" action="{% url 'posts:application_chat' application.id %}" class="mt-3">
         {% csrf_token %}
         <div class="mb-3">
-            <label for="content" class="form-label">Your Message</label>
+            <label for="content" class="form-label">رسالتك</label>
             <textarea name="content" id="content" class="form-control" rows="3" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Send Message</button>
+        <button type="submit" class="btn btn-primary">أرسل الرسالة</button>
     </form>
-     <a href="{% url 'posts:application_status'  %}" class="btn btn-secondary">Back to Applications</a>
+     <a href="{% url 'posts:update_application_status'  %}" class="btn btn-secondary">العودة للتقديم</a>
 </div>
 {% endblock %}
