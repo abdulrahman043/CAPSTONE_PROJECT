@@ -1098,37 +1098,4 @@ body {
     text-decoration: none;
   }
   
-  h2, h3, h4, h5, .fw-bold, .card-title {
-    color: #13A7B1 !important;
-  }
-
-  p, .lead, .card-text {
-    color: #FF7C34 !important;
-  }
-
-  /* الزر البرتقالي الأساسي */
-.btn,
-.btn-primary,
-.btn-secondary,
-.btn-outline-primary {
-  background-color: #FF7C34 !important;
-  border-color: #FF7C34 !important;
-  color: white !important;
-  font-weight: bold;
-}
-
-/* التأثير عند تمرير الماوس */
-.btn:hover,
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-outline-primary:hover {
-  background-color: #13A7B1 !important;
-  border-color: #13A7B1 !important;
-  color: white !important;
-}
-
 /* نص لا توجد فرص حالياً */
-.text-muted {
-  color: #FF7C34 !important;
-  font-weight: bold;
-}
