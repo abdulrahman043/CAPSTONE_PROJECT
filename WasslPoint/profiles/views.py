@@ -646,6 +646,23 @@ def export_cv_pdf(request,user_id=None):
             return redirect('profiles:profile_view_admin', user_id=user_id)
         return redirect('profiles:profile_view')
 @login_required
+def student_company_export_cv_pdf(request,user_id):
+    user = get_object_or_404(User, id=user_id)
+    profile=user.student_profile
+    try:
+        html=render_to_string('profiles/cv_pdf.html',{'profile':profile})
+        response=HttpResponse(content_type='application/pdf')
+        response['Content-Disposition']=f'filename={user.username}_cv.pdf'
+        HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf(response)
+        return response
+
+    except Exception as e:
+        messages.error(request, "عذراً، حدث خطأ أثناء تصدير السيرة الذاتية. حاول مرة أخرى.")
+
+        print(e)
+       
+        return redirect('profiles:company_student_profile' ,user.id)
+@login_required
 def company_student_profile(request, student_id):
    
     profile = get_object_or_404(StudentProfile, user__id=student_id)

@@ -1,0 +1,109 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .section-box {
+        border: 2px solid #13A7B1;
+        border-radius: 10px;
+        padding: 15px;
+        background-color: #fff;
+    }
+    .status-btn {
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .status-ACCEPTED {
+        background-color: #28a745;
+        color: white;
+    }
+    .status-PENDING {
+        background-color: #ffc107;
+        color: black;
+    }
+    .status-REJECTED {
+        background-color: #dc3545;
+        color: white;
+    }
+    .status-WITHDRAWN {
+        background-color: #fd7e14;
+        color: white;
+    }
+    .orange-border {
+        border: 2px solid #FF7C34;
+    }
+    .related-badge {
+        background-color: #FF7C34;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 5px;
+        font-size: 12px;
+        margin-right: 5px;
+    }
+</style>
+<div class="container py-4">
+    <div class="row">
+        <!-- التدريبات ذات صلة -->
+        <div class="col-md-3">
+            <div class="section-box">
+                <h5 class="text-center text-info">تدريبات ذات صلة</h5>
+                <hr>
+                {% for opp in related_opps %}
+                    <div class="mb-3">
+                        <span class="related-badge">جديد</span>
+                        <strong class="d-block text-info">{{ opp.title }}</strong>
+                        <small class="text-muted">{{ opp.city.arabic_name }}</small>
+                        <img src="{{ opp.company.logo.url }}" class="float-end" width="35">
+                    </div>
+                {% empty %}
+                    <p class="text-muted">لا توجد تدريبات مشابهة حالياً.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- الطلبات التي تم التقديم عليها -->
+        <div class="col-md-6">
+            <div class="section-box">
+                <form method="GET" action="#">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="ابحث عن فرص تدريبية...">
+                        <button class="btn btn-outline-warning fw-bold" type="submit">بحث</button>
+                    </div>
+                </form>
+                {% for app in applications %}
+                    <div class="border orange-border rounded mb-3 p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 text-warning">{{ app.opportunity.company.company_name }}</h6>
+                                <p class="mb-1 text-info">{{ app.opportunity.title }} - {{ app.opportunity.city.arabic_name }}</p>
+                                <span class="badge status-btn status-{{ app.status }}">{{ app.get_status_display }}</span>
+                            </div>
+                            <img src="{{ app.opportunity.company.logo.url }}" width="60">
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">لم تقم بالتقديم على أي تدريب بعد.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- الملف الشخصي -->
+        <div class="col-md-3">
+            <div class="section-box text-center">
+                <img src="{{ student_profile.personal_info.picture.url }}" class="rounded-circle mb-2" width="90">
+                <h5 class="text-dark">{{ student_profile.personal_info.full_name }}</h5>
+                <p class="text-muted">
+                    {{ student_profile.education.first.major.ar_name }}<br>
+                    {{ student_profile.contact_info.city.arabic_name }}
+                </p>
+                <p class="text-secondary fw-bold">Tuwaiq Academy</p>
+                <div class="d-flex justify-content-around mt-3">
+                    <a href="#" class="text-info"><i class="fi fi-rr-bell"></i><br>الطلبات</a>
+                    <a href="#" class="text-warning"><i class="fi fi-rr-envelope"></i><br>الرسائل</a>
+                    <a href="#" class="text-dark"><i class="fi fi-rr-user"></i><br>الملف</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
