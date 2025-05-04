@@ -106,3 +106,10 @@ label.required::after {
 .text-orange:hover {
   color: rgba(255, 124, 52, 0.8);
 }
+.com_student{
+  object-fit: cover;
+  height: 200px;
+}
+.badge-skill {
+  margin: 0.2rem;
+}
