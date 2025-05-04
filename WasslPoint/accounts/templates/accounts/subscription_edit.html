@@ -1,0 +1,105 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-page" dir="rtl">
+  <section class="ads">
+    <h2 class="mb-4 page-title">
+      <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
+      إضافة اشتراك
+      <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
+    </h2>
+  </section>
+
+  <div class="admin-container">
+    <nav class="sidebar">
+      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
+      <a href="{% url 'accounts:company_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الشركات</a>
+      <a href="{% url 'accounts:subscription_view' %}" class="sidebar-btn teal text-center text-decoration-none">الاشتراكات</a>
+    </nav>
+
+    <div class="main-content">
+      <div class="form-wrapper shadow-sm p-4">
+        <form method="post" action="{% url 'accounts:edit_subscription_view' subscription.id  %}">
+          {% csrf_token %}
+
+          <div class="form-group mb-3">
+            <label for="id_name">اسم الاشتراك</label>
+            <input
+              type="text"
+              name="name"
+              value="{{subscription.name}}"
+                id="id_name"
+              class="form-control-contact orange-border"
+              placeholder="أدخل اسم الخطة"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="id_duration_days">المدة (أيام)</label>
+            <input
+              type="number"
+              name="duration_days"
+              id="id_duration_days"
+              class="form-control-contact tail-border text-start"
+              value="{{subscription.duration_days}}"
+              placeholder="عدد الأيام"
+              min="1"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="id_price">السعر (SAR)</label>
+              <input
+                type="number"
+                name="price"
+                id="id_price"
+                class="form-control-contact orange-border text-start"
+                placeholder="أدخل السعر"
+                step="0.01"
+                min="0"
+                value="{{ subscription.price|stringformat:'0.2f' }}"
+                required
+              >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="id_description">الوصف (اختياري)</label>
+            <textarea
+              name="description"
+              id="id_description"
+              class="form-control-contact blue-border"
+              rows="3"
+              placeholder="يمكنك إضافة وصف للخطة"
+            >{{subscription.description}}</textarea>
+          </div>
+
+          <div class="form-group mb-4 d-flex align-items-center">
+            <input
+              type="checkbox"
+              name="status"
+              id="id_status"
+              class="form-check-input me-2"
+              {%if subscription.status%}
+              checked
+              {%endif%}
+            >
+            <label for="id_status" class="form-check-label">مُفعّل</label>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn action-btn add text-white">حفظ</button>
+            <a href="{% url 'accounts:subscription_view' %}" class="btn action-btn delete-all">إلغاء</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

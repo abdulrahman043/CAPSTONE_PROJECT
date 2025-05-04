@@ -20,13 +20,16 @@ class City(models.Model):
     arabic_name = models.CharField(max_length=100)  # الاسم بالعربية
     english_name = models.CharField(max_length=100) # الاسم بالإنجليزية
     status = models.BooleanField(default=True)      # علم لحالة التفعيل
+    def __str__(self):
+        return self.arabic_name
 
 
 class Industry(models.Model):
     # نموذج يمثل قطاعاً للصناعة مع حالة تفعيل
     name = models.CharField(max_length=100)   # اسم القطاع
     status = models.BooleanField(default=True) # علم التفعيل
-
+    def __str__(self):
+        return self.name
 
     # الرمز البريدي
 
@@ -164,6 +167,8 @@ class PersonalInformation(models.Model):
         if (today.month, today.day) < (dob.month, dob.day):
             years -= 1
         return years
+    def __str__(self):
+        return self.full_name
 
 
 class Experience(models.Model):
@@ -178,6 +183,8 @@ class Experience(models.Model):
     start_date = models.DateField(null=True)        # تاريخ البدء
     end_date = models.DateField(null=True, blank=True) # تاريخ الانتهاء
     description = models.CharField(blank=True, max_length=100) # وصف مختصر
+    def __str__(self):
+        return self.job_title
 
 
 class Major(models.Model):
@@ -185,6 +192,8 @@ class Major(models.Model):
     ar_name = models.CharField(max_length=100)  # الاسم بالعربية
     en_name = models.CharField(max_length=100)  # الاسم بالإنجليزية
     status = models.BooleanField(default=True)  # حالة التفعيل
+    def __str__(self):
+        return self.ar_name
 
 
 class Education(models.Model):
@@ -213,6 +222,8 @@ class Education(models.Model):
     graduating_date  = models.DateField(null=True)          # تاريخ التخرج
     gpa_scale        = models.PositiveSmallIntegerField(choices=GPA_SCALE.choices, null=True) # المقياس
     GPA              = models.DecimalField(max_digits=5, decimal_places=2, null=True)        # المعدل
+    def __str__(self):
+        return self.university
 
 
 class Skill(models.Model):
@@ -225,6 +236,8 @@ class Skill(models.Model):
     profile     = models.ForeignKey(StudentProfile, models.CASCADE, related_name='skill')
     name        = models.CharField(max_length=100)  # اسم المهارة
     proficiency = models.CharField(max_length=20, choices=Proficiency.choices) # مستوى الإتقان
+    def __str__(self):
+        return self.name
 
 
 class Language(models.Model):
@@ -238,6 +251,8 @@ class Language(models.Model):
     profile     = models.ForeignKey(StudentProfile, models.CASCADE, related_name='language')
     name        = models.CharField(max_length=100, choices=LANGUAGE_CHOICES) # اختيار اللغة من القائمة
     proficiency = models.CharField(max_length=20, choices=Proficiency.choices) # مستوى الإتقان
+    def __str__(self):
+        return self.name
 
 
 class Certification(models.Model):
@@ -248,6 +263,8 @@ class Certification(models.Model):
     issue_date        = models.DateField(null=True)      # تاريخ الإصدار
     expiry_date       = models.DateField(null=True, blank=True) # تاريخ الانتهاء
     certificate_file  = models.FileField(upload_to='certs/')    # ملف الشهادة
+    def __str__(self):
+        return self.name
 
 
 class CompanyProfile(models.Model):
@@ -261,6 +278,8 @@ class CompanyProfile(models.Model):
     logo                = models.ImageField(
                               upload_to='company_logos/',
                               default='company_logos/default.png')
+    def __str__(self):
+        return self.company_name
 class ContactPerson(models.Model):
     company_profile = models.OneToOneField(
         to='profiles.CompanyProfile',
@@ -272,6 +291,8 @@ class ContactPerson(models.Model):
     person_name     = models.CharField(max_length=100)
     email           = models.EmailField()
     phone           = models.CharField(max_length=20)
+    def __str__(self):
+        return self.person_name
 
 class ContactInformation(models.Model):
     # نموذج معلومات الاتصال الخاصة بالطالب
@@ -280,3 +301,5 @@ class ContactInformation(models.Model):
     phone        = models.CharField(max_length=20, null=True, default='') # رقم الهاتف
     address_line = models.TextField(null=True, default='')   # عنوان السكن
     city         = models.ForeignKey(City, on_delete=models.CASCADE, null=True) # ربط بالمدينة
+    def __str__(self):
+        return self.email

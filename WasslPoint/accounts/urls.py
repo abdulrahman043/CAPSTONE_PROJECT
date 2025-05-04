@@ -13,6 +13,9 @@ urlpatterns=[
     path('student/users/',views.student_user_list_view,name='student_user_list_view'),
     path('applications/users/',views.applications_list_view,name='applications_list_view'),
     path('opportunity/users/',views.opportunity_list_view,name='opportunity_list_view'),
+    path('subscription/users/',views.subscription_view,name='subscription_view'),
+    path('subscription/add/',views.add_subscription_view,name='add_subscription_view'),
+    path('subscription/edit/<int:id>',views.edit_subscription_view,name='edit_subscription_view'),
 
     path('pending/company/requests/',views.pending_company_requests_view,name='pending_company_requests_view'),
     path('users/<int:user_id>/delete/', views.user_delete, name='user_delete'),
@@ -21,6 +24,7 @@ urlpatterns=[
     path('verify-otp/resend/', views.resend_signup_otp, name='resend_signup_otp'),
 
     path('users/delete_all/', views.delete_all, name='delete_all'),
+    path('sub/delete_all/', views.sub_delete_all, name='sub_delete_all'),
     path('applications/delete_all/', views.app_delete_all, name='app_delete_all'),
     path('opportunity/delete_all/', views.opp_delete_all, name='opp_delete_all'),
     path('company/signup/email/',   views.signup_company_email, name='signup_company_email'),
