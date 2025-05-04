@@ -4,47 +4,71 @@
 {% block title %}خطط الاشتراك{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h2 class="text-center mb-4">اختر خطتك</h2>
+<section class="py-5 text-center bg-light position-relative">
+  <h2 class="mb-5 fw-bold" style="color: #13A7B1;">
+    <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸</span>
+    باقاتنا
+    <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
+  </h2>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-
-    {% if current_subscription %}
-     <div class="alert alert-info text-center">
-         لديك حاليًا اشتراك نشط في <strong>{{ current_subscription.plan.name }}</strong>الذي تنتهي فيه {{ current_subscription.end_date|date:"Y-m-d" }}.
-         <a href="{% url 'subscriptions:my_subscription' %}" class="alert-link">عرض تفاصيل الاشتراك</a>
-     </div>
-    {% endif %}
-
-    <div class="row justify-content-center">
-        {% for plan in plans %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 {% if current_subscription %} border-secondary {% else %} border-primary {% endif %}">
-                <div class="card-header {% if current_subscription %} bg-secondary text-white {% else %} bg-primary text-white {% endif %} text-center">
-                    <h4>{{ plan.name }}</h4>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-center display-4">{{ plan.price }} <small class="text-muted fs-5">SAR</small></h5>
-                    <p class="card-text text-center text-muted">{{ plan.duration_days }} يوما</p>
-                    <p class="card-text flex-grow-1">{{ plan.description|default:"Standard access to our services." }}</p>
-                    {% if not current_subscription %}
-                        <a href="{% url 'subscriptions:payment' plan.id %}" class="btn btn-primary mt-auto">إشترك الأن</a>
-                    {% else %}
-                         <button class="btn btn-secondary mt-auto" disabled>مشترك بالفعل</button>
-                    {% endif %}
-                </div>
-            </div>
+  {% if messages %}
+    <div class="container mb-4">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        {% empty %}
-        <p class="text-center">لا توجد خطط اشتراك متاحة في الوقت الحالي.</p>
-        {% endfor %}
+      {% endfor %}
     </div>
-</div>
+  {% endif %}
+
+  {% if current_subscription %}
+   <div class="container mb-4">
+     <div class="alert alert-info text-center">
+         لديك حاليًا اشتراك نشط في <strong>{{ current_subscription.plan.name }}</strong>
+         ينتهي في {{ current_subscription.end_date|date:"Y-m-d" }}.
+         <a href="{% url 'subscriptions:my_subscription' %}" class="alert-link">عرض التفاصيل</a>
+     </div>
+   </div>
+  {% endif %}
+
+  <div class="container">
+    <div class="row justify-content-center g-4">
+      {% for plan in plans %}
+      <div class="col-md-5">
+        <div class="border rounded-4 p-4 h-100 text-center"
+             style="border: 4px solid {% if forloop.counter == 1 %}#13A7B1{% else %}#FF7C34{% endif %};">
+
+          <h3 class="fw-bold text-orange" style="color: #FF7C34;">استفد من خدماتنا بـ</h3>
+
+          <h1 class="fw-bold my-3" style="color: #13A7B1; font-size: 60px; border-bottom: 4px solid #FF7C34; display: inline-block;">
+            {{ plan.price }} ﷼
+          </h1>
+
+          <h4 class="fw-bold mt-3" style="color: #FF7C34;">فقط</h4>
+
+          <p class="mt-3" style="color: #13A7B1;">
+            {{ plan.description|default:"Standard access to our services." }}
+          </p>
+
+          <img src="{% static 'images/cash.png' %}" class="img-fluid my-3" alt="طرق الدفع" style="max-width: 75%;">
+
+          {% if not current_subscription %}
+            <a href="{% url 'subscriptions:payment' plan.id %}"
+               class="btn w-50"
+               style="background-color: {% if forloop.counter == 1 %}#FF7C34{% else %}#13A7B1{% endif %};
+                      color: white; font-weight: bold; border-radius: 8px;">
+              اختر
+            </a>
+          {% else %}
+            <button class="btn btn-secondary w-50" disabled>مشترك بالفعل</button>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-center text-muted">لا توجد خطط اشتراك متاحة حالياً.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
 {% endblock %}
