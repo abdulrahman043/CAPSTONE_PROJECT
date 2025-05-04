@@ -67,19 +67,11 @@ class Application(models.Model):
 
 
 class Message(models.Model):
-    """
-    Represents a message in the communication between a student and a company
-    regarding a specific application.
-    """
-
-    application = models.ForeignKey(
-        Application, on_delete=models.CASCADE, related_name='messages'
-    )
-    sender = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )  # Could be a student or a company user
+    application = models.ForeignKey(Application, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     content = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False, db_index=True) # <-- ADD THIS LINE
 
     def __str__(self):
-        return f"Message from {self.sender} on {self.application}"
+        return f'Message from {self.sender.username} on {self.application.id} at {self.sent_at}'
