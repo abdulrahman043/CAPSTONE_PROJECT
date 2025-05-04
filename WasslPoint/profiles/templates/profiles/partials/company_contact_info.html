@@ -1,6 +1,6 @@
 <div class="card-view ">
-    <div class="top-card  bg-blue d-flex justify-content-between align-items-center p-2 ">
-        <h2 class="fs-6 p text-white">معلومات الاتصال</h2>
+    <div class="top-card  border d-flex justify-content-between align-items-center p-2 ">
+        <h2 class="fs-6 p text-black">معلومات الاتصال</h2>
         <a href="javascript:void(0)" class="edit-btn text-white"><svg xmlns="http://www.w3.org/2000/svg"
                 width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
                 <path
@@ -39,8 +39,8 @@
 
 </div>
 <div class="card-edit" style="display: none;">
-    <div class="top-card  border-blue bg-blue d-flex justify-content-between align-items-center p-2 ">
-        <h2 class="fs-6 text-white">معلومات الاتصال</h2>
+    <div class="top-card  border  d-flex justify-content-between align-items-center p-2 ">
+        <h2 class="fs-6 text-black fw-bold">معلومات الاتصال</h2>
 
     </div>
     <form method="post"  {%if admin_view%} action="{%url 'profiles:add_edit_contact_person_admin' profile.user.id %}" {%else%} action="{%url 'profiles:add_edit_contact_person'%}" {%endif%}>
