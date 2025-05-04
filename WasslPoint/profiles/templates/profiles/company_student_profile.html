@@ -1,7 +1,9 @@
 {% extends "main/base.html" %}
 {% load static %}
 
-
+{% block style %}
+  <link rel="stylesheet" href="{% static 'css/profiles.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container py-5"  >
@@ -13,6 +15,7 @@
           src="{{ profile.personal_info.picture.url }}"
           class="card-img-top com_student"
           alt="{{ profile.personal_info.full_name }}"
+          style="height: 250px; object-fit: contain;"
         />
         <div class="card-body">
           <h4 class="card-title bg-white">{{ profile.personal_info.full_name }}</h4>
@@ -25,21 +28,20 @@
           </p>
           <hr>
           <p class="mb-1">
-            <i class="fa fa-envelope me-2"></i>{{ profile.contact_info.email }}
+            {{ profile.contact_info.email }}
           </p>
           <p class="mb-1">
-            <i class="fa fa-phone me-2"></i>{{ profile.contact_info.phone }}
+            {{ profile.contact_info.phone }}
           </p>
           <p class="mb-1">
-            <i class="fa fa-map-marker-alt me-2"></i>
             {{ profile.contact_info.address_line }}, {{ profile.contact_info.city.arabic_name }}
           </p>
           <hr>
           <div class="mb-2">
             <small>اكتمال الملف الشخصي</small>
-            <div class="progress" style="height: 1.5rem;">
+            <div class="progress " style="height: 1.5rem;" dir="ltr">
               <div
-                class="progress-bar"
+                class="progress-bar progress-bar-custom-orange "
                 role="progressbar"
                 style="width: {{ profile.completion_percent }}%;"
                 aria-valuenow="{{ profile.completion_percent }}"
@@ -48,18 +50,15 @@
               >
                 {{ profile.completion_percent }}%
               </div>
+              
+
             </div>
+            <a href="{% url 'profiles:student_company_export_cv_pdf' profile.user.id %}"
+            class="export-pdf-btn btn w-100 mt-3 d-block text-center">
+            تصدير الCV الى PDF
+          </a>
           </div>
-          {% if profile.missing_sections %}
-            <div class="alert alert-warning py-2">
-              <strong>الخطوات التالية:</strong>
-              <ul class="mb-0">
-                {% for sec in profile.missing_sections %}
-                  <li>{{ sec }}</li>
-                {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
+        
         </div>
       </div>
     </div>
@@ -107,14 +106,13 @@
         </ul>
       </div>
 
-      <!-- Skills & Languages -->
       <div class="row gx-2">
         <div class="col-md-6">
           <div class="card mb-4">
             <div class="card-header bg-white text-black fw-bold">المهارات</div>
             <div class="card-body">
               {% for s in profile.skill.all %}
-                <span class="badge bg-primary badge-skill">
+                <span class="badge bg-orange badge-skill">
                   {{ s.name }} ({{ s.get_proficiency_display }})
                 </span>
               {% empty %}
