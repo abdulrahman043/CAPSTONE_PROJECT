@@ -645,3 +645,9 @@ def export_cv_pdf(request,user_id=None):
         if user_id:
             return redirect('profiles:profile_view_admin', user_id=user_id)
         return redirect('profiles:profile_view')
+@login_required
+def company_student_profile(request, student_id):
+   
+    profile = get_object_or_404(StudentProfile, user__id=student_id)
+    print(profile)
+    return render(request, 'profiles/company_student_profile.html', {'profile': profile })
