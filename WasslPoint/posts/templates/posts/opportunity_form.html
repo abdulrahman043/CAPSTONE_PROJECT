@@ -1,11 +1,11 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}{% if is_edit %}Edit{% else %}Create{% endif %} Opportunity{% endblock %}
+{% block title %}{% if is_edit %}تعديل{% else %}إنشاء{% endif %} الفرص{% endblock %}
 
 {% block content %}
 <div class="container mt-4 mb-5">
-    <h2>{% if is_edit %}Edit{% else %}Create{% endif %} Training Opportunity</h2>
+    <h2>{% if is_edit %}تعديل{% else %}إنشاء{% endif %} فرص التدريب</h2>
     <hr>
     {% if messages %}
         {% for message in messages %}
@@ -20,15 +20,15 @@
         {% csrf_token %}
         <div class="row g-3">
             <div class="col-md-6">
-                <label for="majors_needed" class="form-label required">Majors Needed</label>
+                <label for="majors_needed" class="form-label required">التخصصات المطلوبة</label>
                 <select multiple class="form-select" id="majors_needed" name="majors_needed" required size="5">
                     {% for major in majors %}
-                        <option value="{{ major.id }}" {% if major.id in form_data.majors_needed %}selected{% endif %}>
+                        <option value="{{ major.id }}" {% if major.id in form_data.majors_needed %}التخصصات المختارة{% endif %}>
                             {{ major.ar_name }}
                         </option>
                     {% endfor %}
-                </select>
-                <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple.</small>
+                </select>Hold Ctrl/Cmd to select multiple.
+                <small class="form-text text-muted"></small>
             </div>
             <div class="col-md-6">
                 <label for="city" class="form-label required">City</label>

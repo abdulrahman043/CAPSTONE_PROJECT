@@ -1,12 +1,12 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}Company Dashboard - {{ company_profile.company_name }}{% endblock %}
+{% block title %}لوحة تحكم الشركات - {{ company_profile.company_name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Company Dashboard: {{ company_profile.company_name }}</h2>
-    <a href="{% url 'posts:create_opportunity' %}" class="btn btn-success mb-3">Create New Opportunity</a>
+    <h2>لوحة تحكم شركة: {{ company_profile.company_name }}</h2>
+    <a href="{% url 'posts:create_opportunity' %}" class="btn btn-success mb-3">انشاء فرصة تدريبية جديدة</a>
     <hr>
      {% if messages %}
         {% for message in messages %}
@@ -17,17 +17,17 @@
         {% endfor %}
     {% endif %}
 
-    <h3>Your Training Opportunities</h3>
+    <h3>فرصك الوظيفية المقدمه</h3>
     {% if opportunities %}
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Location</th>
-                    <th>Start Date</th>
-                    <th>Deadline</th>
-                    <th>Status</th>
-                    <th>Applications</th>
-                    <th>Actions</th>
+                    <th>الموقع</th>
+                    <th>تاريخ البداية</th>
+                    <th>تاريخ انتهاء التقديم</th>
+                    <th>الحالة</th>
+                    <th>المتقدمين</th>
+                    <th>الإجراءات</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,9 +44,9 @@
                         </td>
                          <td>
                              <a href="{% url 'posts:edit_opportunity' opp.id %}" class="btn btn-sm btn-primary me-1">Edit</a>
-                             <form action="{% url 'posts:delete_opportunity' opp.id %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this opportunity?');">
+                             <form action="{% url 'posts:delete_opportunity' opp.id %}" method="post" class="d-inline" onsubmit="return confirm('هل انت متاكد من حذف الفرصة الوضيفية؟');">
                                  {% csrf_token %}
-                                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                 <button type="submit" class="btn btn-sm btn-danger">حذف</button>
                              </form>
                          </td>
                     </tr>
@@ -54,7 +54,8 @@
             </tbody>
         </table>
     {% else %}
-        <p>You have not created any training opportunities yet.</p>
+        #You have not created any training opportunities yet.
+        <p>لم تقم بإنشاء اي فرصة تدريبة حتى الان</p>
     {% endif %}
 </div>
 {% endblock %}
