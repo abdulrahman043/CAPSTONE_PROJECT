@@ -42,5 +42,6 @@ urlpatterns = [ path('profile/',views.profile_view,name='profile_view'),
                 path('<int:user_id>/add_language/',views.add_language,name='add_language_admin'),
                 path('export/pdf/', views.export_cv_pdf, name='export_cv_pdf'),
                 path('export/pdf/<user_id>', views.export_cv_pdf, name='export_cv_pdf_admin'),
+                path('profile/view/export/pdf/<int:user_id>', views.student_company_export_cv_pdf, name='student_company_export_cv_pdf'),
                  path('profile/view/<int:student_id>/',views.company_student_profile,name='company_student_profile'),
               ]
