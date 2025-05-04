@@ -8,9 +8,12 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from subscriptions.models import SubscriptionPlan
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from decimal import Decimal
+
 from django.contrib import messages
 from .models import EmailOTP
 from django.core.mail   import send_mail
@@ -214,19 +217,26 @@ def signup_company_detail_view(request: HttpRequest):
         if missing:
             messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
             return render(request, 'accounts/signup_company.html', {
-                'industries': industries
+                'industries': industries,
+                'email':email
+
+
             })
 
         if password != password2:
             messages.error(request, "كلمتا السر غير متطابقتين.")
             return render(request, 'accounts/signup_company.html', {
-                'industries': industries
+                'industries': industries,
+                        'email':email
+
             })
 
         if User.objects.filter(username=email).exists():
             messages.error(request, "هذا البريد مسجل مسبقًا.")
             return render(request, 'accounts/signup_company.html', {
-                'industries': industries
+                'industries': industries,
+                        'email':email
+
             })
 
         try:
@@ -236,28 +246,30 @@ def signup_company_detail_view(request: HttpRequest):
             for e in error.error_list:
                 if e.code=='password_too_short':
                     messages.error(request, 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.')
-                    return render(request, 'accounts/signup_company.html')
+                    return render(request, 'accounts/signup_company.html',{ 'email':email})
                 elif e.code == 'password_entirely_numeric':
                     messages.error(request,"لا يمكن أن تكون كلمة المرور أرقامًا فقط.")
-                    return render(request, 'accounts/signup_company.html')
+                    return render(request, 'accounts/signup_company.html',{ 'email':email})
 
                 elif e.code == 'password_too_common':
                     messages.error(request,"هذه كلمة مرور شائعة جدًا، اختر كلمة أخرى أكثر أمانًا.")
-                    return render(request, 'accounts/signup_company.html')
+                    return render(request, 'accounts/signup_company.html',{ 'email':email})
 
                 elif e.code == 'password_similar_to_username':
                     messages.error(request,"كلمة المرور قريبة من البريد الإلكتروني أو الاسم، اختر كلمة أخرى.")
-                    return render(request, 'accounts/signup_company.html')
+                    return render(request, 'accounts/signup_company.html',{ 'email':email})
 
                 else:
                     messages.error(request,error)
-                    return render(request, 'accounts/signup_company.html')
+                    return render(request, 'accounts/signup_company.html',{ 'email':email})
         try:
             industry = industries.get(pk=industry_id)
         except Industry.DoesNotExist:
             messages.error(request, "اختر مجالًا صالحًا للصناعة.")
             return render(request, 'accounts/signup_company.html', {
-                'industries': industries
+                'industries': industries,
+                'email':email
+                
             })
 
         with transaction.atomic():
@@ -364,7 +376,7 @@ def user_list_view(request):
         users = users.filter(company_profile__isnull=False)
     elif user_type == 'staff':
         users = users.filter(is_staff=True)
-
+    users=users.order_by('-date_joined')
     paginator = Paginator(users, 10)
     page_num  = request.GET.get('page')
     user_page = paginator.get_page(page_num)
@@ -398,6 +410,8 @@ def company_user_list_view(request: HttpRequest):
             Q(email__icontains=q) |
             Q(company_profile__company_name__icontains=q)
         ).distinct()
+    user_qs=user_qs.order_by('-date_joined')
+
     paginator=Paginator(user_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
@@ -417,6 +431,8 @@ def student_user_list_view(request: HttpRequest):
             Q(email__icontains=q) |
             Q(student_profile__personal_info__full_name__icontains=q) 
         ).distinct()
+    users_qs=users_qs.order_by('-date_joined')
+
     paginator=Paginator(users_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
@@ -437,12 +453,34 @@ def applications_list_view(request: HttpRequest):
             Q(student__user__email__icontains=q) |
             Q(student__personal_info__full_name__icontains=q) 
         ).distinct()
+    applications_qs=applications_qs.order_by('-applied_at')
     paginator=Paginator(applications_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
     context={"applications_page":user_page}
 
     return render(request, 'accounts/applications_list.html',context)
+@login_required
+@staff_member_required
+def subscription_view(request: HttpRequest):
+    q = request.GET.get('q', '').strip()
+    subscription_qs = SubscriptionPlan.objects.all().order_by('-id')
+
+    if q:
+        subscription_qs = subscription_qs.filter(
+            Q(name__icontains=q) |
+            Q(id__icontains=q) |
+
+            Q(duration_days__icontains=q) |
+            Q(status__icontains=q) 
+        ).distinct()
+    
+    paginator=Paginator(subscription_qs,10)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"subscription_page":user_page}
+
+    return render(request, 'accounts/subscription.html',context)
 @login_required
 @staff_member_required
 def opportunity_list_view(request: HttpRequest):
@@ -459,6 +497,7 @@ def opportunity_list_view(request: HttpRequest):
             Q(company__user__email__icontains=q) 
             
         ).distinct()
+    opportunity_qs=opportunity_qs.order_by('-created_at')
     paginator=Paginator(opportunity_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
@@ -476,6 +515,8 @@ def pending_company_requests_view(request: HttpRequest):
             Q(email__icontains=q) |
             Q(company_profile__company_name__icontains=q)
         ).distinct()
+    user_qs=user_qs.order_by('-date_joined')
+
     paginator=Paginator(user_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
@@ -544,6 +585,22 @@ def app_delete_all(request:HttpRequest):
 @login_required
 @staff_member_required
 @require_POST
+def sub_delete_all(request:HttpRequest):
+    try:
+        if request.method=='POST':
+            ids=request.POST.getlist('selected_users')
+            if ids:
+                SubscriptionPlan.objects.filter(id__in=ids).delete()
+                messages.success(request,"✅ تم حذف الاشتراكات المحددة بنجاح.")
+    except:
+        messages.error(
+            request,
+            "❌ حدث خطأ أثناء حذف الاشتراكات المحددة. حاول مرة أخرى لاحقًا."
+        )
+    return redirect('accounts:subscription_view')
+@login_required
+@staff_member_required
+@require_POST
 def opp_delete_all(request:HttpRequest):
     try:
         if request.method=='POST':
@@ -557,6 +614,151 @@ def opp_delete_all(request:HttpRequest):
             "❌ حدث خطأ أثناء حذف التدريبات. حاول مرة أخرى لاحقًا."
         )
     return redirect('accounts:opportunity_list_view')
+
+@login_required
+@staff_member_required
+def add_subscription_view(request:HttpRequest):
+    if request.method=='POST':
+        name          = request.POST.get('name', '').strip()
+        duration = request.POST.get('duration_days', '').strip()
+        price   = request.POST.get('price', '').strip()
+        description   = request.POST.get('description', '').strip()
+        status        = bool(request.POST.get('status')) 
+
+        missing = []
+        if not name:
+            missing.append('اسم الاشتراك')
+        if not duration:
+            missing.append('المدة')
+        if not price:
+            missing.append('السعر')
+
+        if missing:
+            messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+            return redirect('accounts:add_subscription_view')
+
+        try:
+            duration_days = int(duration)
+            if duration_days < 1:
+                raise ValueError
+        except ValueError:
+            messages.error(request, "المدة يجب أن تكون عدداً صحيحاً أكبر من صفر.")
+            return redirect('accounts:add_subscription_view')
+
+        try:
+            price = Decimal(price)
+            if price < 0:
+                raise ValueError
+        except:
+            messages.error(request, "السعر غير صالح.")
+            return redirect('accounts:add_subscription_view')
+
+        with transaction.atomic():
+            try:
+                SubscriptionPlan.objects.create(
+                    name          = name,
+                    duration_days = duration_days,
+                    price         = price,
+                    description   = description,
+                    status        = status
+                )
+            except Exception as e:
+                messages.error(
+                    request,
+                    "❌ عذرًا، لم نتمكن من إضافة خطة الاشتراك. الرجاء التحقق من البيانات والمحاولة مرة أخرى."
+                )
+
+
+        messages.success(request, "تم إضافة الاشتراك بنجاح!")
+        return redirect('accounts:subscription_view')
+    return render(request,'accounts/subscription_add.html')
+@login_required
+@staff_member_required
+def edit_subscription_view(request:HttpRequest,id):
+    subscription=SubscriptionPlan.objects.get(pk=id)
+
+    if request.method=='POST':
+        name          = request.POST.get('name', '').strip()
+        duration = request.POST.get('duration_days', '').strip()
+        price   = request.POST.get('price', '').strip()
+        description   = request.POST.get('description', '').strip()
+        status        = bool(request.POST.get('status')) 
+
+        missing = []
+        if not name:
+            missing.append('اسم الاشتراك')
+        if not duration:
+            missing.append('المدة')
+        if not price:
+            missing.append('السعر')
+
+        if missing:
+            messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+            return render(request, 'accounts/subscription_edit.html', {
+                'subscription': subscription,
+                'name':         name,
+                'duration':     duration,
+                'price':        price,
+                'description':  description,
+                'status':       status,
+            })
+        try:
+            duration_days = int(duration)
+            if duration_days < 1:
+                raise ValueError
+        except ValueError:
+            messages.error(request, "المدة يجب أن تكون عدداً صحيحاً أكبر من صفر.")
+            return render(request, 'accounts/subscription_edit.html', {
+                'subscription': subscription,
+                'name':         name,
+                'duration':     duration,
+                'price':        price,
+                'description':  description,
+                'status':       status,
+            })
+
+        try:
+            price = Decimal(price)
+            if price < 0:
+                raise ValueError
+        except:
+            messages.error(request, "السعر غير صالح.")
+            return render(request, 'accounts/subscription_edit.html', {
+                'subscription': subscription,
+                'name':         name,
+                'duration':     duration,
+                'price':        price,
+                'description':  description,
+                'status':       status,
+            })
+
+        with transaction.atomic():
+            try:
+                subscription.name=name
+                subscription.duration_days=duration_days
+                subscription.price=price
+                subscription.description=description
+                subscription.status=status
+                subscription.save()
+            except Exception as e:
+                messages.error(
+                    request,
+                    "❌ عذرًا، لم نتمكن من التعديل على خطة الاشتراك. الرجاء التحقق من البيانات والمحاولة مرة أخرى."
+                )
+                return render(request, 'accounts/subscription_edit.html', {
+                'subscription': subscription,
+                'name':         name,
+                'duration':     duration,
+                'price':        price,
+                'description':  description,
+                'status':       status,
+            })
+
+
+
+        messages.success(request, "تم التعديل الاشتراك بنجاح!")
+        return redirect('accounts:subscription_view')
+    return render(request,'accounts/subscription_edit.html',{"subscription":subscription})
 
 def resend_signup_otp(request):
     data = request.session.get('pending_signup')

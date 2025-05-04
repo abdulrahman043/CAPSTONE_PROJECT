@@ -11,38 +11,36 @@
   <section class="ads">
     <h2 class="mb-4 page-title">
       <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
-      الطلاب
+       الاشتراكات
       <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
     </h2>
   </section>
 
   <div class="admin-container">
-    <!-- Sidebar -->
     <nav class="sidebar">
       <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
       <a href="{% url 'accounts:company_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الشركات</a>
-      <a href="{%url 'accounts:applications_list_view'%}" class="sidebar-btn teal text-center text-decoration-none">التقديمات</a>
+      <button class="sidebar-btn teal text-center text-decoration-none">التقديمات</button>
     </nav>
 
-    <!-- Main content -->
     <div class="main-content">
 
-      <!-- Search bar -->
-      <div class="search-filter mb-3">
+      <div class="search-filter" style="margin-bottom:1rem;">
         <form method="get" class="d-flex align-items-center" style="gap:0.5rem;">
           <input
             type="text"
             name="q"
             class="form-control-contact orange-border"
-            placeholder="ابحث عن طالب…"
+            placeholder="ابحث عن اشتراك"
             value="{{ q }}"
           >
-          <button type="submit" class="action-btn edit btn text-white">بحث</button>
+        
+          <button type="submit" class="action-btn btn edit text-white">بحث</button>
         </form>
       </div>
 
-      <!-- Students table & bulk-delete form -->
-      <form action="{% url 'accounts:delete_all' %}" method="post">
+
+      <form action="{% url 'accounts:sub_delete_all' %}" method="post">
         {% csrf_token %}
         <div class="table-wrapper shadow-sm">
           <table class="admin-table">
@@ -50,55 +48,54 @@
               <tr>
                 <th><input type="checkbox" id="select-all"></th>
                 <th>المعرّف</th>
-                <th>الاسم</th>
-                <th>الايميل</th>
-                <th>الهاتف</th>
-                <th>السيرة الذاتية</th>
+                <th> الاسم</th>
+                <th>المدة</th>
+                <th>السعر</th>
+                <th>الحالة</th>
+                <th>الاجرائات</th>
               </tr>
             </thead>
             <tbody>
-              {% for user in user_page %}
+              {% for sub in subscription_page %}
               <tr>
+                <td><input type="checkbox" class="select-row" name="selected_users" value="{{ sub.id }}"></td>
+                <td>{{ sub.id }}</td>
+                <td>{{ sub.name }}</td>
                 <td>
-                  <input type="checkbox" class="select-row"
-                         name="selected_users" value="{{ user.id }}">
+                    {{ sub.duration_days }}
                 </td>
-                <td>{{ user.id }}</td>
-                <td>{{ user.student_profile.personal_info.full_name }}</td>
+                <td>{{ sub.price }}</td>
+                
                 <td>
-                  <a href="{% url 'profiles:profile_view_admin' user.id %}">
-                    {{ user.username }}
-                  </a>
+                  {{sub.status}}
                 </td>
-                <td>{{ user.student_profile.contact_info.phone }}</td>
-                <td>
-                  <a target="_blank"
-                     href="{% url 'profiles:export_cv_pdf_admin' user.id %}"
-                     class="btn export-pdf-btn btn-sm mb-2">
-                    عرض السيرة الذاتية
-                  </a>
+                <td class="d-flex gap-2 justify-content-center">
+                  <a
+                    href="{% url 'accounts:edit_subscription_view' sub.id %}"
+                    class="btn action-btn add text-white">
+                    تعديل
+                </a>
+                 
                 </td>
               </tr>
               {% empty %}
               <tr>
-                <td colspan="6" class="text-center py-4">لا يوجد طلاب.</td>
+                <td colspan="7" class="text-center py-4">لا توجد اشتراكات.</td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
 
-        <!-- Action buttons -->
-        <div class="actions">
-           <!--
-          <a href="#" class="action-btn add">اضافة</a>
-          <a href="#" class="action-btn edit">تعديل</a>
-          -->
-          <button type="submit" class="action-btn delete-all btn text-white">حذف</button>
+         <div class="actions">
+        
+         <!--<a href="#" class="action-btn edit">تعديل</a>-->
+          <a href="{%url 'accounts:add_subscription_view'%}" class="action-btn add">اضافة</a>
+          <button type="submit" class="btn action-btn delete-all text-white">حذف</button>
+
         </div>
       </form>
 
-      <!-- Pagination -->
       <div class="pagination">
         {% if user_page.has_previous %}
           <a href="?q={{ q }}&page=1">&laquo; الأولى</a>

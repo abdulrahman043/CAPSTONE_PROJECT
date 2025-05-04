@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="admin-page" dir="ltr">
+<div class="admin-page" dir="rtl">
 
   <section class="ads">
     <h2 class="mb-4 page-title">
@@ -20,7 +20,7 @@
     <nav class="sidebar">
       <a href="{% url 'accounts:company_user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الشركات</a>
       <a href="{% url 'accounts:student_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الطلاب</a>
-      <button class="sidebar-btn teal text-center text-decoration-none">الرسائل</button>
+      <a href="{% url 'accounts:subscription_view' %}" class="sidebar-btn teal text-center text-decoration-none">الاشتراكات</a>
     </nav>
 
     <div class="main-content">
