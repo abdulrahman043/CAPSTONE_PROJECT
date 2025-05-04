@@ -53,6 +53,7 @@
                 <th>الاسم</th>
                 <th>الايميل</th>
                 <th>الهاتف</th>
+                <th>الخطة</th>
                 <th>السيرة الذاتية</th>
               </tr>
             </thead>
@@ -71,6 +72,8 @@
                   </a>
                 </td>
                 <td>{{ user.student_profile.contact_info.phone }}</td>
+                <td>  {{ user.subscriptions.last.plan.name }}
+                </td>
                 <td>
                   <a target="_blank"
                      href="{% url 'profiles:export_cv_pdf_admin' user.id %}"
