@@ -4,12 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from .models import TrainingOpportunity, Application, Message
 from profiles.models import CompanyProfile, StudentProfile, Major, City
-from subscriptions.models import has_active_subscription # Import subscription check
+from subscriptions.models import has_active_subscription
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 from django.contrib import messages
 from django.views.decorators.http import require_POST, require_http_methods
 from django.urls import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 # --- Helper Decorators ---
 def company_required(view_func):
@@ -132,14 +134,43 @@ def apply_opportunity(request, opportunity_id):
          return redirect('posts:my_applications')
 
 
+
+
+
 @login_required
 @student_required
 def my_applications_list(request):
-    """ Shows the logged-in student their applications. """
-    applications = Application.objects.filter(
-        student=request.user.student_profile
+    """ Shows the logged-in student their applications with pagination. """
+    student_profile = request.user.student_profile
+    application_list = Application.objects.filter(
+        student=student_profile
     ).select_related('opportunity__company', 'opportunity__city').order_by('-applied_at')
-    return render(request, 'posts/my_applications.html', {'applications': applications})
+
+    # --- Mark unseen status updates as seen by the student ---
+    # Application.objects.filter(
+    #     student=student_profile,
+    #     student_has_seen_latest_status=False
+    # ).update(student_has_seen_latest_status=True)
+    # --- (End Notification Logic - Requires model field) ---
+
+    # --- Pagination Logic ---
+    paginator = Paginator(application_list, 10) # Show 10 applications per page
+    page_number = request.GET.get('page') # Get page number from URL query ?page=...
+
+    try:
+        page_obj = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        page_obj = paginator.get_page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        page_obj = paginator.get_page(paginator.num_pages)
+    # --- End Pagination Logic ---
+
+    context = {
+        'page_obj': page_obj # Pass the Page object to the template
+    }
+    return render(request, 'posts/my_applications.html', context)
 
 
 @login_required

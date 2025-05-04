@@ -11,7 +11,7 @@ urlpatterns = [
     path('<int:opportunity_id>/apply/', views.apply_opportunity, name='apply_opportunity'),
     path('applications/', views.my_applications_list, name='my_applications'), # Renamed from application_status
     path('applications/<int:application_id>/withdraw/', views.withdraw_application, name='withdraw_application'),
-    path('applications/<int:application_id>/chat/', views.application_chat, name='application_chat'), # Keep chat as is
+    path('applications/<int:application_id>/chat/', views.application_chat, name='application_chat'),
 
     # Company Views
     path('company/dashboard/', views.company_dashboard, name='company_dashboard'), # New dashboard
