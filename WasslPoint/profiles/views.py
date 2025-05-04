@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.db import transaction
+from posts.models import Application
 from django.contrib.admin.views.decorators import staff_member_required 
 
 # Create your views here.
@@ -515,8 +516,11 @@ def company_profile_view(request:HttpRequest,user_id=None):
  
     industries = Industry.objects.filter(status=True)
 
-        
-    return render(request,'profiles/company_profile.html',{'profile':profile,'admin_view':bool(user_id),'industries':industries})
+    total_applications = Application.objects.filter(
+        opportunity__company=profile
+    ).count()
+
+    return render(request,'profiles/company_profile.html',{'profile':profile,'admin_view':bool(user_id),'industries':industries,'total_applications':total_applications})
 
 @login_required
 def add_edit_contact_person(request:HttpRequest,user_id=None):

@@ -9,7 +9,11 @@ def home_view(request:HttpRequest):
     return render(request,'main/home.html')
 
 def training_view(request:HttpRequest):
-    return render(request,'main/training.html')
+    active_opportunities = TrainingOpportunity.objects.filter(
+        status=TrainingOpportunity.Status.ACTIVE,
+        application_deadline__gte=timezone.now().date()
+        )
+    return render(request,'main/training.html',{"opportunities":active_opportunities})
 
 def about_view(request:HttpRequest):
     return render(request,'main/about.html')

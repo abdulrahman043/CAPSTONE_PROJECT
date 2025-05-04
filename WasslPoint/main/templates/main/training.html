@@ -29,40 +29,31 @@
         <button class="filter-btn">تصنيف</button>
       </div>
   
-      <!-- كروت التدريب -->
-      <div class="row g-4 justify-content-center">
-  
-        <!-- كرت تدريب 1 -->
-        <div class="col-md-4 col-12">
-          <div class="training-card">
-            <img src="{% static 'images/aramco.png' %}" alt="أرامكو" class="company-logo mb-3">
-            <h4 class="company-name">أرامكو</h4>
-            <h5 class="training-opportunity">٣٠ فرصة تدريبية</h5>
-            <p class="training-fields">علوم الحاسب، هندسة ميكانيكية، هندسة الحاسب، صحة وسلامة مهنية، ملاحة</p>
-          </div>
-        </div>
-  
-        <!-- كرت تدريب 2 -->
-        <div class="col-md-4 col-12">
-          <div class="training-card">
-            <img src="{% static 'images/sabic.png' %}" alt="سابك" class="company-logo mb-3">
-            <h4 class="company-name">سابك</h4>
-            <h5 class="training-opportunity">٥٩ فرصة تدريبية</h5>
-            <p class="training-fields">علوم الحاسب، هندسة كهربائية، هندسة صناعية، فيزياء، صحة وسلامة مهنية</p>
-          </div>
-        </div>
-  
-        <!-- كرت تدريب 3 -->
-        <div class="col-md-4 col-12">
-          <div class="training-card">
-            <img src="{% static 'images/sec.png' %}" alt="SEC" class="company-logo mb-3">
-            <h4 class="company-name">SEC</h4>
-            <h5 class="training-opportunity">١٣ فرصة تدريبية</h5>
-            <p class="training-fields">علوم الحاسب، تحويل، علاقات عامة، صحة وسلامة مهنية، الاقتصاد</p>
-          </div>
-        </div>
-  
+   <!-- كروت التدريب -->
+<!-- كروت التدريب -->
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-end">
+  {% for op in opportunities %}
+  <a class="text-decoration-none" href="{% url 'posts:opportunity_detail' op.id %}">
+    <div class="col">
+      <div class="training-card">
+        <img
+          src="{{ op.company.logo.url }}"
+          alt="{{ op.company.company_name }}"
+          class="company-logo mb-3"
+        >
+        <h4 class="company-name">{{ op.company.company_name }}</h4>
+        <h5 class="training-opportunity">{{op.city.arabic_name}}</h5>
+        <p class="training-fields">
+          {% for major in op.majors_needed.all|slice:":2" %}
+            {{ major.ar_name }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </p>
       </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
   
     </div>
   </section>
