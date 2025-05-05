@@ -1,195 +1,159 @@
-{% extends "main/base.html" %}
+{% extends 'main/base.html' %}
 {% load static %}
 
-{# --- Update Title Block --- #}
-{% block title %}{{ profile.personal_info.full_name|default:profile.user.username }} - ملف الطالب{% endblock %}
+{% block title %}{{ profile.company_name }} - ملف الشركة{% endblock %}
 
 {% block style %}
-  {# Use the same CSS as the student's own profile view for consistency #}
-  <link rel="stylesheet" href="{% static 'css/profiles.css' %}">
-  {# Add any specific overrides if needed #}
-  <style>
-    /* Example: Add some margin below the header */
-    .profile-header { margin-bottom: 2rem; }
-    .card-header { font-weight: bold; } /* Ensure headers are bold */
-  </style>
+<style>
+    .profile-header {
+        background-color: #f8f9fa; /* Light background */
+        padding: 2rem 1rem;
+        margin-bottom: 2rem;
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+    }
+    .profile-logo {
+        max-width: 150px;
+        max-height: 150px;
+        object-fit: contain;
+        border: 1px solid #eee;
+        padding: 5px;
+        background-color: #fff;
+        border-radius: 0.25rem;
+    }
+    .detail-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.2rem; /* Space below label */
+    }
+    .detail-value {
+        margin-bottom: 1rem; /* Space below value */
+        color: #333;
+        word-wrap: break-word; /* Prevent long text overflowing */
+    }
+    .detail-value a {
+        word-break: break-all; /* Help long URLs break nicely */
+    }
+    .detail-value .not-available {
+        color: #888;
+        font-style: italic;
+    }
+    .info-card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        background-color: #fff;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+    }
+    .info-card h4 {
+        color: #13A7B1; /* Theme color */
+        border-bottom: 2px solid #eee;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .material-symbols-outlined {
+        vertical-align: text-bottom;
+        font-size: 1.1em;
+        margin-inline-end: 5px;
+    }
+
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container my-4 my-md-5">
 
-  {# Optional Header - could show who is viewing #}
-  {# <div class="profile-header text-center bg-light p-3 rounded mb-4 border">
-    <h2 class="h4">عرض ملف الطالب: {{ profile.personal_info.full_name|default:profile.user.username }}</h2>
-    <p class="text-muted mb-0">يتم العرض بواسطة: {{ request.user.company_profile.company_name|default:"مستخدم شركة" }}</p>
-  </div> #}
-
-  <div class="row gx-4">
-
-    {# --- Left Column: Basic Info Card (like student profile) --- #}
-    <div class="col-lg-4 mb-4">
-      <div class="card profile-card shadow-sm"> {# Added shadow-sm #}
-        <img
-          src="{% if profile.personal_info.picture %}{{ profile.personal_info.picture.url }}{% else %}{% static 'images/default-avatar.jpg' %}{% endif %}" {# Added default image #}
-          class="card-img-top com_student" {# Reuse class? Maybe adjust #}
-          alt="{% firstof profile.personal_info.full_name profile.user.username %}"
-          style="height: 250px; object-fit: cover;" {# Changed object-fit to cover #}
-        />
-        <div class="card-body">
-          <h4 class="card-title text-center mb-2">{% firstof profile.personal_info.full_name profile.user.username %}</h4>
-          <p class="text-center text-muted mb-3">
-            <span class="material-symbols-outlined" style="font-size:1em; vertical-align: middle;">cake</span> {{ profile.personal_info.age|default:"-" }} سنة
-            <span class="mx-1">•</span>
-            <span class="material-symbols-outlined" style="font-size:1em; vertical-align: middle;">person</span> {{ profile.personal_info.get_gender_display|default:"-" }}
-            <span class="mx-1">•</span>
-            <span class="material-symbols-outlined" style="font-size:1em; vertical-align: middle;">flag</span> {{ profile.personal_info.nationality.arabic_name|default:"-" }}
-          </p>
-
-          <hr>
-          <p class="mb-1"><span class="material-symbols-outlined">mail</span> {{ profile.contact_info.email|default:"-" }}</p>
-          <p class="mb-1"><span class="material-symbols-outlined">phone</span> {{ profile.contact_info.phone|default:"-" }}</p>
-          <p class="mb-1"><span class="material-symbols-outlined">home</span> {{ profile.contact_info.address_line|default:"-" }}, {{ profile.contact_info.city.arabic_name|default:"-" }}</p>
-          <hr>
-          {# Completion Percentage - Optional for company view #}
-          {# <div class="mb-2">
-            <strong>اكتمال الملف الشخصي</strong>
-            <div class="progress " style="height: 1.5rem; margin-top: 10px;" dir="ltr">
-              <div
-                class="progress-bar progress-bar-custom-orange "
-                role="progressbar"
-                style="width: {{ profile.completion_percent }}%;"
-                aria-valuenow="{{ profile.completion_percent }}"
-                aria-valuemin="0"
-                aria-valuemax="100"
-              >
-                {{ profile.completion_percent }}%
-              </div>
-            </div>
-          </div> #}
-          {# CV Export Button #}
-          <a href="{% url 'profiles:student_company_export_cv_pdf' profile.user.id %}"
-          class="btn btn-outline-primary w-100 mt-3 d-block text-center"> {# Changed style #}
-            <span class="material-symbols-outlined">picture_as_pdf</span> تصدير السيرة الذاتية (PDF)
-          </a>
-        </div>
-      </div>
+    {# Header with Logo and Name #}
+    <div class="profile-header text-center">
+        {# Ensure profile.logo exists before accessing url #}
+        <img src="{% if profile.logo %}{{ profile.logo.url }}{% else %}{% static 'images/default_company_logo.png' %}{% endif %}" alt="شعار {{ profile.company_name }}" class="profile-logo mb-3">
+        <h1 class="mb-1">{{ profile.company_name|default:"اسم الشركة غير متوفر" }}</h1>
+        {% if profile.industry %}
+        <p class="text-muted lead fs-6 mb-0">
+             <span class="material-symbols-outlined">business_center</span>
+             {# Ensure industry object exists before accessing name #}
+             {{ profile.industry.arabic_name|default:"المجال غير محدد" }} {# Adjusted based on your previous fix #}
+        </p>
+        {% endif %}
     </div>
 
-    {# --- Right Column: Details (like student profile) --- #}
-    <div class="col-lg-8">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
 
-      {# Experience #}
-      <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-white text-black p-3"><span class="material-symbols-outlined">work_history</span> الخبرة العملية</div>
-        <ul class="list-group list-group-flush ">
-          {% for exp in profile.experience.all %}
-            <li class="list-group-item p-3">
-              <h5>{{ exp.job_title }} - {{ exp.company_name }}</h5>
-              <small class="text-muted">
-                {{ exp.start_date|date:"Y-m" }} –
-                {% if exp.end_date %}{{ exp.end_date|date:"Y-m" }}{% else %}حتى الان{% endif %}
-              </small>
-              {% if exp.description %}
-                <p class="mt-2 mb-0">{{ exp.description|linebreaksbr }}</p> {# Added linebreaksbr #}
-              {% endif %}
-            </li>
-          {% empty %}
-            <li class="list-group-item text-muted p-3">لا توجد خبرة مسجلة.</li>
-          {% endfor %}
-        </ul>
-      </div>
+            {# Company Information Card #}
+            <div class="info-card">
+                <h4><span class="material-symbols-outlined">info</span> معلومات الشركة</h4>
+                <dl class="row">
 
-      {# Education #}
-      <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-white text-black p-3"><span class="material-symbols-outlined">school</span> المؤهلات التعليمية</div>
-        <ul class="list-group list-group-flush education-list">
-          {% for edu in profile.education.all %}
-            <li class="list-group-item p-3">
-              <h5>{{ edu.get_degree_display }} – {{ edu.major.ar_name }}</h5>
-              <h6 class="mt-1 mb-1 text-muted">{{edu.university}}</h6> {# Changed to h6 and muted #}
-              <small class="text-muted">
-                تاريخ التخرج: {{ edu.graduating_date|date:"Y-m" }}
-              </small>
-              {% if edu.GPA %}
-                <p class="mt-1 mb-0"> {# Removed margin #}
-                  المعدل: {{ edu.GPA }} / {{ edu.get_gpa_scale_display }}
-                </p>
-              {% endif %}
-            </li>
-          {% empty %}
-            <li class="list-group-item text-muted p-3">لا توجد مؤهلات مسجلة.</li>
-          {% endfor %}
-        </ul>
-      </div>
+                    <dt class="col-sm-4 detail-label">وصف الشركة:</dt>
+                    <dd class="col-sm-8 detail-value">
+                        {% if profile.company_description %}
+                            {{ profile.company_description|linebreaksbr }}
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
 
-      <div class="row gx-3"> {# Adjusted gutter #}
-        {# Skills #}
-        <div class="col-md-6">
-          <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-white text-black p-3"><span class="material-symbols-outlined">construction</span> المهارات</div>
-            <div class="card-body p-3"> {# Adjusted padding #}
-              {% for s in profile.skill.all %}
-                <span class="badge bg-orange badge-skill me-1 mb-1"> {# Added margins #}
-                  {{ s.name }} ({{ s.get_proficiency_display }})
-                </span>
-              {% empty %}
-                <p class="text-muted mb-0">لا توجد مهارات مسجلة.</p> {# Removed padding #}
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-        {# Languages #}
-        <div class="col-md-6">
-          <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-white text-black p-3"><span class="material-symbols-outlined">translate</span> اللغات</div>
-            <div class="card-body p-3"> {# Adjusted padding #}
-              {% for lang in profile.language.all %}
-                <span class="badge bg-blue badge-skill me-1 mb-1"> {# Added margins #}
-                  {{ lang.get_name_display }} ({{ lang.get_proficiency_display }})
-                </span>
-              {% empty %}
-                <p class="text-muted mb-0">لا توجد لغات مسجلة.</p> {# Removed padding #}
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-      </div>
+                    <dt class="col-sm-4 detail-label">موقع الشركة الإلكتروني:</dt>
+                    <dd class="col-sm-8 detail-value">
+                        {% if profile.company_url %}
+                            <a href="{{ profile.company_url }}" target="_blank" rel="noopener noreferrer">{{ profile.company_url }}</a>
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
 
-      {# Certifications #}
-      <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-white text-black p-3"><span class="material-symbols-outlined">workspace_premium</span> الشهادات</div>
-        <ul class="list-group list-group-flush">
-          {% for cert in profile.certification.all %}
-            <li class="list-group-item p-3">
-              <h5>{{ cert.name }} – {{ cert.issuer }}</h5>
-              <small class="text-muted ">
-                إصدار: {{ cert.issue_date|date:"Y-m" }}
-                {% if cert.expiry_date %}؛ انتهاء: {{ cert.expiry_date|date:"Y-m" }}{% endif %}
-              </small>
-              {% if cert.certificate_file %}
-              <p class="mt-2 mb-0"> {# Removed margin #}
-                <a href="{{ cert.certificate_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary"> {# Styled as button #}
-                  <span class="material-symbols-outlined" style="font-size:1.1em">download</span> تحميل ملف الشهادة
+                    <dt class="col-sm-4 detail-label">الموقع على الخريطة:</dt>
+                    <dd class="col-sm-8 detail-value">
+                        {% if profile.company_location %}
+                            <a href="{{ profile.company_location }}" target="_blank" rel="noopener noreferrer">عرض الموقع على الخريطة</a>
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4 detail-label">المجال:</dt>
+                    <dd class="col-sm-8 detail-value">
+                        {% if profile.industry %}
+                            {# Adjusted based on your previous fix #}
+                            {{ profile.industry.arabic_name|default:"غير محدد" }}
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
+
+                     <dt class="col-sm-4 detail-label">المدينة:</dt>
+                     <dd class="col-sm-8 detail-value">
+                        {% if profile.city %}
+                            {{ profile.city.arabic_name|default:"غير محددة" }} {# Assuming City model has arabic_name #}
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4 detail-label">العنوان:</dt>
+                    <dd class="col-sm-8 detail-value">
+                        {% if profile.address_line %}
+                            {{ profile.address_line }}
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
+
+                </dl>
+            </div>{# End Info Card #}
+
+
+
+            <div class="text-center mt-4">
+                <a href="{% url 'main:company_view' %}" class="btn btn-outline-secondary">
+                   <span class="material-symbols-outlined">arrow_back</span> العودة إلى قائمة الشركات
                 </a>
-              </p>
-              {% endif %}
-            </li>
-          {% empty %}
-            <li class="list-group-item text-muted p-3">لا توجد شهادات مسجلة.</li>
-          {% endfor %}
-        </ul>
-      </div>
+            </div>
 
-       {# Back Button (Points back to application list or dashboard?) #}
-       <div class="text-center mt-4">
-            {# You might want this button to go back to the application list #}
-            {# Check if request.META.HTTP_REFERER exists and is safe, otherwise fallback #}
-            <a href="{{ request.META.HTTP_REFERER|default:request.user.company_profile.get_absolute_url|default:'/' }}" class="btn btn-outline-secondary">
-               <span class="material-symbols-outlined">arrow_back</span> العودة للخلف
-            </a>
-       </div>
+        </div> {# End Column #}
+    </div> {# End Row #}
 
-    </div> {# End Right Column #}
-  </div> {# End Row #}
 </div> {# End Container #}
 {% endblock %}

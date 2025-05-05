@@ -87,13 +87,24 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavWassl">
 
-                <ul class="navbar-nav align-items-center me-lg-auto"> {# User/Notification Area #}
+                {# --- User/Notification Area --- #}
+                <ul class="navbar-nav align-items-center me-lg-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown me-2"> {# User Dropdown #}
                             <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownUserWassl" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ user.username }}
+                                {# Display Name based on User Type #}
+                                {% if user.student_profile and user.student_profile.personal_info.full_name %}
+                                    {{ user.student_profile.personal_info.full_name }}
+                                {% elif user.company_profile and user.company_profile.company_name %}
+                                    {{ user.company_profile.company_name }}
+                                {% elif user.is_staff %}
+                                     Admin ({{ user.username }})
+                                {% else %}
+                                    {{ user.username }} {# Fallback #}
+                                {% endif %}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="navbarDropdownUserWassl">
+                                {# Use direct profile check in if/elif #}
                                 {% if user.student_profile %}
                                     <li><a class="dropdown-item" href="{% url 'profiles:profile_view' %}">الملف الشخصي</a></li>
                                     <li><a class="dropdown-item" href="{% url 'posts:my_applications' %}">طلباتي</a></li>
@@ -104,8 +115,9 @@
                                  {% elif user.is_staff %}
                                       <li><a class="dropdown-item" href="{% url 'accounts:user_list_view' %}">لوحة التحكم</a></li>
                                  {% else %}
-                                     <li><span class="dropdown-item text-muted">الملف الشخصي</span></li>
-                                {% endif %}
+                                     <li><span class="dropdown-item text-muted">الملف الشخصي غير متوفر</span></li>
+                                 {% endif %}
+
                                  {% if user.is_staff %}
                                       <li><hr class="dropdown-divider"></li>
                                       <li><a class="dropdown-item" href="{% url 'admin:index' %}" target="_blank">لوحة تحكم Django</a></li>
@@ -113,6 +125,7 @@
                                  {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
+                                     {# Logout URL Name #}
                                     <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
                                         {% csrf_token %}
                                         <button type="submit" class="dropdown-item">تسجيل الخروج</button>
@@ -121,7 +134,7 @@
                             </ul>
                         </li>
                         <li class="nav-item"> {# Notification Icon #}
-                            {% if unread_notifications_count is defined %}
+                           {% if unread_notifications_count is defined %}
                             <a class="nav-link position-relative text-white p-2" href="#" title="الإشعارات">
                                 <span class="material-symbols-outlined nav-icon-notification">
                                   notifications
@@ -142,11 +155,20 @@
                             {% endif %}
                         </li>
                     {% else %}
-                         <li class="nav-item"> {# Login Button #}
+                         {# --- Anonymous User Links --- #}
+                         <li class="nav-item">
+                             {# Login URL Name #}
                             <a href="{% url 'accounts:login_view' %}" class="btn" style="background-color: #FF7C34; color: white; border-radius: 8px; margin-left: 5px;">تسجيل دخول</a>
+                        </li>
+                         <li class="nav-item">
+                             {# --- CORRECTED Signup URL Name --- #}
+                             {# Points to student signup. Create 'select_signup_view' if needed #}
+                            <a href="{% url 'accounts:signup_view' %}" class="nav-link text-white">تسجيل جديد</a>
                         </li>
                      {% endif %}
                  </ul>
+                 {# --- END User/Notification Area --- #}
+
                  <ul class="navbar-nav mx-auto"> {# Centered Main Nav Links #}
                     <li class="nav-item mx-2">
                       <a class="nav-link text-white {% if request.resolver_match.url_name == 'home_view' %}active{% endif %}" href="{% url 'main:home_view' %}">الرئيسية</a>
@@ -160,6 +182,7 @@
                     <li class="nav-item mx-2">
                       <a class="nav-link text-white {% if request.resolver_match.url_name == 'company_view' %}active{% endif %}" href="{% url 'main:company_view' %}">الشركات</a>
                     </li>
+                    {# Correct check for student profile link #}
                     {% if user.is_authenticated and user.student_profile %}
                     <li class="nav-item mx-2">
                       <a class="nav-link text-white {% if request.resolver_match.app_name == 'subscriptions' %}active{% endif %}" href="{% url 'subscriptions:plans' %}">الاشتراكات</a>
@@ -180,13 +203,12 @@
         </nav>
     </header>
 
-    {# --- MODIFIED Messages Block --- #}
+    {# --- Messages Block (Unchanged) --- #}
     {% if messages %}
     <div class="container mt-3">
       {% for message in messages %}
-        {# Convert message to string and check if it starts like the object str #}
         {% with message_str=message|stringformat:"s" %}
-          {% if not message_str|slice:":12" == 'Message from ' %} {# <<< ADDED FILTER #}
+          {% if not message_str|slice:":12" == 'Message from ' %}
             <div
               class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'warning'%}warning{% elif message.tags == 'success'%}success{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show"
               role="alert"
@@ -194,12 +216,12 @@
               {{ message|safe }}
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-          {% endif %} {# End filter check #}
+          {% endif %}
         {% endwith %}
       {% endfor %}
     </div>
     {% endif %}
-     {# --- End MODIFIED Messages Block --- #}
+     {# --- End Messages Block --- #}
 
     <main>
         {%block content%}{%endblock%}
