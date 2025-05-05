@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpRequest,HttpResponse
-from .models import StudentProfile,PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language,Education,Certification,Major,CompanyProfile,Industry,ContactPerson
+from .models import StudentProfile,PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language,Education,Certification,Major,CompanyProfile,Industry,ContactPerson,CompanyProfileEditRequest
 from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -593,6 +593,53 @@ def add_edit_company_info(request:HttpRequest,user_id):
         return redirect('profiles:company_profile_view')
     if user_id:
         return redirect('profiles:company_profile_view_admin', user_id=user_id)
+    return redirect('profiles:company_profile_view')
+@login_required
+@require_POST
+def add_edit_company_info_company(request: HttpRequest):
+    profile = get_object_or_404(CompanyProfile, user=request.user)
+
+    company_name        = request.POST.get('company_name', '').strip()
+    commercial_register = request.POST.get('commercial_register', '').strip()
+    industry_id         = request.POST.get('industry', '').strip()
+    address_line        = request.POST.get('address_line', '').strip()
+    crm_certificate     = request.FILES.get('crm_certificate')
+
+    missing = []
+    if not company_name:        missing.append('اسم الشركة')
+    if not commercial_register: missing.append('رقم السجل التجاري')
+    if not industry_id:         missing.append('المجال')
+
+
+    if missing:
+        messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+        return redirect('profiles:company_profile_view')
+
+    try:
+        industry = Industry.objects.get(pk=industry_id)
+    except Industry.DoesNotExist:
+        messages.error(request, "المجال المحدد غير صالح. يرجى الاختيار من القائمة.")
+        return redirect('profiles:company_profile_view')
+
+    try:
+        with transaction.atomic():
+            edit = CompanyProfileEditRequest.objects.create(
+                company             = profile,
+                company_name        = company_name,
+                commercial_register = commercial_register,
+                industry            = industry,
+                address_line        = address_line or None,
+            )
+            if crm_certificate:
+                edit.crm_certificate = crm_certificate
+            
+            edit.save()
+
+    except Exception:
+        messages.error(request, "حدث خطأ أثناء إنشاء طلب التعديل. حاول مرة أخرى.")
+        return redirect('profiles:company_profile_view')
+
+    messages.success(request, "تم إرسال طلب التعديل وسيتم مراجعته من قبل الإدارة.")
     return redirect('profiles:company_profile_view')
 @require_POST
 @login_required
