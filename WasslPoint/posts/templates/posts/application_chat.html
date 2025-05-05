@@ -1,27 +1,146 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}مراسلة ممثل الشركة عن التقديم{% endblock %}
+{% block title %}محادثة بخصوص التقديم{% endblock %} {# Chat Regarding Application #}
+
+{% block style %}
+{# Chat styles #}
+<style>
+    .chat-box {
+        height: 400px; /* Adjust as needed */
+        overflow-y: scroll;
+        border: 1px solid #eee;
+        padding: 15px;
+        margin-bottom: 15px;
+        background-color: #f8f9fa; /* Light background */
+        border-radius: 5px;
+    }
+    .message {
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        border-radius: 15px;
+        max-width: 75%;
+        word-wrap: break-word;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        display: flex; /* Use flexbox for alignment */
+        flex-direction: column; /* Stack sender/content/time vertically */
+    }
+    .message.sent {
+        background-color: #dcf8c6; /* WhatsApp-like green for sent */
+        margin-left: auto; /* Align right (RTL: appears left) */
+        align-items: flex-end; /* Align text content right */
+        border-bottom-right-radius: 0;
+    }
+    .message.received {
+        background-color: #ffffff; /* White for received */
+        border: 1px solid #eee;
+        margin-right: auto; /* Align left (RTL: appears right) */
+        align-items: flex-start; /* Align text content left */
+        border-bottom-left-radius: 0;
+    }
+    .message .sender {
+        font-weight: bold;
+        font-size: 0.9em;
+        margin-bottom: 3px;
+        color: #555; /* Or a theme color */
+    }
+     .message .content {
+        font-size: 1em;
+        color: #333;
+        text-align: start; /* Ensure text aligns start within bubble */
+        margin-bottom: 4px;
+     }
+    .message small.msg-time {
+        font-size: 0.75em;
+        color: #999;
+        margin-top: 5px;
+        align-self: flex-end; /* Keep time aligned bottom-right within bubble */
+        display: block; /* Ensure it takes its own line if needed */
+    }
+    .message.received small.msg-time {
+         align-self: flex-end; /* Also align time right for received */
+     }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <h1>Chat with {% if request.user == application.student.user %}الشركة{% else %}الطالب{% endif %}</h1>
-    <div class="chat-messages">
-        {% for message in messages %}
-            <div class="message {% if message.sender == request.user %}مرسل{% else %}مستقبل{% endif %}">
-                <p><strong>{{ message.sender.username }}:</strong> {{ message.content }}</p>
-                <small>{{ message.sent_at }}</small>
-            </div>
-        {% endfor %}
+<div class="container my-4 my-md-5"> {# Consistent container padding #}
+
+    {# Page Title #}
+    <h3 class="mb-3 text-center">
+        محادثة بخصوص طلب التقديم لـ<span class="fw-bold mx-2">{{ application.opportunity.company.company_name }}</span>
+    </h3>
+     <p class="text-center text-muted">
+        مقدم الطلب: {{ application.student.user.get_full_name|default:application.student.user.username }} | {# Show full name if available #}
+        الحالة: <span class="fw-bold">{{ application.get_status_display }}</span>
+     </p>
+
+    <hr class="my-4">
+
+     {# --- Display Filtered Django Flash Messages --- #}
+   
+     {# --- End Filtered Alert Messages --- #}
+
+    {# Chat Messages Area #}
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+             <div class="chat-box shadow-sm" id="chatBox">
+                 {# Loop through 'messages' context variable (actual chat history) #}
+                 {% for message in messages %}
+                     <div class="message {% if message.sender == user %}sent{% else %}received{% endif %}">
+                          <span class="sender">
+                            {% if message.sender == user %}أنا{% else %}{{ message.sender.get_full_name|default:message.sender.username }}{% endif %} {# Display 'Me' or sender name #}
+                          </span>
+                          <span class="content">{{ message.content|linebreaksbr }}</span>
+                          <small class="msg-time">{{ message.sent_at|date:"Y-m-d H:i" }}</small>
+                     </div>
+                 {% empty %}
+                     <p class="text-center text-muted mt-3">لا توجد رسائل حتى الآن.</p> {# No messages yet #}
+                 {% endfor %}
+             </div>
+         </div>
+     </div>
+
+    {# Send Message Form #}
+     <div class="row justify-content-center mt-3">
+        <div class="col-md-10 col-lg-8">
+             <form method="post" action="{% url 'posts:application_chat' application.id %}">
+                 {% csrf_token %}
+                 <div class="input-group">
+                     <textarea name="content" id="content" class="form-control" placeholder="اكتب رسالتك هنا..." rows="3" required aria-label="رسالتك"></textarea>
+                     <button type="submit" class="btn btn-primary">
+                          <span class="material-symbols-outlined" style="font-size: 1.2em; vertical-align: middle;">send</span>
+                          أرسل {# Send #}
+                     </button>
+                 </div>
+             </form>
+         </div>
+      </div>
+
+    {# Back Button - Uses context flags from view #}
+    <div class="text-center mt-4">
+        {% if is_student_view %}
+             <a href="{% url 'posts:my_applications' %}" class="btn btn-outline-secondary">العودة إلى طلباتي</a> {# Back to My Applications #}
+         {% elif is_company_view or request.user.is_staff %}
+             <a href="{% url 'posts:opportunity_applications' application.opportunity.id %}" class="btn btn-outline-secondary">العودة إلى طلبات الفرصة</a> {# Back to Opportunity Applications #}
+         {% else %}
+             {# Fallback link #}
+             <a href="{% url 'main:home_view' %}" class="btn btn-outline-secondary">العودة للرئيسية</a>
+         {% endif %}
     </div>
-    <form method="post" action="{% url 'posts:application_chat' application.id %}" class="mt-3">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="content" class="form-label">رسالتك</label>
-            <textarea name="content" id="content" class="form-control" rows="3" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">أرسل الرسالة</button>
-    </form>
-     <a href="{% url 'posts:update_application_status'  %}" class="btn btn-secondary">العودة للتقديم</a>
+
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    // Scroll chat box to the bottom on page load
+    const chatBox = document.getElementById('chatBox');
+    if (chatBox) {
+        // Use setTimeout to ensure content is rendered before scrolling
+        setTimeout(() => {
+             chatBox.scrollTop = chatBox.scrollHeight;
+        }, 100); // 100ms delay, adjust if needed
+    }
+</script>
 {% endblock %}

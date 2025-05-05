@@ -15,12 +15,22 @@
       <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
     </h2>
   </section>
-
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb" style="--bs-breadcrumb-divider: '>'; ">
+      <li class="breadcrumb-item">
+        <a class="text-bluea" href="{% url 'accounts:user_list_view' %}" >لوحة الاداراة</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a class="text-bluea" href="{% url 'accounts:company_user_list_view' %}">الشركات</a>
+      </li>
+      
+      <li class="breadcrumb-item active" aria-current="page">طلبات التفعيل</li>
+    </ol>
+  </nav>
   <div class="admin-container">
     <nav class="sidebar">
-      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
+      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">لوحة الاداراة</a>
       <a href="{% url 'accounts:company_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الشركات</a>
-      <button class="sidebar-btn teal text-center text-decoration-none">التقديمات</button>
     </nav>
 
     <div class="main-content">
@@ -71,7 +81,7 @@
                     {{ user.username }}
                   </a>
                 </td>
-                <td>{{ user.company_profile.industry.name }}</td>
+                <td>{{ user.company_profile.industry.arabic_name }}</td>
                 <td>
                   {% if user.company_profile.crm_certificate %}
                   <a href="{{ user.company_profile.crm_certificate.url }}"
@@ -88,7 +98,7 @@
                     قبول
                   </button>
                   <button
-                    formaction="{% url 'accounts:user_delete' user.id %}"
+                    formaction="{% url 'accounts:user_reject' user.id %}"
                     class="btn action-btn delete-all text-white">
                     رفض
                   </button>

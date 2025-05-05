@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from babel import Locale
 # استيراد لحساب العمر من تاريخ الميلاد
 from datetime import date
+from django.utils import timezone
+from django.core.mail import send_mail
+from django.conf import settings
 
 # تهيئة اللغة العربية في Babel
 locale_ar = Locale('ar')
@@ -26,7 +29,8 @@ class City(models.Model):
 
 class Industry(models.Model):
     # نموذج يمثل قطاعاً للصناعة مع حالة تفعيل
-    name = models.CharField(max_length=100)   # اسم القطاع
+    arabic_name = models.CharField(max_length=100)   # اسم القطاع
+    english_name = models.CharField(max_length=100)
     status = models.BooleanField(default=True) # علم التفعيل
     def __str__(self):
         return self.name
@@ -270,10 +274,15 @@ class Certification(models.Model):
 class CompanyProfile(models.Model):
     # ملف الشركة المرتبط بالمستخدم
     user                          = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company_profile')
-    company_name                  = models.TextField(max_length=200) # اسم الشركة
+    company_name                  = models.CharField(max_length=200) # اسم الشركة
+    company_description           = models.TextField(null=True)  #وصف
+    company_url                   = models.URLField(null=True)  # اسم الشركة
+    company_location              = models.URLField(null=True)
     crm_certificate               = models.FileField(upload_to='crm_certs/') # شهادة CRM
     commercial_register           = models.CharField(max_length=200)       # رقم السجل التجاري
     industry                       = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True) # الصناعة
+    city                = models.ForeignKey(City, on_delete=models.CASCADE, null=True) 
+
     address_line = models.CharField(max_length=255, null=True, blank=True)
     logo                = models.ImageField(
                               upload_to='company_logos/',
@@ -303,3 +312,72 @@ class ContactInformation(models.Model):
     city         = models.ForeignKey(City, on_delete=models.CASCADE, null=True) # ربط بالمدينة
     def __str__(self):
         return self.email
+
+class CompanyProfileEditRequest(models.Model):
+    STATUS_PENDING  = "PENDING"
+    STATUS_APPROVED = "APPROVED"
+    STATUS_REJECTED = "REJECTED"
+    STATUS_CHOICES = [
+        ('PENDING',  "قيد المراجعة"),
+        ('APPROVED', "مقبول"),
+        ('REJECTED', "مرفوض"),
+    ]
+
+    company            = models.ForeignKey('CompanyProfile', on_delete=models.CASCADE, related_name="edit_requests")
+    company_name       = models.CharField(max_length=200)
+    commercial_register= models.CharField(max_length=200)
+    company_location= models.URLField(null=True,blank=True)
+    industry           = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True)
+    crm_certificate    = models.FileField(upload_to='crm_certs/', blank=True, null=True)
+    city                = models.ForeignKey(City, on_delete=models.CASCADE, null=True) 
+
+    status             = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    submitted_at       = models.DateTimeField(auto_now_add=True)
+
+    def approve(self, admin_user):
+        p = self.company
+        p.company_name        = self.company_name
+        p.commercial_register = self.commercial_register
+        p.industry_id         = self.industry_id
+        p.city_id         = self.city_id
+        p.company_location        = self.company_location
+        if self.crm_certificate: p.crm_certificate = self.crm_certificate
+        p.save()
+        self.status      = self.STATUS_APPROVED
+        self.reviewed_at = timezone.now()
+        self.save()
+        subject = '✅ تم قبول طلب تعديل معلومات شركتكم'
+        body = (
+            f'مرحباً {p.company_name},\n\n'
+            'لقد تم قبول طلب تعديل معلومات شركتكم بنجاح. '
+            'يمكنك الآن مراجعة التعديلات في حسابك.\n\n'
+            'شكراً لاستخدامك منصتنا.'
+        )
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [p.user.email],
+            fail_silently=False,
+        )
+
+    def reject(self, admin_user, comment=None):
+        self.crm_certificate.delete(save=False)
+        self.status      = self.STATUS_REJECTED
+        subject = '❌ تم رفض طلب تعديل معلومات شركتكم'
+        body = (
+            f'مرحباً {self.company.company_name},\n\n'
+            'نأسف لإبلاغكم بأنه تم رفض طلب تعديل معلومات شركتكم.\n'
+            f'{"تعليق الإدارة: " + comment + "\n\n" if comment else ""}'
+            'يرجى مراجعة البيانات وإعادة إرسال الطلب إذا لزم الأمر.\n\n'
+            'شكراً لاستخدامك منصتنا.'
+        )
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [self.company.user.email],
+            fail_silently=False,
+        )
+        self.delete()
+        

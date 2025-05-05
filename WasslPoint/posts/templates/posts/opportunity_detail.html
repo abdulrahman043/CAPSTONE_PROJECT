@@ -67,7 +67,7 @@
                           <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L16 6.464a.5.5 0 0 0 .025-.917z"/>
                           <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466zM8 12.46l-3.891 1.556L8 15.11l3.891-1.556z"/>
                         </svg>
-                        <strong>التخصصات المطلبة:</strong>
+                        <strong>التخصصات المطلوبة:</strong>
                         {% for major in opportunity.majors_needed.all %}
                             <span class="badge bg-secondary">{{ major.ar_name }}</span>
                         {% empty %}
@@ -170,8 +170,8 @@
                             <form action="{% url 'posts:apply_opportunity' opportunity.id %}" method="post">
                                 {% csrf_token %}
                                 <div class="mb-3">
-                                    <label for="message" class="form-label">Optional Message to Company:</label>
-                                    <textarea name="message" id="message" rows="3" class="form-control" placeholder="Write a brief cover message..."></textarea>
+                                    <label for="message" class="form-label">اكتب رسالة للشركة :(إختياري)</label>
+                                    <textarea name="message" id="message" rows="3" class="form-control" placeholder="اكتب رسالة موجزة للشركة..."></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-success">التقديم الأن</button>
                             </form>

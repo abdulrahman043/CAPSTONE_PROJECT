@@ -21,29 +21,31 @@
   <div class="row g-4">
     <div class="col-12 col-md-8">
       <div class="profile-flex">
-        <div class="o border-blue radius mb-4">
+        <div class="o border bg-white radius mb-4 ">
           {% include 'profiles/partials/company_logo.html' %}
         </div>
 
-        <div class="card border-orange radius mb-4">
+        <div class="card border bg-white radius mb-4">
           {% include 'profiles/partials/company_info.html' %}
         </div>
+        <div class="card border bg-white radius mb-4">
+          {% include 'profiles/partials/company_info op.html' %}
+        </div>
 
-        <div class="card border-blue radius mb-4">
+        <div class="card border bg-white radius mb-4">
           {% include 'profiles/partials/company_contact_info.html' %}
         </div>
 
       </div>
     </div>
+            <div class="col-12 col-md-3">
+              <div class="prog border bg-white p-3 radius ">
+                <h5 class="mb-3 orange">التدريبات المضافة:{{profile.opportunities.count}}</h5>
+                <h5 class="mb-3 orange">اجمالي التقديمات:{{total_applications}}</h5>
+                  <h5><a href={% url 'posts:company_dashboard' %}>للذهاب الى صفحة التحكم</a></h5>
+              </div>
+            </div>
 
-    <div class="col-12 col-md-3">
-      <div class="prog border-orange p-3 radius ">
-        <h5 class="mb-3 orange">التدريبات المضافة:{{profile.opportunities.count}}</h5>
-        <h5 class="mb-3 orange">اجمالي التقديمات:{{total_applications}}</h5>
-        
-    
-      </div>
-    </div>
   </div>
 </div>
 {% block script %}

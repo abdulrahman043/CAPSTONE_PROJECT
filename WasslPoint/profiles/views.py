@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpRequest,HttpResponse
-from .models import StudentProfile,PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language,Education,Certification,Major,CompanyProfile,Industry,ContactPerson
+from .models import StudentProfile,PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language,Education,Certification,Major,CompanyProfile,Industry,ContactPerson,CompanyProfileEditRequest
 from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.db import transaction
 from posts.models import Application
 from django.contrib.admin.views.decorators import staff_member_required 
+from decimal import Decimal
 
 # Create your views here.
 @login_required
@@ -258,6 +259,26 @@ def delate_edu(request:HttpRequest,edu_id,user_id=None):
 @login_required
 @require_POST
 def edit_edu(request:HttpRequest,edu_id,user_id=None):
+    gpa_raw   = request.POST.get('gpa', '').strip().replace(',', '.')
+    scale_raw = request.POST.get('gpa_scale', '').strip().replace(',', '.')
+
+    try:
+        gpa_raw   = Decimal(gpa_raw)
+        scale_raw = Decimal(scale_raw)
+    except:
+        messages.error(request, "يجب أن يكون كل من الـ GPA والمقياس رقمًا صالحًا.")
+        if user_id:
+            return redirect('profiles:profile_view_admin', user_id=user_id)
+        return redirect('profiles:profile_view')
+
+    if gpa_raw > scale_raw:
+        messages.error(
+            request,
+            f'القيمة ({gpa_raw}) لا يمكن أن تتجاوز المقياس ({scale_raw}).'
+        )
+        if user_id:
+            return redirect('profiles:profile_view_admin', user_id=user_id)
+        return redirect('profiles:profile_view')
     try:
         if request.method=='POST':
             profile = get_target_profile(request, user_id)
@@ -470,6 +491,26 @@ def add_language(request:HttpRequest,user_id=None):
 @login_required
 @require_POST
 def add_edu(request:HttpRequest,user_id=None):
+    gpa_raw   = request.POST.get('gpa', '').strip().replace(',', '.')
+    scale_raw = request.POST.get('gpa_scale', '').strip().replace(',', '.')
+
+    try:
+        gpa_raw   = Decimal(gpa_raw)
+        scale_raw = Decimal(scale_raw)
+    except:
+        messages.error(request, "يجب أن يكون كل من الـ GPA والمقياس رقمًا صالحًا.")
+        if user_id:
+            return redirect('profiles:profile_view_admin', user_id=user_id)
+        return redirect('profiles:profile_view')
+
+    if gpa_raw > scale_raw:
+        messages.error(
+            request,
+            f'القيمة ({gpa_raw}) لا يمكن أن تتجاوز المقياس ({scale_raw}).'
+        )
+        if user_id:
+            return redirect('profiles:profile_view_admin', user_id=user_id)
+        return redirect('profiles:profile_view')
     try:
         if request.method=='POST':
             education = Education.objects.create(profile = get_target_profile(request, user_id))
@@ -515,12 +556,13 @@ def company_profile_view(request:HttpRequest,user_id=None):
             return redirect('main:home_view')
  
     industries = Industry.objects.filter(status=True)
+    cities = City.objects.filter(status=True) 
 
     total_applications = Application.objects.filter(
         opportunity__company=profile
     ).count()
 
-    return render(request,'profiles/company_profile.html',{'profile':profile,'admin_view':bool(user_id),'industries':industries,'total_applications':total_applications})
+    return render(request,'profiles/company_profile.html',{'profile':profile,'admin_view':bool(user_id),'industries':industries,'cities':cities,'total_applications':total_applications})
 
 @login_required
 def add_edit_contact_person(request:HttpRequest,user_id=None):
@@ -552,6 +594,46 @@ def add_edit_contact_person(request:HttpRequest,user_id=None):
                 messages.success(request, "تم تحديث بيانات جهة الاتصال بنجاح.")
         except Exception as e:
                 messages.error(request, "حدث خطأ أثناء حفظ بيانات جهة الاتصال. حاول مرة أخرى.")
+
+        if user_id:
+            return redirect('profiles:company_profile_view_admin', user_id=user_id)
+        return redirect('profiles:company_profile_view')
+    if user_id:
+        return redirect('profiles:company_profile_view_admin', user_id=user_id)
+    return redirect('profiles:company_profile_view')
+
+
+@login_required
+def add_edit_moreinfo_company(request:HttpRequest,user_id=None):
+    if not request.user.is_authenticated:
+        return redirect('main:home_view')
+    if user_id:
+        if not request.user.is_staff:
+            return redirect("main:home_view")
+        user = get_object_or_404(User, pk=user_id)
+        profile=user.company_profile
+        
+    else:
+        try:
+            profile=request.user.company_profile
+        except CompanyProfile.DoesNotExist:
+            messages.error(request, "عذراً، لم يتم العثور على ملف الشركة.")
+        
+
+    if request.method=='POST':
+        try:
+            company_description=request.POST.get('company_description').strip()
+            company_url=request.POST.get('company_url').strip()
+            address_line=request.POST.get('address_line').strip()
+
+            profile.company_description=company_description
+            profile.company_url=company_url
+            profile.address_line=address_line
+            profile.save()
+            messages.success(request, "تم تحديث بيانات الشركة بنجاح.")
+        except Exception as e:
+                messages.error(request, "حدث خطأ أثناء حفظ بيانات الشركة. حاول مرة أخرى.")
+                print(e)
 
         if user_id:
             return redirect('profiles:company_profile_view_admin', user_id=user_id)
@@ -593,6 +675,71 @@ def add_edit_company_info(request:HttpRequest,user_id):
         return redirect('profiles:company_profile_view')
     if user_id:
         return redirect('profiles:company_profile_view_admin', user_id=user_id)
+    return redirect('profiles:company_profile_view')
+@login_required
+@require_POST
+def add_edit_company_info_company(request: HttpRequest):
+    profile = get_object_or_404(CompanyProfile, user=request.user)
+    if CompanyProfileEditRequest.objects.filter(
+        company=profile,
+        status=CompanyProfileEditRequest.STATUS_PENDING
+    ).exists():
+        messages.warning(
+            request,
+            "لديك طلب تعديل قيد المراجعة بالفعل. لا يمكنك إنشاء طلب جديد حتى يُعالج الطلب الحالي."
+        )
+        return redirect('profiles:company_profile_view')
+
+    company_name        = request.POST.get('company_name').strip()
+    commercial_register = request.POST.get('commercial_register').strip()
+    industry_id         = request.POST.get('industry').strip()
+    city_id         = request.POST.get('city').strip()
+    company_location        = request.POST.get('company_location')
+    crm_certificate     = request.FILES.get('crm_certificate')
+
+    missing = []
+    if not company_name:        missing.append('اسم الشركة')
+    if not commercial_register: missing.append('رقم السجل التجاري')
+    if not industry_id:         missing.append('المجال')
+    if not city_id:         missing.append('المدينة')
+
+
+    if missing:
+        messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+        return redirect('profiles:company_profile_view')
+
+    try:
+        industry = Industry.objects.get(pk=industry_id)
+    except Industry.DoesNotExist:
+        messages.error(request, "المجال المحدد غير صالح. يرجى الاختيار من القائمة.")
+        return redirect('profiles:company_profile_view')
+    try:
+        city = City.objects.get(pk=city_id)
+    except City.DoesNotExist:
+        messages.error(request, "المدينة المحددة غير صالحه. يرجى الاختيار من القائمة.")
+        return redirect('profiles:company_profile_view')
+    print(company_location)
+    try:
+        with transaction.atomic():
+            edit = CompanyProfileEditRequest.objects.create(
+                company             = profile,
+                company_name        = company_name,
+                commercial_register = commercial_register,
+                industry            = industry,
+                city        =          city ,
+                company_location=company_location or None
+            )
+            if crm_certificate:
+                edit.crm_certificate = crm_certificate
+            
+            edit.save()
+
+    except Exception as e:
+        print(e)
+        messages.error(request, "حدث خطأ أثناء إنشاء طلب التعديل. حاول مرة أخرى.")
+        return redirect('profiles:company_profile_view')
+
+    messages.success(request, "تم إرسال طلب التعديل وسيتم مراجعته من قبل الإدارة.")
     return redirect('profiles:company_profile_view')
 @require_POST
 @login_required
@@ -645,3 +792,69 @@ def export_cv_pdf(request,user_id=None):
         if user_id:
             return redirect('profiles:profile_view_admin', user_id=user_id)
         return redirect('profiles:profile_view')
+@login_required
+def student_company_export_cv_pdf(request,user_id):
+    user = get_object_or_404(User, id=user_id)
+    profile=user.student_profile
+    try:
+        html=render_to_string('profiles/cv_pdf.html',{'profile':profile})
+        response=HttpResponse(content_type='application/pdf')
+        response['Content-Disposition']=f'filename={user.username}_cv.pdf'
+        HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf(response)
+        return response
+
+    except Exception as e:
+        messages.error(request, "عذراً، حدث خطأ أثناء تصدير السيرة الذاتية. حاول مرة أخرى.")
+
+        print(e)
+       
+        return redirect('profiles:company_student_profile' ,user.id)
+
+@login_required
+def company_student_profile(request, student_id):
+    """
+    View for a company or admin to see a specific student's profile.
+    Renders a specific template for this view.
+    """
+    # Authorization: Allow staff or users with a company profile
+    if not (request.user.is_staff or hasattr(request.user, 'company_profile')):
+         messages.error(request, "ليس لديك الصلاحية لعرض ملفات الطلاب.")
+         # Redirect appropriately
+         return redirect('main:home_view') # Or company dashboard if appropriate
+
+    # Fetch student profile, optimize related data access if needed
+    profile = get_object_or_404(
+        StudentProfile.objects.select_related(
+            'user', 'personal_info', 'contact_info',
+            'personal_info__nationality', # Include nationality
+            'contact_info__city' # Include city
+        ).prefetch_related(
+            'experience', 'skill', 'language', 'education__major', 'certification'
+        ),
+        user__id=student_id
+    )
+
+    context = {
+        'profile': profile,
+        # Add any other context specific to this view if needed
+        # 'viewing_user_is_company': hasattr(request.user, 'company_profile'), # Example flag
+        }
+    # Render the specific template uploaded by the user
+    return render(request, 'profiles/company_student_profile.html', context)
+def public_company_profile_view(request, company_id):
+    """
+    Displays a public view of a company's profile.
+    Fetches the company profile based on its ID and ensures the associated user is active.
+    """
+    # Fetch the specific company profile, ensuring it's linked to an active user
+    # Use select_related for efficiency when accessing Industry and City
+    company_profile = get_object_or_404(
+        CompanyProfile.objects.select_related('user', 'industry', 'city'),
+        pk=company_id,
+        user__is_active=True # Only show profiles of active companies
+    )
+
+    context = {
+        'profile': company_profile,
+    }
+    return render(request, 'profiles/public_company_profile.html', context)

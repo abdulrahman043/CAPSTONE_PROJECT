@@ -11,7 +11,7 @@ urlpatterns = [
     path('<int:opportunity_id>/apply/', views.apply_opportunity, name='apply_opportunity'),
     path('applications/', views.my_applications_list, name='my_applications'), # Renamed from application_status
     path('applications/<int:application_id>/withdraw/', views.withdraw_application, name='withdraw_application'),
-    path('applications/<int:application_id>/chat/', views.application_chat, name='application_chat'), # Keep chat as is
+    path('applications/<int:application_id>/chat/', views.application_chat, name='application_chat'),
 
     # Company Views
     path('company/dashboard/', views.company_dashboard, name='company_dashboard'), # New dashboard
@@ -20,8 +20,7 @@ urlpatterns = [
     path('company/<int:opportunity_id>/delete/', views.delete_opportunity, name='delete_opportunity'),
     path('company/<int:opportunity_id>/applications/', views.opportunity_applications, name='opportunity_applications'),
     path('company/applications/<int:application_id>/update_status/', views.update_application_status, name='update_application_status'),
-
-    # Admin Views (Optional separate URLs or handle within existing views using checks)
-    # Example: path('admin/opportunities/', views.admin_opportunity_list, name='admin_opportunity_list'),
-    # For simplicity, admins will use company views but with permission checks inside
+    path('opportunity/<int:opportunity_id>/applications/', views.opportunity_applications, name='opportunity_applications'),
+    path('opportunity/<int:opportunity_id>/applications/export/excel/', views.export_opportunity_applications_excel, name='export_applications_excel'),
+    path('application/<int:application_id>/status/<str:status>/', views.update_application_status, name='update_application_status'),
 ]

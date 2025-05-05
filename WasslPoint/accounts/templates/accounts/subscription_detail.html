@@ -1,0 +1,128 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-page" dir="rtl">
+
+  <section class="ads">
+    <h2 class="mb-4 page-title">
+      <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
+       الاشتراكات
+      <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
+    </h2>
+  </section>
+  <nav aria-label="breadcrumb" class="mb-3 text-bluea ">
+    <ol class="breadcrumb " style="--bs-breadcrumb-divider: '>'; ">
+      <li class="breadcrumb-item ">
+        <a class="text-bluea" href="{% url 'accounts:user_list_view' %}" >لوحة الاداراة</a>
+      </li>
+      <li class="breadcrumb-item ">
+        <a class="text-bluea" href="{% url 'accounts:subscription_view' %}" >الاشتراكات </a>
+      </li>
+      
+      <li class="breadcrumb-item active" aria-current="page">المشتركين </li>
+    </ol>
+  </nav>
+  <div class="admin-container">
+    <nav class="sidebar">
+      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">لوحة الاداراة</a>
+      <a href="{% url 'accounts:student_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الطلاب</a>
+      
+    </nav>
+
+    <div class="main-content">
+
+      <div class="search-filter" style="margin-bottom:1rem;">
+        <form method="get" class="d-flex align-items-center" style="gap:0.5rem;">
+          <input
+            type="text"
+            name="q"
+            class="form-control-contact orange-border"
+            placeholder="ابحث عن مشتركين"
+            value="{{ q }}"
+          >
+        
+          <button type="submit" class="action-btn btn edit text-white">بحث</button>
+        </form>
+      </div>
+
+
+      <form action="{% url 'accounts:subscription_detail_delete_all' plan.id %}" method="post">
+        {% csrf_token %}
+        <div class="table-wrapper shadow-sm">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="select-all"></th>
+                <th>المعرّف</th>
+                <th> اسم المشترك</th>
+                <th> اسم الخطة</th>
+                <th>بدايه الاشتراك</th>
+                <th>نهاية الاشتراك</th>
+                <th>معرف الدفع</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for sub in subscriber_page %}
+              <tr>
+                <td><input type="checkbox" class="select-row" name="selected_users" value="{{ sub.id }}"></td>
+                <td>{{ sub.id }}</td>
+                <td>{{ sub.user.username }}</td>
+                <td>{{ plan.name}}</td>
+                <td>
+                    {{ sub.start_date }}
+                </td>
+                <td>{{ sub.end_date }}</td>
+                
+                <td>
+                  {{sub.payment_id}}
+                </td>
+                
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center py-4">لا يوجد مشتركين .</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+         <div class="actions">
+        
+         <!--<a href="#" class="action-btn edit">تعديل</a>-->
+          <a href="{%url 'accounts:add_subscription_view'%}" class="action-btn add">اضافة</a>
+          <button type="submit" class="btn action-btn delete-all text-white">حذف</button>
+
+        </div>
+      </form>
+
+      <div class="pagination">
+        {% if user_page.has_previous %}
+          <a href="?q={{ q }}&page=1">&laquo; الأولى</a>
+          <a href="?q={{ q }}&page={{ user_page.previous_page_number }}">&lsaquo; السابق</a>
+        {% endif %}
+        <span>صفحة {{ user_page.number }} من {{ user_page.paginator.num_pages }}</span>
+        {% if user_page.has_next %}
+          <a href="?q={{ q }}&page={{ user_page.next_page_number }}">التالي &rsaquo;</a>
+          <a href="?q={{ q }}&page={{ user_page.paginator.num_pages }}">الأخيرة &raquo;</a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('select-all')?.addEventListener('change', e => {
+    document.querySelectorAll('.select-row')
+      .forEach(cb => cb.checked = e.target.checked);
+  });
+});
+</script>
+{% endblock %}

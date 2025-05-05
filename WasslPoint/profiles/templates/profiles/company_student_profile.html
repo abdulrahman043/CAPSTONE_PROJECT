@@ -1,0 +1,171 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static 'css/profiles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5"  >
+  <div class="row gx-4">
+
+    <div class="col-lg-4 mb-4">
+      <div class="card profile-card">
+        <img
+          src="{{ profile.personal_info.picture.url }}"
+          class="card-img-top com_student"
+          alt="{{ profile.personal_info.full_name }}"
+          style="height: 250px; object-fit: contain;"
+        />
+        <div class="card-body">
+          <h4 class="card-title bg-white">{{ profile.personal_info.full_name }}</h4>
+          <p class="mb-1">
+            <strong>العمر:</strong> {{ profile.personal_info.age }}
+            • <strong>الجنس:</strong> {{ profile.personal_info.get_gender_display }}
+          </p>
+          <p class="mb-1">
+            <strong>الجنسية:</strong> {{ profile.personal_info.nationality.arabic_name }}
+          </p>
+          <hr>
+          <p class="mb-1">
+            {{ profile.contact_info.email }}
+          </p>
+          <p class="mb-1">
+            {{ profile.contact_info.phone }}
+          </p>
+          <p class="mb-1">
+            {{ profile.contact_info.address_line }}, {{ profile.contact_info.city.arabic_name }}
+          </p>
+          <hr>
+          <div class="mb-2">
+            <strong >اكتمال الملف الشخصي</strong>
+            <div class="progress " style="height: 1.5rem; margin-top: 10px;" dir="ltr">
+              <div
+                class="progress-bar progress-bar-custom-orange "
+                role="progressbar"
+                style="width: {{ profile.completion_percent }}%;"
+                aria-valuenow="{{ profile.completion_percent }}"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                {{ profile.completion_percent }}%
+              </div>
+
+
+            </div>
+            <a href="{% url 'profiles:student_company_export_cv_pdf' profile.user.id %}"
+            class="export-pdf-btn btn w-100 mt-3 d-block text-center">
+            تصدير الCV الى PDF
+          </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+
+      <div class="card mb-4">
+        <div class="card-header bg-white  text-black fw-bold p-3">الخبرة العملية</div>
+        <ul class="list-group list-group-flush ">
+          {% for exp in profile.experience.all %}
+            <li class="list-group-item p-3">
+              <h5>{{ exp.job_title }} - {{ exp.company_name }}</h5>
+              <small class="text-muted">
+                {{ exp.start_date|date:"Y-m" }} –
+                {% if exp.end_date %}{{ exp.end_date|date:"Y-m" }}{% else %}حتى الان{% endif %}
+              </small>
+              {% if exp.description %}
+                <p class="mt-2">{{ exp.description }}</p>
+              {% endif %}
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted p-3">لا توجد خبرة مسجلة.</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header bg-white text-black fw-bold p-3">المؤهلات التعليمية</div>
+        <ul class="list-group list-group-flush education-list">
+          {% for edu in profile.education.all %}
+            <li class="list-group-item">
+              <h5  >{{ edu.get_degree_display }} – {{ edu.major.ar_name }}</h5>
+              <h6 class="mt-3">{{edu.university}}</h6>
+              <small class="text-muted">
+
+                {{ edu.graduating_date|date:"Y-m" }}
+              </small>
+              {% if edu.GPA %}
+                <p class="mt-1">
+                  المعدل: {{ edu.GPA }} / {{ edu.get_gpa_scale_display }}
+                </p>
+              {% endif %}
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted p-3">لا توجد مؤهلات مسجلة.</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="row gx-2">
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header bg-white text-black fw-bold p-3">المهارات</div>
+            <div class="card-body">
+              {% for s in profile.skill.all %}
+                <span class="badge bg-orange badge-skill">
+                  {{ s.name }} ({{ s.get_proficiency_display }})
+                </span>
+              {% empty %}
+                <p class="text-muted p-3">لا توجد مهارات مسجلة.</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header bg-white text-black fw-bold p-3">اللغات</div>
+            <div class="card-body">
+              {% for lang in profile.language.all %}
+                <span class="badge bg-blue badge-skill">
+                  {{ lang.get_name_display }} ({{ lang.get_proficiency_display }})
+                </span>
+              {% empty %}
+                <p class="text-muted p-3">لا توجد لغات مسجلة.</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certifications -->
+      <div class="card mb-4">
+        <div class="card-header bg-white text-black fw-bold p-3">الشهادات</div>
+        <ul class="list-group list-group-flush">
+          {% for cert in profile.certification.all %}
+            <li class="list-group-item">
+              <h5>{{ cert.name }} – {{ cert.issuer }}</h5>
+              <small class="text-muted ">
+                إصدار: {{ cert.issue_date|date:"Y-m" }}
+                {% if cert.expiry_date %}؛ انتهاء: {{ cert.expiry_date|date:"Y-m" }}{% endif %}
+              </small>
+              {%if cert.certificate_file%}
+              <p class="mt-2">
+                <a href="{{ cert.certificate_file.url }}" target="_blank">
+                  تحميل ملف الشهادة
+                </a>
+              </p>
+
+              {%endif%}
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted p-3 ">لا توجد شهادات مسجلة.</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ profile.company_name }} - ملف الشركة{% endblock %}
+
+{% block style %}
+<style>
+    .profile-header {
+        background-color: #f8f9fa; /* Light background */
+        padding: 2rem 1rem;
+        margin-bottom: 2rem;
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+    }
+    .profile-logo {
+        max-width: 150px;
+        max-height: 150px;
+        object-fit: contain;
+        border: 1px solid #eee;
+        padding: 5px;
+        background-color: #fff;
+        border-radius: 0.25rem;
+    }
+    .detail-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.2rem; /* Space below label */
+    }
+    .detail-value {
+        margin-bottom: 1rem; /* Space below value */
+        color: #333;
+        word-wrap: break-word; /* Prevent long text overflowing */
+    }
+    .detail-value a {
+        word-break: break-all; /* Help long URLs break nicely */
+    }
+    .detail-value .not-available {
+        color: #888;
+        font-style: italic;
+    }
+    .info-card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        background-color: #fff;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+    }
+    .info-card h4 {
+        color: #13A7B1; /* Theme color */
+        border-bottom: 2px solid #eee;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .material-symbols-outlined {
+        vertical-align: text-bottom;
+        font-size: 1.1em;
+        margin-inline-end: 5px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4 my-md-5">
+
+    {# Header with Logo and Name #}
+    <div class="profile-header text-center">
+        {# Ensure profile.logo exists before accessing url #}
+        <img src="{% if profile.logo %}{{ profile.logo.url }}{% else %}{% static 'images/default_company_logo.png' %}{% endif %}" alt="شعار {{ profile.company_name }}" class="profile-logo mb-3">
+        <h1 class="mb-1">{{ profile.company_name|default:"اسم الشركة غير متوفر" }}</h1>
+        {% if profile.industry %}
+        <p class="text-muted lead fs-6 mb-0">
+             <span class="material-symbols-outlined">business_center</span>
+             {# Ensure industry object exists before accessing name #}
+             {{ profile.industry.arabic_name|default:"المجال غير محدد" }} {# Adjusted based on your previous fix #}
+        </p>
+        {% endif %}
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+
+            {# Company Information Card #}
+            <div class="info-card">
+                <h4><span class="material-symbols-outlined">info</span> معلومات الشركة</h4>
+                <dl class="row">
+
+                    <dt class="col-sm-4 detail-label">وصف الشركة:</dt>
+                    <dd class="col-sm-8 detail-value">
+                        {% if profile.company_description %}
+                            {{ profile.company_description|linebreaksbr }}
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4 detail-label">موقع الشركة الإلكتروني:</dt>
+                    <dd class="col-sm-8 detail-value">
+                        {% if profile.company_url %}
+                            <a href="{{ profile.company_url }}" target="_blank" rel="noopener noreferrer">{{ profile.company_url }}</a>
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4 detail-label">الموقع على الخريطة:</dt>
+                    <dd class="col-sm-8 detail-value">
+                        {% if profile.company_location %}
+                            <a href="{{ profile.company_location }}" target="_blank" rel="noopener noreferrer">عرض الموقع على الخريطة</a>
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4 detail-label">المجال:</dt>
+                    <dd class="col-sm-8 detail-value">
+                        {% if profile.industry %}
+                            {# Adjusted based on your previous fix #}
+                            {{ profile.industry.arabic_name|default:"غير محدد" }}
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
+
+                     <dt class="col-sm-4 detail-label">المدينة:</dt>
+                     <dd class="col-sm-8 detail-value">
+                        {% if profile.city %}
+                            {{ profile.city.arabic_name|default:"غير محددة" }} {# Assuming City model has arabic_name #}
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4 detail-label">العنوان:</dt>
+                    <dd class="col-sm-8 detail-value">
+                        {% if profile.address_line %}
+                            {{ profile.address_line }}
+                        {% else %}
+                            <span class="not-available">لا يتوفر حاليا</span>
+                        {% endif %}
+                    </dd>
+
+                </dl>
+            </div>{# End Info Card #}
+
+
+
+            <div class="text-center mt-4">
+                <a href="{% url 'main:company_view' %}" class="btn btn-outline-secondary">
+                   <span class="material-symbols-outlined">arrow_back</span> العودة إلى قائمة الشركات
+                </a>
+            </div>
+
+        </div> {# End Column #}
+    </div> {# End Row #}
+
+</div> {# End Container #}
+{% endblock %}

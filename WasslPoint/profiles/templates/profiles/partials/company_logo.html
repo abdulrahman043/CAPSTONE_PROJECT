@@ -1,6 +1,6 @@
 <form method="post"
       enctype="multipart/form-data"
-      class="row align-items-center gy-2"
+      class="row align-items-center gy-2 p-3"
       style="max-width: 500px;"
       {% if admin_view %}
         action="{% url 'profiles:edit_logo_admin' profile.user.id %}"

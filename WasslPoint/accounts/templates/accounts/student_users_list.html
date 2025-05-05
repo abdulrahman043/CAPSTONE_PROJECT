@@ -15,11 +15,20 @@
       <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
     </h2>
   </section>
-
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb" style="--bs-breadcrumb-divider: '>'; ">
+      <li class="breadcrumb-item">
+        <a class="text-bluea" href="{% url 'accounts:user_list_view' %}" >لوحة الاداراة</a>
+      </li>
+     
+      
+      <li class="breadcrumb-item active" aria-current="page"> الطلاب</li>
+    </ol>
+  </nav>
   <div class="admin-container">
     <!-- Sidebar -->
     <nav class="sidebar">
-      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
+      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">لوحة الاداراة</a>
       <a href="{% url 'accounts:company_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الشركات</a>
       <a href="{%url 'accounts:applications_list_view'%}" class="sidebar-btn teal text-center text-decoration-none">التقديمات</a>
     </nav>

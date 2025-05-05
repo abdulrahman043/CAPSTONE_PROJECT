@@ -15,12 +15,20 @@
       <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
     </h2>
   </section>
-
+  <nav aria-label="breadcrumb" class="mb-3 text-bluea ">
+    <ol class="breadcrumb " style="--bs-breadcrumb-divider: '>'; ">
+      <li class="breadcrumb-item ">
+        <a class="text-bluea" href="{% url 'accounts:user_list_view' %}" >لوحة الاداراة</a>
+      </li>
+      
+      <li class="breadcrumb-item active" aria-current="page">الاشتركات </li>
+    </ol>
+  </nav>
   <div class="admin-container">
     <nav class="sidebar">
-      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الحسابات</a>
-      <a href="{% url 'accounts:company_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الشركات</a>
-      <button class="sidebar-btn teal text-center text-decoration-none">التقديمات</button>
+      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">لوحة الاداراة</a>
+      <a href="{% url 'accounts:student_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الطلاب</a>
+      
     </nav>
 
     <div class="main-content">
@@ -60,7 +68,7 @@
               <tr>
                 <td><input type="checkbox" class="select-row" name="selected_users" value="{{ sub.id }}"></td>
                 <td>{{ sub.id }}</td>
-                <td>{{ sub.name }}</td>
+                <td><a href="{%url 'accounts:subscription_detail_view' sub.id %}">{{ sub.name }}</a></td>
                 <td>
                     {{ sub.duration_days }}
                 </td>

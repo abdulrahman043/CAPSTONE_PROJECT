@@ -3,17 +3,18 @@ from django.http import HttpRequest
 from django.db import transaction
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.models import User
-from profiles.models import CompanyProfile,StudentProfile,PersonalInformation,Experience,Education,Skill,Language,Certification,ContactInformation,Industry
+from profiles.models import CompanyProfile,StudentProfile,PersonalInformation,Experience,Education,Skill,Language,Certification,ContactInformation,Industry,Major,City,CompanyProfileEditRequest
 from django.contrib.admin.views.decorators import staff_member_required 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-from subscriptions.models import SubscriptionPlan
+from subscriptions.models import SubscriptionPlan,UserSubscription
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from decimal import Decimal
-
+from django.core.mail import send_mail
+from django.conf import settings
 from django.contrib import messages
 from .models import EmailOTP
 from django.core.mail   import send_mail
@@ -192,6 +193,8 @@ def signup_company_detail_view(request: HttpRequest):
     if not data or data.get('type') != 'company':
         return redirect('accounts:signup_company_email')
     industries = Industry.objects.filter(status=True)
+    cities = City.objects.filter(status=True) 
+
     email                     = data['email']
 
     if request.method == 'POST':
@@ -202,9 +205,8 @@ def signup_company_detail_view(request: HttpRequest):
         commercial_register_number= request.POST.get('commercial_register_number', '').strip()
         reg_file                  = request.FILES.get('commercial_register_file')
         industry_id               = request.POST.get('industry')
-        address_line               = request.POST.get('address_line') 
-        logo                       = request.FILES.get('logo') 
-
+        city_id               = request.POST.get('city')
+        print(request.POST)
         missing = []
         if not email:      missing.append('البريد الإلكتروني')
         if not password:   missing.append('كلمة السر')
@@ -213,12 +215,17 @@ def signup_company_detail_view(request: HttpRequest):
         if not commercial_register_number: missing.append('رقم السجل التجاري')
         if not reg_file:   missing.append('ملف السجل التجاري')
         if not industry_id:missing.append('مجال العمل')
-
+        if not city_id:missing.append(' المدينة')
         if missing:
             messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
             return render(request, 'accounts/signup_company.html', {
                 'industries': industries,
-                'email':email
+                'cites':cities,
+                'email':email,
+                'company_name':company_name,
+                'commercial_register_number':commercial_register_number,
+
+
 
 
             })
@@ -226,16 +233,23 @@ def signup_company_detail_view(request: HttpRequest):
         if password != password2:
             messages.error(request, "كلمتا السر غير متطابقتين.")
             return render(request, 'accounts/signup_company.html', {
-                'industries': industries,
-                        'email':email
+                 'industries': industries,
+                'email':email,
+                                'cites':cities,
 
+                'company_name':company_name,
+                'commercial_register_number':commercial_register_number,
             })
 
         if User.objects.filter(username=email).exists():
             messages.error(request, "هذا البريد مسجل مسبقًا.")
             return render(request, 'accounts/signup_company.html', {
-                'industries': industries,
-                        'email':email
+                 'industries': industries,
+                'email':email,
+                                'cites':cities,
+
+                'company_name':company_name,
+                'commercial_register_number':commercial_register_number,
 
             })
 
@@ -246,30 +260,70 @@ def signup_company_detail_view(request: HttpRequest):
             for e in error.error_list:
                 if e.code=='password_too_short':
                     messages.error(request, 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.')
-                    return render(request, 'accounts/signup_company.html',{ 'email':email})
+                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
+                'email':email,
+                'company_name':company_name,
+                                'cites':cities,
+
+                'commercial_register_number':commercial_register_number,})
                 elif e.code == 'password_entirely_numeric':
                     messages.error(request,"لا يمكن أن تكون كلمة المرور أرقامًا فقط.")
-                    return render(request, 'accounts/signup_company.html',{ 'email':email})
+                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
+                'email':email,
+                'company_name':company_name,
+                                'cites':cities,
+
+                'commercial_register_number':commercial_register_number,})
 
                 elif e.code == 'password_too_common':
                     messages.error(request,"هذه كلمة مرور شائعة جدًا، اختر كلمة أخرى أكثر أمانًا.")
-                    return render(request, 'accounts/signup_company.html',{ 'email':email})
+                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
+                'email':email,
+                'company_name':company_name,
+                                'cites':cities,
+
+                'commercial_register_number':commercial_register_number,})
 
                 elif e.code == 'password_similar_to_username':
                     messages.error(request,"كلمة المرور قريبة من البريد الإلكتروني أو الاسم، اختر كلمة أخرى.")
-                    return render(request, 'accounts/signup_company.html',{ 'email':email})
+                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
+                'email':email,
+                'company_name':company_name,
+                                'cites':cities,
+
+                'commercial_register_number':commercial_register_number,})
 
                 else:
                     messages.error(request,error)
-                    return render(request, 'accounts/signup_company.html',{ 'email':email})
+                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
+                'email':email,
+                'company_name':company_name,
+                                'cites':cities,
+
+                'commercial_register_number':commercial_register_number,})
         try:
             industry = industries.get(pk=industry_id)
         except Industry.DoesNotExist:
             messages.error(request, "اختر مجالًا صالحًا للصناعة.")
             return render(request, 'accounts/signup_company.html', {
                 'industries': industries,
-                'email':email
-                
+                'email':email,
+                                'cites':cities,
+
+                'company_name':company_name,
+                'commercial_register_number':commercial_register_number,
+            })
+        try:
+            city = cities.get(pk=city_id)
+        except City.DoesNotExist:
+            messages.error(request, "اختر مدينة صالحه")
+            return render(request, 'accounts/signup_company.html', {
+                'industries': industries,
+                'email':email,
+                                'cites':cities,
+
+                'company_name':company_name,
+                'commercial_register_number':commercial_register_number,
             })
 
         with transaction.atomic():
@@ -286,8 +340,7 @@ def signup_company_detail_view(request: HttpRequest):
                     commercial_register         = commercial_register_number,
                     crm_certificate  = reg_file,
                     industry                    = industry,
-                    address_line                = address_line,
-                    logo                        = logo
+                    city=city,
                 )
             else:
                   CompanyProfile.objects.create(
@@ -296,7 +349,7 @@ def signup_company_detail_view(request: HttpRequest):
                     commercial_register         = commercial_register_number,
                     crm_certificate  = reg_file,
                     industry                    = industry,
-                    address_line                = address_line,
+                    city=city,
                 )
             del request.session['pending_signup']
 
@@ -310,7 +363,9 @@ def signup_company_detail_view(request: HttpRequest):
 
     return render(request, 'accounts/signup_company.html', {
         'industries': industries,
-        'email':email
+        'email':email,
+            'cites':cities,
+
     })
 
 def login_view(request: HttpRequest):
@@ -325,7 +380,7 @@ def login_view(request: HttpRequest):
         if not password: missing.append('كلمة السر')
         if missing:
             messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
-            return render(request, 'accounts/login.html')
+            return render(request, 'accounts/login.html',{'email':email})
 
         user = authenticate(request, username=email, password=password)
         if user is not None:
@@ -346,7 +401,7 @@ def login_view(request: HttpRequest):
 
         # 4) باقي الحالات (خطأ بالإيميل أو الباسوورد)
         messages.error(request, "❌ البريد الإلكتروني أو كلمة السر غير صحيحة.")
-        return render(request, 'accounts/login.html')
+        return render(request, 'accounts/login.html',{'email':email})
 
     return render(request, 'accounts/login.html')
 def logout_view(request:HttpRequest):
@@ -363,7 +418,7 @@ def user_list_view(request):
 
     if q:
         users = users.filter(
-              Q(id__icontains=q) |
+              Q(id__exact=q) |
             Q(username__icontains=q) |
             Q(email__icontains=q) |
             Q(student_profile__personal_info__full_name__icontains=q) |
@@ -386,12 +441,41 @@ def user_list_view(request):
         'q': q,
         'user_type': user_type,   
     })
+@login_required
+@staff_member_required
 def user_delete(request, user_id):
     user=User.objects.get(pk=user_id)
     if user.is_superuser or user.is_staff:
         pass
     elif request.user!=user:
         user.delete()
+    
+    return redirect('accounts:user_list_view')
+@login_required
+@staff_member_required
+def user_reject(request, user_id):
+    user=User.objects.get(pk=user_id)
+    if user.is_superuser or user.is_staff:
+        pass
+    elif request.user!=user:
+        subject = "❌ تم رفض طلب تسجيل شركتكم"
+        body = (
+            f"مرحباً {user.company_profile.company_name},\n\n"
+            "نأسف لإبلاغكم بأن طلب تسجيل شركتكم في منصتنا قد تم رفضه.\n"
+            "للاستفسار أكثر، يرجى التواصل مع الدعم.\n\n"
+            "شكراً لتفهمكم."
+        )
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+
+        user.delete()
+        messages.success(request, f"تم رفض وحذف حساب {user.username} بنجاح.")
+
     
     return redirect('accounts:user_list_view')
 
@@ -404,7 +488,7 @@ def company_user_list_view(request: HttpRequest):
 
     if q:
         user_qs = user_qs.filter(
-            Q(id__icontains=q) |
+            Q(id__exact=q) |
 
             Q(username__icontains=q) |
             Q(email__icontains=q) |
@@ -415,7 +499,7 @@ def company_user_list_view(request: HttpRequest):
     paginator=Paginator(user_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"user_page":user_page}
+    context={"user_page":user_page,'q': q}
 
     return render(request, 'accounts/company_users_list.html',context)
 @login_required
@@ -436,7 +520,7 @@ def student_user_list_view(request: HttpRequest):
     paginator=Paginator(users_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"user_page":user_page}
+    context={"user_page":user_page, 'q': q}
 
     return render(request, 'accounts/student_users_list.html',context)
 @login_required
@@ -457,7 +541,7 @@ def applications_list_view(request: HttpRequest):
     paginator=Paginator(applications_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"applications_page":user_page}
+    context={"applications_page":user_page,'q': q}
 
     return render(request, 'accounts/applications_list.html',context)
 @login_required
@@ -478,9 +562,30 @@ def subscription_view(request: HttpRequest):
     paginator=Paginator(subscription_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"subscription_page":user_page}
+    context={"subscription_page":user_page,'q': q}
 
     return render(request, 'accounts/subscription.html',context)
+@login_required
+@staff_member_required
+def major_view(request: HttpRequest):
+    q = request.GET.get('q', '').strip()
+    major_qs = Major.objects.all().order_by('-id')
+
+    if q:
+        major_qs = major_qs.filter(
+            Q(ar_name__icontains=q) |
+            Q(id__icontains=q) |
+
+            Q(en_name__icontains=q) |
+            Q(status__icontains=q) 
+        ).distinct()
+    
+    paginator=Paginator(major_qs,5)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"major_page":user_page,'q': q}
+
+    return render(request, 'accounts/major_list.html',context)
 @login_required
 @staff_member_required
 def opportunity_list_view(request: HttpRequest):
@@ -501,7 +606,7 @@ def opportunity_list_view(request: HttpRequest):
     paginator=Paginator(opportunity_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"opportunity_page":user_page}
+    context={"opportunity_page":user_page,'q': q}
 
     return render(request, 'accounts/opportunity_list.html',context)
 @login_required
@@ -520,7 +625,7 @@ def pending_company_requests_view(request: HttpRequest):
     paginator=Paginator(user_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"user_page":user_page}
+    context={"user_page":user_page,'q': q}
 
     return render(request, 'accounts/pending_company_requests.html',context)
 @login_required
@@ -547,6 +652,23 @@ def approve_company(request, user_id):
         user.is_active=True
         user.save()
         messages.success(request, f"تم تفعيل حساب {user.username} بنجاح.")
+        
+
+        subject = "✅ تم تفعيل حساب شركتكم"
+        body = (
+            f"مرحباً {user.company_profile.company_name},\n\n"
+            "يسرنا إبلاغكم بأنه قد تم تفعيل حساب شركتكم في منصتنا.\n"
+            f"يمكنكم الآن تسجيل الدخول لحسابكم"
+            "شكرًا لاستخدامكم منصتنا."
+        )
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+
 
     
     return redirect('accounts:pending_company_requests_view')
@@ -598,6 +720,22 @@ def sub_delete_all(request:HttpRequest):
             "❌ حدث خطأ أثناء حذف الاشتراكات المحددة. حاول مرة أخرى لاحقًا."
         )
     return redirect('accounts:subscription_view')
+@login_required
+@staff_member_required
+@require_POST
+def major_delete_all(request:HttpRequest):
+    try:
+        if request.method=='POST':
+            ids=request.POST.getlist('selected_users')
+            if ids:
+                Major.objects.filter(id__in=ids).delete()
+                messages.success(request,"✅ تم حذف التخخصات المحددة بنجاح.")
+    except:
+        messages.error(
+            request,
+            "❌ حدث خطأ أثناء حذف التخصصات المحددة. حاول مرة أخرى لاحقًا."
+        )
+    return redirect('accounts:major_view')
 @login_required
 @staff_member_required
 @require_POST
@@ -759,6 +897,101 @@ def edit_subscription_view(request:HttpRequest,id):
         messages.success(request, "تم التعديل الاشتراك بنجاح!")
         return redirect('accounts:subscription_view')
     return render(request,'accounts/subscription_edit.html',{"subscription":subscription})
+@login_required
+@staff_member_required
+def edit_major_view(request:HttpRequest,id):
+    major=Major.objects.get(pk=id)
+
+    if request.method=='POST':
+        ar_name          = request.POST.get('ar_name', '').strip()
+        en_name = request.POST.get('en_name', '').strip()
+      
+        status        = bool(request.POST.get('status')) 
+
+        missing = []
+        if not ar_name:
+            missing.append('اسم المدينة بالعربي')
+      
+
+        if missing:
+            messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+            return render(request, 'accounts/major_edit.html', {
+                'ar_name': ar_name,
+                'en_name':         en_name,
+                
+                'status':       status,
+            })
+       
+        with transaction.atomic():
+            try:
+                major.ar_name=ar_name
+                major.en_name=en_name
+                major.status=status
+                major.save()
+               
+            except Exception as e:
+                messages.error(
+                    request,
+                    "❌ عذرًا، لم نتمكن من التعديل على التخصص . الرجاء التحقق من البيانات والمحاولة مرة أخرى."
+                )
+                return render(request, 'accounts/major_edit.html', {
+                'ar_name': ar_name,
+                'en_name':         en_name,
+                'status':       status,
+            })
+
+
+
+        messages.success(request, "تم التعديل التخصص بنجاح!")
+        return redirect('accounts:major_view')
+    return render(request,'accounts/major_edit.html',{"major":major})
+@login_required
+@staff_member_required
+def add_major_view(request:HttpRequest):
+
+    if request.method=='POST':
+        ar_name          = request.POST.get('ar_name', '').strip()
+        en_name = request.POST.get('en_name', '').strip()
+      
+        status        = bool(request.POST.get('status')) 
+        print(request.POST)
+
+        missing = []
+        if not ar_name:
+            missing.append('اسم المدينة بالعربي')
+       
+       
+
+        if missing:
+            messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+            return render(request, 'accounts/major_add.html', {
+                'ar_name': ar_name,
+                'en_name':         en_name,
+                
+                'status':       status,
+            })
+       
+        with transaction.atomic():
+            try:
+                Major.objects.create(ar_name=ar_name,en_name=en_name,status=status)
+                
+               
+            except Exception as e:
+                messages.error(
+                    request,
+                    "❌ عذرًا، لم نتمكن من الاضافة على التخصص . الرجاء التحقق من البيانات والمحاولة مرة أخرى."
+                )
+                return render(request, 'accounts/major_add.html', {
+                'ar_name': ar_name,
+                'en_name':         en_name,
+                'status':       status,
+            })
+
+
+
+        messages.success(request, "تم اضافة التخصص بنجاح!")
+        return redirect('accounts:major_view')
+    return render(request,'accounts/major_add.html')
 
 def resend_signup_otp(request):
     data = request.session.get('pending_signup')
@@ -772,20 +1005,16 @@ def resend_signup_otp(request):
         used=False
     ).order_by('-created_at').first()
 
-    # إذا لم يمضِ أقل من دقيقتين على آخر إرسال
     if last_otp and now - last_otp.created_at < timedelta(minutes=2):
         remaining = 120 - int((now - last_otp.created_at).total_seconds())
         messages.error(request, f"📥 يمكنك إعادة الإرسال بعد {remaining} ثانية.")
         return redirect('accounts:verify_signup_otp')
 
-    # نجعل كل الرموز القديمة غير صالحة
     EmailOTP.objects.filter(user_email=email, used=False).update(used=True)
 
-    # ننشئ رمزًا جديدًا
     otp_code = f"{random.randint(0, 999999):06d}"
     EmailOTP.objects.create(user_email=email, code=otp_code)
 
-    # نرسل الرمز الجديد عبر البريد
     send_mail(
         subject="رمز التحقق",
         message=(
@@ -800,3 +1029,349 @@ def resend_signup_otp(request):
     messages.success(request, "📥 تم إعادة إرسال الرمز إلى بريدك الإلكتروني.")
 
     return redirect('accounts:verify_signup_otp')
+
+
+@login_required
+@staff_member_required
+@require_POST
+def city_delete_all(request:HttpRequest):
+    try:
+        if request.method=='POST':
+            ids=request.POST.getlist('selected_users')
+            if ids:
+                City.objects.filter(id__in=ids).delete()
+                messages.success(request,"✅ تم حذف المدن المحددة بنجاح.")
+    except:
+        messages.error(
+            request,
+            "❌ حدث خطأ أثناء حذف المدن المحددة. حاول مرة أخرى لاحقًا."
+        )
+    return redirect('accounts:city_view')
+@login_required
+@staff_member_required
+def city_view(request: HttpRequest):
+    q = request.GET.get('q', '').strip()
+    city_qs = City.objects.all().order_by('-id')
+
+    if q:
+        city_qs = city_qs.filter(
+            Q(arabic_name__icontains=q) |
+            Q(id__icontains=q) |
+
+            Q(english_name__icontains=q) |
+            Q(status__icontains=q) 
+        ).distinct()
+    
+    paginator=Paginator(city_qs,5)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"city_page":user_page,'q': q}
+
+    return render(request, 'accounts/city_list.html',context)
+@login_required
+@staff_member_required
+def edit_city_view(request:HttpRequest,id):
+    city=City.objects.get(pk=id)
+
+    if request.method=='POST':
+        arabic_name          = request.POST.get('arabic_name', '').strip()
+        english_name = request.POST.get('english_name', '').strip()
+      
+        status        = bool(request.POST.get('status')) 
+
+        missing = []
+        if not arabic_name:
+            missing.append('اسم المدينة بالعربي')
+      
+
+        if missing:
+            messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+            return render(request, 'accounts/city_edit.html', {
+                'arabic_name': arabic_name,
+                'english_name':         english_name,
+                
+                'status':       status,
+            })
+       
+        with transaction.atomic():
+            try:
+                city.arabic_name=arabic_name
+                city.english_name=english_name
+                city.status=status
+                city.save()
+               
+            except Exception as e:
+                messages.error(
+                    request,
+                    "❌ عذرًا، لم نتمكن من التعديل على المدينة . الرجاء التحقق من البيانات والمحاولة مرة أخرى."
+                )
+                return render(request, 'accounts/city_edit.html', {
+                'arabic_name': arabic_name,
+                'english_name':         english_name,
+                'status':       status,
+            })
+
+
+
+        messages.success(request, "تم التعديل على المدينة بنجاح!")
+        return redirect('accounts:city_view')
+    return render(request,'accounts/city_edit.html',{"city":city})
+@login_required
+@staff_member_required
+def add_city_view(request:HttpRequest):
+
+    if request.method=='POST':
+        arabic_name          = request.POST.get('arabic_name', '').strip()
+        english_name = request.POST.get('english_name', '').strip()
+      
+        status        = bool(request.POST.get('status')) 
+
+        missing = []
+        if not arabic_name:
+            missing.append('اسم المدينة بالعربي')
+       
+       
+
+        if missing:
+            messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+            return render(request, 'accounts/city_add.html', {
+                'arabic_name': arabic_name,
+                'english_name':         english_name,
+                
+                'status':       status,
+            })
+       
+        with transaction.atomic():
+            try:
+                City.objects.create(arabic_name=arabic_name,english_name=english_name,status=status)
+                
+               
+            except Exception as e:
+                messages.error(
+                    request,
+                    "❌ عذرًا، لم نتمكن من اضافة المدينة . الرجاء التحقق من البيانات والمحاولة مرة أخرى."
+                )
+                return render(request, 'accounts/major_add.html', {
+                'arabic_name': arabic_name,
+                'english_name':         english_name,
+                'status':       status,
+            })
+
+
+
+        messages.success(request, "تم اضافة المدينة بنجاح!")
+        return redirect('accounts:city_view')
+    return render(request,'accounts/city_add.html')
+#industry
+@login_required
+@staff_member_required
+@require_POST
+def industry_delete_all(request:HttpRequest):
+    try:
+        if request.method=='POST':
+            ids=request.POST.getlist('selected_users')
+            if ids:
+                Industry.objects.filter(id__in=ids).delete()
+                messages.success(request,"✅ تم حذف المجالات المحددة بنجاح.")
+    except:
+        messages.error(
+            request,
+            "❌ حدث خطأ أثناء حذف المجالات المحددة. حاول مرة أخرى لاحقًا."
+        )
+    return redirect('accounts:industry_view')
+@login_required
+@staff_member_required
+def industry_view(request: HttpRequest):
+    q = request.GET.get('q', '').strip()
+    industry_qs = Industry.objects.all().order_by('-id')
+
+    if q:
+        industry_qs = industry_qs.filter(
+            Q(arabic_name__icontains=q) |
+            Q(id__icontains=q) |
+
+            Q(english_name__icontains=q) |
+            Q(status__icontains=q) 
+        ).distinct()
+    
+    paginator=Paginator(industry_qs,5)
+    page=request.GET.get('page')
+    user_page=paginator.get_page(page)
+    context={"industry_page":user_page,'q': q}
+
+    return render(request, 'accounts/industry_list.html',context)
+@login_required
+@staff_member_required
+def edit_industry_view(request:HttpRequest,id):
+    industry=Industry.objects.get(pk=id)
+
+    if request.method=='POST':
+        arabic_name          = request.POST.get('arabic_name', '').strip()
+        english_name = request.POST.get('english_name', '').strip()
+      
+        status        = bool(request.POST.get('status')) 
+
+        missing = []
+        if not arabic_name:
+            missing.append('اسم المجال بالعربي')
+      
+
+        if missing:
+            messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+            return render(request, 'accounts/industry_edit.html', {
+                'arabic_name': arabic_name,
+                'english_name':         english_name,
+                
+                'status':       status,
+            })
+       
+        with transaction.atomic():
+            try:
+                industry.arabic_name=arabic_name
+                industry.english_name=english_name
+                industry.status=status
+                industry.save()
+               
+            except Exception as e:
+                messages.error(
+                    request,
+                    "❌ عذرًا، لم نتمكن من التعديل على المجال . الرجاء التحقق من البيانات والمحاولة مرة أخرى."
+                )
+                return render(request, 'accounts/industry_edit.html', {
+                'arabic_name': arabic_name,
+                'english_name':         english_name,
+                'status':       status,
+            })
+
+
+
+        messages.success(request, "تم التعديل على المدينة بنجاح!")
+        return redirect('accounts:industry_view')
+    return render(request,'accounts/industry_edit.html',{"industry":industry})
+@login_required
+@staff_member_required
+def add_industry_view(request:HttpRequest):
+
+    if request.method=='POST':
+        arabic_name          = request.POST.get('arabic_name', '').strip()
+        english_name = request.POST.get('english_name', '').strip()
+      
+        status        = bool(request.POST.get('status')) 
+
+        missing = []
+        if not arabic_name:
+            missing.append('اسم المجال بالعربي')
+       
+       
+
+        if missing:
+            messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
+            return render(request, 'accounts/industry_add.html', {
+                'arabic_name': arabic_name,
+                'english_name':         english_name,
+                
+                'status':       status,
+            })
+       
+        with transaction.atomic():
+            try:
+                Industry.objects.create(arabic_name=arabic_name,english_name=english_name,status=status)
+                
+               
+            except Exception as e:
+                messages.error(
+                    request,
+                    "❌ عذرًا، لم نتمكن من اضافة المجال . الرجاء التحقق من البيانات والمحاولة مرة أخرى."
+                )
+                return render(request, 'accounts/industry_add.html', {
+                'arabic_name': arabic_name,
+                'english_name':         english_name,
+                'status':       status,
+            })
+
+
+
+        messages.success(request, "تم اضافة المجال بنجاح!")
+        return redirect('accounts:industry_view')
+    return render(request,'accounts/industry_add.html')
+
+@login_required
+@staff_member_required
+def subscription_detail_view(request, id):
+    q = request.GET.get('q', '').strip()
+
+    plan = get_object_or_404(SubscriptionPlan, pk=id)
+
+    subscriber_qs = plan.user_subscriptions.order_by('-id')
+
+    if q:
+        subscriber_qs = subscriber_qs.filter(
+            Q(payment_id__icontains=q) |
+            Q(user__username__icontains=q) |
+            Q(id__icontains=q)
+        ).distinct()
+
+    paginator = Paginator(subscriber_qs, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'accounts/subscription_detail.html', {
+        'plan': plan,
+        'subscriber_page': page_obj,
+        'q': q,
+    })
+@login_required
+@staff_member_required
+@require_POST
+def subscription_detail_delete_all(request, id):
+    plan = get_object_or_404(SubscriptionPlan, pk=id)
+
+    ids = request.POST.getlist('selected_users')
+    if ids:
+        UserSubscription.objects.filter(id__in=ids).delete()
+        messages.success(request, "✅ تم حذف المشتركين المحددين بنجاح.")
+    else:
+        messages.warning(request, "لم يتم تحديد أي مشتركين للحذف.")
+
+    return redirect('accounts:subscription_detail_view', id=plan.id)
+
+@login_required
+@staff_member_required
+def company_edit_request_list(request):
+    q = request.GET.get('q','').strip()
+    qs = CompanyProfileEditRequest.objects.filter(status='PENDING')\
+          .select_related('company__user','industry','city')\
+          .order_by('-submitted_at')
+    if q:
+        qs = qs.filter(company__company_name__icontains=q)
+
+    # simple pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(qs, 10)
+    page = request.GET.get('page')
+    edit_page = paginator.get_page(page)
+
+    return render(request, 'accounts/company_edit_request_list.html', {
+        'edit_page': edit_page,
+        'q': q,
+    })
+
+@login_required
+@staff_member_required
+def approve_company_edit_request(request, pk):
+    edit = get_object_or_404(
+        CompanyProfileEditRequest, pk=pk, status='PENDING'
+    )
+    edit.approve(admin_user=request.user)
+    messages.success(request, "تم قبول طلب التعديل وحُفظ بنجاح.")
+    return redirect('accounts:company_edit_request_list')
+
+@login_required
+@staff_member_required
+def reject_company_edit_request(request, pk):
+    edit = get_object_or_404(
+        CompanyProfileEditRequest, pk=pk, status='PENDING'
+    )
+    edit.reject(admin_user=request.user)
+    messages.success(request, "تم رفض طلب التعديل وحُذف.")
+    return redirect('accounts:company_edit_request_list')

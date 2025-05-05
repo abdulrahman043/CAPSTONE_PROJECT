@@ -1,0 +1,128 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-page" dir="rtl">
+
+  <section class="ads">
+    <h2 class="mb-4 page-title">
+      <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
+       المدن
+      <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
+    </h2>
+  </section>
+  <nav aria-label="breadcrumb" class="mb-3 text-bluea ">
+    <ol class="breadcrumb " style="--bs-breadcrumb-divider: '>'; ">
+      <li class="breadcrumb-item ">
+        <a class="text-bluea" href="{% url 'accounts:user_list_view' %}" >لوحة الاداراة</a>
+      </li>
+      
+      <li class="breadcrumb-item active" aria-current="page">المدن </li>
+    </ol>
+  </nav>
+  <div class="admin-container">
+    <nav class="sidebar">
+      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">لوحة الاداراة</a>
+      <a href="{% url 'accounts:add_city_view' %}" class="sidebar-btn orange text-center text-decoration-none">اضافة مدن</a>
+      
+    </nav>
+
+    <div class="main-content">
+
+      <div class="search-filter" style="margin-bottom:1rem;">
+        <form method="get" class="d-flex align-items-center" style="gap:0.5rem;">
+          <input
+            type="text"
+            name="q"
+            class="form-control-contact orange-border"
+            placeholder="ابحث عن مدينة"
+            value="{{ q }}"
+          >
+        
+          <button type="submit" class="action-btn btn edit text-white">بحث</button>
+        </form>
+      </div>
+
+
+      <form action="{% url 'accounts:city_delete_all' %}" method="post">
+        {% csrf_token %}
+        <div class="table-wrapper shadow-sm">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="select-all"></th>
+                <th>المعرّف</th>
+                <th> المدينة بالعربي</th>
+                <th>المدينة بالانقليزي</th>
+                <th>الحالة</th>
+                <th>الاجرائات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for city in city_page %}
+              <tr>
+                <td><input type="checkbox" class="select-row" name="selected_users" value="{{ city.id }}"></td>
+                <td>{{city.id }}</td>
+                <td>{{ city.arabic_name }}</td>
+                <td>
+                    {{ city.english_name }}
+                </td>
+                <td>{{ city.status }}</td>
+                
+               
+                <td class="d-flex gap-2 justify-content-center">
+                  <a
+                    href="{% url 'accounts:edit_city_view' city.id %}"
+                    class="btn action-btn   add text-white">
+                    تعديل
+                </a>
+                 
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center py-4">لا توجد مدن.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+         <div class="actions">
+        
+         <!--<a href="#" class="action-btn edit">تعديل</a>-->
+          <a href="{%url 'accounts:add_city_view'%}" class="action-btn add">اضافة</a>
+          <button type="submit" class="btn action-btn delete-all text-white">حذف</button>
+
+        </div>
+      </form>
+
+      <div class="pagination">
+        {% if user_page.has_previous %}
+          <a href="?q={{ q }}&page=1">&laquo; الأولى</a>
+          <a href="?q={{ q }}&page={{ user_page.previous_page_number }}">&lsaquo; السابق</a>
+        {% endif %}
+        <span>صفحة {{ user_page.number }} من {{ user_page.paginator.num_pages }}</span>
+        {% if user_page.has_next %}
+          <a href="?q={{ q }}&page={{ user_page.next_page_number }}">التالي &rsaquo;</a>
+          <a href="?q={{ q }}&page={{ user_page.paginator.num_pages }}">الأخيرة &raquo;</a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('select-all')?.addEventListener('change', e => {
+    document.querySelectorAll('.select-row')
+      .forEach(cb => cb.checked = e.target.checked);
+  });
+});
+</script>
+{% endblock %}

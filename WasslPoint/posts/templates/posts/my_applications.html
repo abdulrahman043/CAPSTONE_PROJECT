@@ -1,52 +1,190 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}طلبي{% endblock %}
+{% block title %}طلباتي{% endblock %} {# My Applications #}
+
+{% block style %}
+{# Add specific styles if needed #}
+<style>
+    .application-card {
+        border-color: #e0e0e0; /* Lighter border */
+        transition: box-shadow .3s ease-in-out;
+    }
+    .application-card:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.1); /* Subtle shadow on hover */
+    }
+    .status-badge {
+        font-size: 0.85em;
+        padding: 0.4em 0.7em;
+    }
+    .pagination .page-link {
+        color: #13A7B1; /* Match navbar color */
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #13A7B1;
+        border-color: #13A7B1;
+        color: white;
+    }
+    /* Style for the title like in company profile */
+    .contact-title {
+        color: #333; /* Adjust color if needed */
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+    }
+    .contact-title span {
+        color: #FF7C34; /* Orange accent color */
+        font-weight: bold;
+        display: inline-block;
+        margin: 0 0.5em;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>طلب التدريب الخاص بي</h2>
-    <hr>
+<div class="container my-4 my-md-5"> {# Added vertical margins #}
+
+    {# Page Title - matching style from company profile example #}
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2 class="contact-title text-center">
+          <span style="color: #FF7C34;">▸▸▸</span>
+            طلبات التقديم الخاصة بي {# My Applications #}
+          <span style="color: #FF7C34;">◂◂◂</span>
+        </h2>
+      </div>
+    </div>
+
+    {# Display Django messages #}
     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="row justify-content-center mb-3">
+            <div class="col-md-10 col-lg-8">
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'warning'%}warning{% elif message.tags == 'success'%}success{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message|safe }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
+        </div>
     {% endif %}
 
-    {% if applications %}
-        <div class="list-group">
-            {% for app in applications %}
-                <div class="list-group-item list-group-item-action flex-column align-items-start mb-3">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">
-                            <a href="{% url 'posts:opportunity_detail' app.opportunity.id %}" class="text-decoration-none">
-                                {{ app.opportunity.company.company_name }} - {{ app.opportunity.city.arabic_name }}
-                            </a>
-                        </h5>
-                        <small>تم التقديم في: {{ app.applied_at|date:"Y-m-d" }}</small>
+    {# Check if page_obj exists (from pagination view) #}
+    {% if page_obj and page_obj.object_list %}
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                {% for app in page_obj.object_list %} {# Loop through items on the current page #}
+                    <div class="card application-card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex w-100 justify-content-between mb-2 flex-wrap">
+                                <h5 class="card-title mb-1">
+                                    <a href="{% url 'posts:opportunity_detail' app.opportunity.id %}" class="text-decoration-none link-dark stretched-link">
+                                        {{ app.opportunity.company.company_name }}
+                                    </a>
+                                </h5>
+                                <small class="text-muted">تم التقديم في: {{ app.applied_at|date:"Y-m-d H:i" }}</small>
+                            </div>
+                             <h6 class="card-subtitle mb-2 text-muted">{{ app.opportunity.city.arabic_name|default:"" }}</h6>
+
+                            <p class="mb-2">
+                                الحالة: {# Status #}
+                                {% if app.status == 'PENDING' %}
+                                    <span class="badge rounded-pill bg-secondary status-badge">{{ app.get_status_display }}</span>
+                                {% elif app.status == 'ACCEPTED' %}
+                                    <span class="badge rounded-pill bg-success status-badge">{{ app.get_status_display }}</span>
+                                {% elif app.status == 'REJECTED' %}
+                                     <span class="badge rounded-pill bg-danger status-badge">{{ app.get_status_display }}</span>
+                                {% elif app.status == 'WITHDRAWN' %}
+                                      <span class="badge rounded-pill bg-warning text-dark status-badge">{{ app.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge rounded-pill bg-light text-dark status-badge">{{ app.get_status_display }}</span>
+                                {% endif %}
+                            </p>
+                             {% if app.message %}
+                                <p class="card-text fst-italic border-start border-secondary border-3 ps-2 my-2">"{{ app.message|truncatewords:30 }}"</p> {# Display application message if exists #}
+                             {% endif %}
+
+                            <small class="text-muted d-block mb-3">آخر تحديث: {{ app.updated_at|timesince }} مضت</small>
+
+                            <div class="mt-2 action-buttons">
+                                {% if app.status == 'PENDING' or app.status == 'ACCEPTED' %}
+                                    <form action="{% url 'posts:withdraw_application' app.id %}" method="post" class="d-inline me-2" onsubmit="return confirm('هل أنت متأكد من سحب طلب التقديم؟');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-warning">سحب الطلب</button> {# Withdraw #}
+                                    </form>
+                                {% endif %}
+                                {% if app.status != 'WITHDRAWN' %} {# Allow chat unless withdrawn #}
+                                   <a href="{% url 'posts:application_chat' app.id %}" class="btn btn-sm btn-outline-primary">
+                                        <span class="material-symbols-outlined" style="font-size: 1em; vertical-align: middle;">chat</span>
+                                        مراسلة الشركة {# Chat #}
+                                   </a>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    <p class="mb-1">حالة التقديم <strong>{{ app.get_status_display }}</strong></p>
-                    <small>أخر تحديث: {{ app.updated_at|timesince }} ago</small>
-                    <div class="mt-2">
-                        {% if app.status == 'PENDING' or app.status == 'ACCEPTED' %}
-                            <form action="{% url 'posts:withdraw_application' app.id %}" method="post" class="d-inline me-2" onsubmit="return confirm('هل انت متأكد من سحب طلب التقديم الخاص فيك؟');">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-warning">سحب التقديم</button>
-                            </form>
-                        {% endif %}
-                        {% if app.status != 'WITHDRAWN' %} {# Allow chat unless withdrawn #}
-                           <a href="{% url 'posts:application_chat' app.id %}" class="btn btn-sm btn-outline-primary">مراسلة ممثل الشركة</a>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
+
+        {# START: Pagination Controls #}
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4 d-flex justify-content-center">
+                <ul class="pagination">
+                    {# Previous Button #}
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-hidden="true">&laquo;</span>
+                        </li>
+                    {% endif %}
+
+                    {# Page Numbers #}
+                    {% for page_num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == page_num %}
+                            <li class="page-item active" aria-current="page"><span class="page-link">{{ page_num }}</span></li>
+                        {% elif page_num > page_obj.number|add:'-3' and page_num < page_obj.number|add:'3' %} {# Show nearby pages #}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        {% elif page_num == page_obj.paginator.page_range|first or page_num == page_obj.paginator.page_range|last %} {# Always show first/last #}
+                             {% if page_num == page_obj.paginator.page_range|first and page_obj.number > 4 %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li> {# Ellipsis if far from start #}
+                            {% endif %}
+                             <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                            {% if page_num == page_obj.paginator.page_range|last and page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li> {# Ellipsis if far from end #}
+                            {% endif %}
+
+                        {% endif %}
+                    {% endfor %}
+
+                    {# Next Button #}
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-hidden="true">&raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+        {# END: Pagination Controls #}
+
     {% else %}
-        <p>لم تقم بالتقديم على اي فرصة تدريبية</p>
-        <a href="{% url 'posts:opportunity_list' %}" class="btn btn-primary">تصفح الفرص</a>
+        <div class="text-center mt-5">
+             <p class="lead">لم تقم بالتقديم على أي فرصة تدريبية بعد.</p> {# You haven't applied... #}
+             <a href="{% url 'posts:opportunity_list' %}" class="btn btn-lg btn-primary mt-3">
+                 <span class="material-symbols-outlined" style="font-size: 1.2em; vertical-align: middle;">search</span>
+                 تصفح الفرص الآن {# Browse Opportunities #}
+            </a>
+        </div>
     {% endif %}
 </div>
 {% endblock %}

@@ -1,7 +1,7 @@
 <div class="many-card-view ">
-    <div class="top-many-card  bg-blue d-flex justify-content-between align-items-center p-2 ">
-        <h2 class="fs-6 p text-white">التعليم</h2>
-        <a href="javascript:void(0)" class="add-btn text-white"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+    <div class="top-many-card  border  d-flex justify-content-between align-items-center p-3 ">
+        <h2 class="fs-6 p text-black fw-bold">التعليم</h2>
+        <a href="javascript:void(0)" class="add-btn text-black"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                 fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
                 <path
@@ -13,12 +13,12 @@
         {%if profile.education %}
 
         {%for edu in profile.education.all%}
-        <div class="many-card radius border-blue  mb-3" data-exp-id="{{edu.id}}">
+        <div class="many-card radius border  mb-3" data-exp-id="{{edu.id}}">
             <div class="many-card-view p-3">
                 <div class="d-flex justify-content-between align-items-center ">
-                    <h6>{{edu.university }} </h6>
+                    <h6>                {{ edu.get_degree_display }}  - {{edu.major.ar_name}}</h6>
                     <div>
-                        <a href="javascript:void(0)" class="edit-btn text-decoration-none"><svg
+                        <a href="javascript:void(0)" class="edit-btn text-decoration-none text-black"><svg
                                 xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-pencil" viewBox="0 0 16 16">
                                 <path
@@ -28,7 +28,7 @@
                         </a>
                         <form class="d-inline" method="post" {%if admin_view%}action="{%url 'profiles:delate_edu_admin' profile.user.id edu.id %}" {%else%}action="{%url 'profiles:delate_edu' edu.id %}" {%endif%}>
                             {%csrf_token%}
-                            <button class="edit-btn btn btn-link"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                            <button class="edit-btn btn btn-link text-black"><svg xmlns="http://www.w3.org/2000/svg" width="16"
                                     height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                     <path
                                         d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
@@ -42,8 +42,9 @@
                         </form>
                     </div>
                 </div>
-                <p> {{ edu.get_degree_display }}</p>
-                <p>{{ edu.graduating_date|date:"Y-m" }} </p>
+                <p> {{ edu.university}}</p>
+
+                <p>{{ edu.graduating_date|date:"Y-m" }}</p>
                 <p>{{ edu.GPA }}/{{edu.gpa_scale}}</p>
 
 
@@ -153,8 +154,8 @@
 
 </div>
 <div class="many-card-add" style="display: none;">
-    <div class="top-many-card border-blue bg-blue d-flex justify-content-between align-items-center p-2 ">
-        <h2 class="fs-6 text-white">التعليم</h2>
+    <div class="top-many-card border  d-flex justify-content-between align-items-center p-3 ">
+        <h2 class="fs-6 text-black fw-bold">التعليم</h2>
 
     </div>
     <form {%if admin_view%} action="{%url 'profiles:add_edu_admin' profile.user.id%}" {%else%} action="{%url 'profiles:add_edu'%}" {%endif%} method="post" class="p-3">
