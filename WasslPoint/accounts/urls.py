@@ -29,6 +29,7 @@ urlpatterns=[
 
     path('pending/company/requests/',views.pending_company_requests_view,name='pending_company_requests_view'),
     path('users/<int:user_id>/delete/', views.user_delete, name='user_delete'),
+    path('users/<int:user_id>/reject/', views.user_reject, name='user_reject'),
     path('users/<int:user_id>/approve_company/', views.approve_company, name='approve_company'),
     path('signup/verify-otp/', views.verify_signup_otp, name='verify_signup_otp'),
     path('verify-otp/resend/', views.resend_signup_otp, name='resend_signup_otp'),
@@ -42,23 +43,9 @@ urlpatterns=[
     path('applications/delete_all/', views.app_delete_all, name='app_delete_all'),
     path('opportunity/delete_all/', views.opp_delete_all, name='opp_delete_all'),
     path('company/signup/email/',   views.signup_company_email, name='signup_company_email'),
-        path(
-        'company-edit-requests/',
-        views.company_edit_request_list,
-        name='company_edit_request_list'
-    ),
-
-    path(
-        'company-edit-requests/<int:pk>/approve/',
-        views.approve_company_edit_request,
-        name='approve_company_edit_request'
-    ),
-
-    path(
-        'company-edit-requests/<int:pk>/reject/',
-        views.reject_company_edit_request,
-        name='reject_company_edit_request'
-    ),
+    path('company-edit-requests/',views.company_edit_request_list,name='company_edit_request_list'),
+    path('company-edit-requests/<int:pk>/approve/',views.approve_company_edit_request,name='approve_company_edit_request'),
+    path('company-edit-requests/<int:pk>/reject/',views.reject_company_edit_request,name='reject_company_edit_request'),
 
 
 ]

@@ -13,7 +13,8 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from decimal import Decimal
-
+from django.core.mail import send_mail
+from django.conf import settings
 from django.contrib import messages
 from .models import EmailOTP
 from django.core.mail   import send_mail
@@ -379,7 +380,7 @@ def login_view(request: HttpRequest):
         if not password: missing.append('كلمة السر')
         if missing:
             messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
-            return render(request, 'accounts/login.html')
+            return render(request, 'accounts/login.html',{'email':email})
 
         user = authenticate(request, username=email, password=password)
         if user is not None:
@@ -400,7 +401,7 @@ def login_view(request: HttpRequest):
 
         # 4) باقي الحالات (خطأ بالإيميل أو الباسوورد)
         messages.error(request, "❌ البريد الإلكتروني أو كلمة السر غير صحيحة.")
-        return render(request, 'accounts/login.html')
+        return render(request, 'accounts/login.html',{'email':email})
 
     return render(request, 'accounts/login.html')
 def logout_view(request:HttpRequest):
@@ -440,12 +441,41 @@ def user_list_view(request):
         'q': q,
         'user_type': user_type,   
     })
+@login_required
+@staff_member_required
 def user_delete(request, user_id):
     user=User.objects.get(pk=user_id)
     if user.is_superuser or user.is_staff:
         pass
     elif request.user!=user:
         user.delete()
+    
+    return redirect('accounts:user_list_view')
+@login_required
+@staff_member_required
+def user_reject(request, user_id):
+    user=User.objects.get(pk=user_id)
+    if user.is_superuser or user.is_staff:
+        pass
+    elif request.user!=user:
+        subject = "❌ تم رفض طلب تسجيل شركتكم"
+        body = (
+            f"مرحباً {user.company_profile.company_name},\n\n"
+            "نأسف لإبلاغكم بأن طلب تسجيل شركتكم في منصتنا قد تم رفضه.\n"
+            "للاستفسار أكثر، يرجى التواصل مع الدعم.\n\n"
+            "شكراً لتفهمكم."
+        )
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+
+        user.delete()
+        messages.success(request, f"تم رفض وحذف حساب {user.username} بنجاح.")
+
     
     return redirect('accounts:user_list_view')
 
@@ -622,6 +652,23 @@ def approve_company(request, user_id):
         user.is_active=True
         user.save()
         messages.success(request, f"تم تفعيل حساب {user.username} بنجاح.")
+        
+
+        subject = "✅ تم تفعيل حساب شركتكم"
+        body = (
+            f"مرحباً {user.company_profile.company_name},\n\n"
+            "يسرنا إبلاغكم بأنه قد تم تفعيل حساب شركتكم في منصتنا.\n"
+            f"يمكنكم الآن تسجيل الدخول لحسابكم"
+            "شكرًا لاستخدامكم منصتنا."
+        )
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+
 
     
     return redirect('accounts:pending_company_requests_view')
