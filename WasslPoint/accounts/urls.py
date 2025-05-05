@@ -14,6 +14,7 @@ urlpatterns=[
     path('applications/users/',views.applications_list_view,name='applications_list_view'),
     path('opportunity/users/',views.opportunity_list_view,name='opportunity_list_view'),
     path('subscription/users/',views.subscription_view,name='subscription_view'),
+    path('subscription/<int:id>/',views.subscription_detail_view,name='subscription_detail_view'),
     path('major/users/',views.major_view,name='major_view'),
     path('city/users/',views.city_view,name='city_view'),
     path('industry/users/',views.industry_view,name='industry_view'),
@@ -34,6 +35,7 @@ urlpatterns=[
 
     path('users/delete_all/', views.delete_all, name='delete_all'),
     path('sub/delete_all/', views.sub_delete_all, name='sub_delete_all'),
+    path('sub/<int:id>/delete_all/', views.subscription_detail_delete_all, name='subscription_detail_delete_all'),
     path('major/delete_all/', views.major_delete_all, name='major_delete_all'),
     path('city/delete_all/', views.city_delete_all, name='city_delete_all'),
     path('industry/delete_all/', views.industry_delete_all, name='industry_delete_all'),

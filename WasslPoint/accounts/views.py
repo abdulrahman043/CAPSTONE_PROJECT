@@ -8,7 +8,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-from subscriptions.models import SubscriptionPlan
+from subscriptions.models import SubscriptionPlan,UserSubscription
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -363,7 +363,7 @@ def user_list_view(request):
 
     if q:
         users = users.filter(
-              Q(id__icontains=q) |
+              Q(id__exact=q) |
             Q(username__icontains=q) |
             Q(email__icontains=q) |
             Q(student_profile__personal_info__full_name__icontains=q) |
@@ -404,7 +404,7 @@ def company_user_list_view(request: HttpRequest):
 
     if q:
         user_qs = user_qs.filter(
-            Q(id__icontains=q) |
+            Q(id__exact=q) |
 
             Q(username__icontains=q) |
             Q(email__icontains=q) |
@@ -415,7 +415,7 @@ def company_user_list_view(request: HttpRequest):
     paginator=Paginator(user_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"user_page":user_page}
+    context={"user_page":user_page,'q': q}
 
     return render(request, 'accounts/company_users_list.html',context)
 @login_required
@@ -436,7 +436,7 @@ def student_user_list_view(request: HttpRequest):
     paginator=Paginator(users_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"user_page":user_page}
+    context={"user_page":user_page, 'q': q}
 
     return render(request, 'accounts/student_users_list.html',context)
 @login_required
@@ -457,7 +457,7 @@ def applications_list_view(request: HttpRequest):
     paginator=Paginator(applications_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"applications_page":user_page}
+    context={"applications_page":user_page,'q': q}
 
     return render(request, 'accounts/applications_list.html',context)
 @login_required
@@ -478,7 +478,7 @@ def subscription_view(request: HttpRequest):
     paginator=Paginator(subscription_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"subscription_page":user_page}
+    context={"subscription_page":user_page,'q': q}
 
     return render(request, 'accounts/subscription.html',context)
 @login_required
@@ -499,7 +499,7 @@ def major_view(request: HttpRequest):
     paginator=Paginator(major_qs,5)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"major_page":user_page}
+    context={"major_page":user_page,'q': q}
 
     return render(request, 'accounts/major_list.html',context)
 @login_required
@@ -522,7 +522,7 @@ def opportunity_list_view(request: HttpRequest):
     paginator=Paginator(opportunity_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"opportunity_page":user_page}
+    context={"opportunity_page":user_page,'q': q}
 
     return render(request, 'accounts/opportunity_list.html',context)
 @login_required
@@ -541,7 +541,7 @@ def pending_company_requests_view(request: HttpRequest):
     paginator=Paginator(user_qs,10)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"user_page":user_page}
+    context={"user_page":user_page,'q': q}
 
     return render(request, 'accounts/pending_company_requests.html',context)
 @login_required
@@ -964,7 +964,7 @@ def city_view(request: HttpRequest):
     paginator=Paginator(city_qs,5)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"city_page":user_page}
+    context={"city_page":user_page,'q': q}
 
     return render(request, 'accounts/city_list.html',context)
 @login_required
@@ -1096,7 +1096,7 @@ def industry_view(request: HttpRequest):
     paginator=Paginator(industry_qs,5)
     page=request.GET.get('page')
     user_page=paginator.get_page(page)
-    context={"industry_page":user_page}
+    context={"industry_page":user_page,'q': q}
 
     return render(request, 'accounts/industry_list.html',context)
 @login_required
@@ -1193,3 +1193,43 @@ def add_industry_view(request:HttpRequest):
         messages.success(request, "تم اضافة المجال بنجاح!")
         return redirect('accounts:industry_view')
     return render(request,'accounts/industry_add.html')
+
+@login_required
+@staff_member_required
+def subscription_detail_view(request, id):
+    q = request.GET.get('q', '').strip()
+
+    plan = get_object_or_404(SubscriptionPlan, pk=id)
+
+    subscriber_qs = plan.user_subscriptions.order_by('-id')
+
+    if q:
+        subscriber_qs = subscriber_qs.filter(
+            Q(payment_id__icontains=q) |
+            Q(user__username__icontains=q) |
+            Q(id__icontains=q)
+        ).distinct()
+
+    paginator = Paginator(subscriber_qs, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'accounts/subscription_detail.html', {
+        'plan': plan,
+        'subscriber_page': page_obj,
+        'q': q,
+    })
+@login_required
+@staff_member_required
+@require_POST
+def subscription_detail_delete_all(request, id):
+    plan = get_object_or_404(SubscriptionPlan, pk=id)
+
+    ids = request.POST.getlist('selected_users')
+    if ids:
+        UserSubscription.objects.filter(id__in=ids).delete()
+        messages.success(request, "✅ تم حذف المشتركين المحددين بنجاح.")
+    else:
+        messages.warning(request, "لم يتم تحديد أي مشتركين للحذف.")
+
+    return redirect('accounts:subscription_detail_view', id=plan.id)
