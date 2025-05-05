@@ -57,7 +57,7 @@
                 <p>موقع الشركة (قوقل ماب)</p>
             </div>
             <div class="col">
-                <p>{{profile.company_location}}</p>
+                <p>{%if profile.company_location%} {{profile.company_location}} {%endif%}</p>
             </div>
         </div>
        
@@ -146,10 +146,10 @@
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <label class="form-label " for="company_url"> موقع الشركة الالكتروني         </label>
+                    <label class="form-label " for="company_location"> موقع الشركة الالكتروني         </label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="company_url" name="company_url" type="text" value="{{profile.company_url}}"  required ></p>
+                    <p><input class="form-control" id="company_location" name="company_location" type="text" {%if profile.company_location%} value="{{profile.company_location}}" {%endif%}  ></p>
                 </div>
             </div>
             <div class="row mb-2">

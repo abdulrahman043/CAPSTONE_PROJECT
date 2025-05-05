@@ -3,6 +3,15 @@
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+<style>
+  /* force definition-list cells in modals to wrap long text */
+  .modal-body dl dt,
+  .modal-body dl dd {
+    white-space: normal !important;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -45,62 +54,56 @@
         </form>
       </div>
 
-      <form method="post">
-        {% csrf_token %}
-        <div class="table-wrapper shadow-sm">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>اسم الشركة</th>
-                <th>الإيميل</th>
-                <th>المجال</th>
-                <th>المدينة</th>
-                <th>السجل التجاري</th>
-                <th>الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for edit in edit_page %}
-              <tr>
-                <td>{{ edit.id }}</td>
-                <td>{{ edit.company.company_name }}</td>
-                <td>{{ edit.company.user.username }}</td>
-                <td>{{ edit.industry.arabic_name }}</td>
-                <td>{{ edit.city.arabic_name }}</td>
-                <td>
-                  {% if edit.crm_certificate %}
-                    <a href="{{ edit.crm_certificate.url }}"
-                       target="_blank"
-                       class="btn export-pdf-btn btn-sm">
-                      عرض PDF
-                    </a>
-                  {% else %}
-                    -
-                  {% endif %}
-                </td>
-                <td class="d-flex justify-content-center gap-2">
-                  <button
-                    formaction="{% url 'accounts:approve_company_edit_request' edit.id %}"
-                    class="btn action-btn add text-white">
-                    قبول
-                  </button>
-                  <button
-                    formaction="{% url 'accounts:reject_company_edit_request' edit.id %}"
-                    class="btn action-btn delete-all text-white">
-                    رفض
-                  </button>
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="7" class="text-center py-4">لا توجد طلبات تعديل حالياً.</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </form>
+      <div class="table-wrapper shadow-sm">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>اسم الشركة</th>
+              <th>الإيميل</th>
+              <th>المجال</th>
+              <th>المدينة</th>
+              <th>السجل التجاري</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for edit in edit_page %}
+            <tr>
+              <td>{{ edit.id }}</td>
+              <td>{{ edit.company.company_name }}</td>
+              <td>{{ edit.company.user.username }}</td>
+              <td>{{ edit.industry.arabic_name }}</td>
+              <td>{{ edit.city.arabic_name }}</td>
+              <td>
+                {% if edit.crm_certificate %}
+                  <a href="{{ edit.crm_certificate.url }}"
+                     target="_blank"
+                     class="btn export-pdf-btn btn-sm">
+                    عرض PDF
+                  </a>
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>
+                <button 
+                  class="btn btn-outline-primary btn-sm" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#editRequestModal{{ edit.id }}"
+                >
+                  عرض
+                </button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center py-4">لا توجد طلبات تعديل حالياً.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
       <div class="pagination mt-4">
         {% if edit_page.has_previous %}
@@ -116,16 +119,79 @@
     </div>
   </div>
 </div>
-{% endblock %}
 
+{% for edit in edit_page %}
+<div class="modal fade" id="editRequestModal{{ edit.id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" dir="rtl">
+      <div class="modal-header">
+        <h5 class="modal-title">تفاصيل التعديل: {{ edit.company.company_name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <dl class="row">
+          <dt class="col-sm-4">الحقل</dt>
+          <dt class="col-sm-4">قبل</dt>
+          <dt class="col-sm-4">بعد</dt>
+
+          <dt class="col-sm-4">اسم الشركة</dt>
+          <dd class="col-sm-4 text-break">{{ edit.company.company_name }}</dd>
+          <dd class="col-sm-4 text-break">{{ edit.company_name }}</dd>
+
+          <dt class="col-sm-4">السجل التجاري</dt>
+          <dd class="col-sm-4 text-break">{{ edit.company.commercial_register }}</dd>
+          <dd class="col-sm-4 text-break">{{ edit.commercial_register }}</dd>
+
+          <dt class="col-sm-4">المجال</dt>
+          <dd class="col-sm-4 text-break">{{ edit.company.industry.arabic_name }}</dd>
+          <dd class="col-sm-4 text-break">{{ edit.industry.arabic_name }}</dd>
+
+          <dt class="col-sm-4">المدينة</dt>
+          <dd class="col-sm-4 text-break">{{ edit.company.city.arabic_name }}</dd>
+          <dd class="col-sm-4 text-break">{{ edit.city.arabic_name }}</dd>
+          
+          <dt class="col-sm-4">موقع الشركة (قوقل ماب)          </dt>
+          <dd class="col-sm-4 text-break">{{ edit.company.company_location }}</dd>
+          <dd class="col-sm-4 text-break">{{ edit.company_location}}</dd>
+
+          <dt class="col-sm-4">ملف السجل التجاري</dt>
+          <dd class="col-sm-4 ">
+            {% if edit.company.crm_certificate %}
+              <a href="{{ edit.company.crm_certificate.url }}" target="_blank">عرض</a>
+            {% else %}
+              -
+            {% endif %}
+          </dd>
+          <dd class="col-sm-4">
+            {% if edit.crm_certificate %}
+              <a href="{{ edit.crm_certificate.url }}" target="_blank">عرض</a>
+            {% else %}
+                لايوجد تعديل
+            {% endif %}
+          </dd>
+        </dl>
+      </div>
+      <div class="modal-footer">
+        <form method="post" action="{% url 'accounts:approve_company_edit_request' edit.id %}" class="d-inline">
+          {% csrf_token %}
+          <button class="btn btn-success">قبول</button>
+        </form>
+        <form method="post" action="{% url 'accounts:reject_company_edit_request' edit.id %}" class="d-inline">
+          {% csrf_token %}
+          <button class="btn btn-danger">رفض</button>
+        </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{%endblock%}
 {% block script %}
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('form button[formaction]').forEach(btn=>{
-      btn.addEventListener('click', e=>{
-        // ensure it's a POST
-        btn.closest('form').setAttribute('method','post');
-      });
+    document.querySelectorAll('form button[formaction]').forEach(btn => {
+      btn.closest('form').setAttribute('method', 'post');
     });
   });
 </script>
