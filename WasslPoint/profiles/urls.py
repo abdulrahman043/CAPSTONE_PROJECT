@@ -4,6 +4,7 @@ app_name = "profiles"
 urlpatterns = [ path('profile/',views.profile_view,name='profile_view'),
                 path('profile/<user_id>',views.profile_view,name='profile_view_admin'),
                 path('company_profile/',views.company_profile_view,name='company_profile_view'),
+                path('company_profile/edit-pending/',views.add_edit_company_info_company,name='add_edit_company_info_company'),
                 path('company_profile/<int:user_id>',views.company_profile_view,name='company_profile_view_admin'),
                 path('company_profile/<int:user_id>/add_',views.add_edit_company_info,name='add_edit_company_info'),
                 path('company_profile/add_contact',views.add_edit_contact_person,name='add_edit_contact_person'),
