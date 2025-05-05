@@ -285,7 +285,7 @@ class CompanyProfile(models.Model):
     def __str__(self):
         return self.company_name
 class ContactPerson(models.Model):
-        company_profile = models.OneToOneField(
+    company_profile = models.OneToOneField(
         to='profiles.CompanyProfile',
         on_delete=models.CASCADE,
         related_name='contact_person',
