@@ -1,0 +1,97 @@
+{% now "Y-m-d" as today %}
+<div class="card-view ">
+    <div class="top-card border  d-flex justify-content-between align-items-center p-3 ">
+        <h2 class="fs-6 p text-black fw-bold ">معلومات الشركة (اختياري)</h2>
+        {%if admin_view%}
+
+        <a href="javascript:void(0) " class="edit-btn text-black"><svg xmlns="http://www.w3.org/2000/svg"
+                width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                <path
+                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
+            </svg>
+        </a>
+        {%endif%}
+    </div>
+    <div class="container mt-3">
+        <div class="row mb-2">
+            <div class="col">
+                <p>وصف الشركة  </p>
+            </div>
+            <div class="col">
+                <p>{{profile.company_description}}</p>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <p>عنوان الشركة  </p>
+            </div>
+            <div class="col">
+                <p>{{profile.address_line}}</p>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <p>  موقع الشركة الالكتروني</p>
+            </div>
+            <div class="col">
+                <p>{{profile.user.company_description}}</p>
+            </div>
+        </div>
+       
+       
+       
+        
+        
+    </div>
+
+</div>
+<div class="card-edit" style="display: none;">
+    <div class="top-card border  d-flex justify-content-between align-items-center p-3 ">
+        <h2 class="fs-6 text-black fw-bold"> معلومات الشركة (اختياري)</h2>
+
+    </div>
+    <form method="post" action="{%url 'profiles:add_edit_company_info' profile.user.id %}" enctype="multipart/form-data">
+        {%csrf_token%}
+        <div class="container mt-3">
+            <div class="row mb-2">
+                <div class="col">
+                    <label class="form-label" for="company_description"> وصف الشركة </label>
+                </div>
+                <div class="col">
+                    <p><textarea class="form-control" name="company_description" rows="6" id="company_description">{{profile.company_description}}</textarea></p>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <label class="form-label" for="company_description"> عنوان الشركة </label>
+                </div>
+                <div class="col">
+                    <p><input class="form-control" id="company_description" name="company_description" type="text" value="{{profile.company_description}}"  ></p>
+
+                </div>
+            </div>
+           
+            <div class="row mb-2">
+                <div class="col">
+                    <label class="required" for="company_location">  موقع الشركة (قوقل ماب)                    </label>
+                </div>
+                <div class="col">
+                    <p><input class="form-control" id="company_location" name="company_location" type="text" value="{{profile.company_location}}"  ></p>
+
+                </div>
+            </div>
+           
+            <div class="row mb-2">
+                <div class="col">
+                </div>
+                <div class="col">
+                    <button name="personal-submit" type="submit" class="btn btn-primary">حفظ</button>
+                    <button type="button"
+                        class="btn btn-outline-secondary cancel-btn">الغاء</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+</div>

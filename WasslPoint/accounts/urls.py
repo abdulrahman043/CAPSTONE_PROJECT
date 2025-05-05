@@ -42,5 +42,23 @@ urlpatterns=[
     path('applications/delete_all/', views.app_delete_all, name='app_delete_all'),
     path('opportunity/delete_all/', views.opp_delete_all, name='opp_delete_all'),
     path('company/signup/email/',   views.signup_company_email, name='signup_company_email'),
+        path(
+        'company-edit-requests/',
+        views.company_edit_request_list,
+        name='company_edit_request_list'
+    ),
+
+    path(
+        'company-edit-requests/<int:pk>/approve/',
+        views.approve_company_edit_request,
+        name='approve_company_edit_request'
+    ),
+
+    path(
+        'company-edit-requests/<int:pk>/reject/',
+        views.reject_company_edit_request,
+        name='reject_company_edit_request'
+    ),
+
 
 ]

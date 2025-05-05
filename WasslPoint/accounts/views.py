@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from django.db import transaction
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.models import User
-from profiles.models import CompanyProfile,StudentProfile,PersonalInformation,Experience,Education,Skill,Language,Certification,ContactInformation,Industry,Major,City
+from profiles.models import CompanyProfile,StudentProfile,PersonalInformation,Experience,Education,Skill,Language,Certification,ContactInformation,Industry,Major,City,CompanyProfileEditRequest
 from django.contrib.admin.views.decorators import staff_member_required 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -192,6 +192,8 @@ def signup_company_detail_view(request: HttpRequest):
     if not data or data.get('type') != 'company':
         return redirect('accounts:signup_company_email')
     industries = Industry.objects.filter(status=True)
+    cities = City.objects.filter(status=True) 
+
     email                     = data['email']
 
     if request.method == 'POST':
@@ -202,9 +204,8 @@ def signup_company_detail_view(request: HttpRequest):
         commercial_register_number= request.POST.get('commercial_register_number', '').strip()
         reg_file                  = request.FILES.get('commercial_register_file')
         industry_id               = request.POST.get('industry')
-        address_line               = request.POST.get('address_line') 
-        logo                       = request.FILES.get('logo') 
-
+        city_id               = request.POST.get('city')
+        print(request.POST)
         missing = []
         if not email:      missing.append('البريد الإلكتروني')
         if not password:   missing.append('كلمة السر')
@@ -213,12 +214,17 @@ def signup_company_detail_view(request: HttpRequest):
         if not commercial_register_number: missing.append('رقم السجل التجاري')
         if not reg_file:   missing.append('ملف السجل التجاري')
         if not industry_id:missing.append('مجال العمل')
-
+        if not city_id:missing.append(' المدينة')
         if missing:
             messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
             return render(request, 'accounts/signup_company.html', {
                 'industries': industries,
-                'email':email
+                'cites':cities,
+                'email':email,
+                'company_name':company_name,
+                'commercial_register_number':commercial_register_number,
+
+
 
 
             })
@@ -226,16 +232,23 @@ def signup_company_detail_view(request: HttpRequest):
         if password != password2:
             messages.error(request, "كلمتا السر غير متطابقتين.")
             return render(request, 'accounts/signup_company.html', {
-                'industries': industries,
-                        'email':email
+                 'industries': industries,
+                'email':email,
+                                'cites':cities,
 
+                'company_name':company_name,
+                'commercial_register_number':commercial_register_number,
             })
 
         if User.objects.filter(username=email).exists():
             messages.error(request, "هذا البريد مسجل مسبقًا.")
             return render(request, 'accounts/signup_company.html', {
-                'industries': industries,
-                        'email':email
+                 'industries': industries,
+                'email':email,
+                                'cites':cities,
+
+                'company_name':company_name,
+                'commercial_register_number':commercial_register_number,
 
             })
 
@@ -246,30 +259,70 @@ def signup_company_detail_view(request: HttpRequest):
             for e in error.error_list:
                 if e.code=='password_too_short':
                     messages.error(request, 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.')
-                    return render(request, 'accounts/signup_company.html',{ 'email':email})
+                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
+                'email':email,
+                'company_name':company_name,
+                                'cites':cities,
+
+                'commercial_register_number':commercial_register_number,})
                 elif e.code == 'password_entirely_numeric':
                     messages.error(request,"لا يمكن أن تكون كلمة المرور أرقامًا فقط.")
-                    return render(request, 'accounts/signup_company.html',{ 'email':email})
+                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
+                'email':email,
+                'company_name':company_name,
+                                'cites':cities,
+
+                'commercial_register_number':commercial_register_number,})
 
                 elif e.code == 'password_too_common':
                     messages.error(request,"هذه كلمة مرور شائعة جدًا، اختر كلمة أخرى أكثر أمانًا.")
-                    return render(request, 'accounts/signup_company.html',{ 'email':email})
+                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
+                'email':email,
+                'company_name':company_name,
+                                'cites':cities,
+
+                'commercial_register_number':commercial_register_number,})
 
                 elif e.code == 'password_similar_to_username':
                     messages.error(request,"كلمة المرور قريبة من البريد الإلكتروني أو الاسم، اختر كلمة أخرى.")
-                    return render(request, 'accounts/signup_company.html',{ 'email':email})
+                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
+                'email':email,
+                'company_name':company_name,
+                                'cites':cities,
+
+                'commercial_register_number':commercial_register_number,})
 
                 else:
                     messages.error(request,error)
-                    return render(request, 'accounts/signup_company.html',{ 'email':email})
+                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
+                'email':email,
+                'company_name':company_name,
+                                'cites':cities,
+
+                'commercial_register_number':commercial_register_number,})
         try:
             industry = industries.get(pk=industry_id)
         except Industry.DoesNotExist:
             messages.error(request, "اختر مجالًا صالحًا للصناعة.")
             return render(request, 'accounts/signup_company.html', {
                 'industries': industries,
-                'email':email
-                
+                'email':email,
+                                'cites':cities,
+
+                'company_name':company_name,
+                'commercial_register_number':commercial_register_number,
+            })
+        try:
+            city = cities.get(pk=city_id)
+        except City.DoesNotExist:
+            messages.error(request, "اختر مدينة صالحه")
+            return render(request, 'accounts/signup_company.html', {
+                'industries': industries,
+                'email':email,
+                                'cites':cities,
+
+                'company_name':company_name,
+                'commercial_register_number':commercial_register_number,
             })
 
         with transaction.atomic():
@@ -286,8 +339,7 @@ def signup_company_detail_view(request: HttpRequest):
                     commercial_register         = commercial_register_number,
                     crm_certificate  = reg_file,
                     industry                    = industry,
-                    address_line                = address_line,
-                    logo                        = logo
+                    city=city,
                 )
             else:
                   CompanyProfile.objects.create(
@@ -296,7 +348,7 @@ def signup_company_detail_view(request: HttpRequest):
                     commercial_register         = commercial_register_number,
                     crm_certificate  = reg_file,
                     industry                    = industry,
-                    address_line                = address_line,
+                    city=city,
                 )
             del request.session['pending_signup']
 
@@ -310,7 +362,9 @@ def signup_company_detail_view(request: HttpRequest):
 
     return render(request, 'accounts/signup_company.html', {
         'industries': industries,
-        'email':email
+        'email':email,
+            'cites':cities,
+
     })
 
 def login_view(request: HttpRequest):
@@ -1233,3 +1287,44 @@ def subscription_detail_delete_all(request, id):
         messages.warning(request, "لم يتم تحديد أي مشتركين للحذف.")
 
     return redirect('accounts:subscription_detail_view', id=plan.id)
+
+@login_required
+@staff_member_required
+def company_edit_request_list(request):
+    q = request.GET.get('q','').strip()
+    qs = CompanyProfileEditRequest.objects.filter(status='PENDING')\
+          .select_related('company__user','industry','city')\
+          .order_by('-submitted_at')
+    if q:
+        qs = qs.filter(company__company_name__icontains=q)
+
+    # simple pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(qs, 10)
+    page = request.GET.get('page')
+    edit_page = paginator.get_page(page)
+
+    return render(request, 'accounts/company_edit_request_list.html', {
+        'edit_page': edit_page,
+        'q': q,
+    })
+
+@login_required
+@staff_member_required
+def approve_company_edit_request(request, pk):
+    edit = get_object_or_404(
+        CompanyProfileEditRequest, pk=pk, status='PENDING'
+    )
+    edit.approve(admin_user=request.user)
+    messages.success(request, "تم قبول طلب التعديل وحُفظ بنجاح.")
+    return redirect('accounts:company_edit_request_list')
+
+@login_required
+@staff_member_required
+def reject_company_edit_request(request, pk):
+    edit = get_object_or_404(
+        CompanyProfileEditRequest, pk=pk, status='PENDING'
+    )
+    edit.reject(admin_user=request.user)
+    messages.success(request, "تم رفض طلب التعديل وحُذف.")
+    return redirect('accounts:company_edit_request_list')

@@ -33,12 +33,14 @@
                 {% for app in applications %}
                     <tr>
                         <td>
+                            <a href="{%url 'profiles:company_student_profile' app.student.user.id %}">
                             {% if app.student.personal_info.full_name %}
                                {{ app.student.personal_info.full_name }}
                             {% else %}
                                 {{ app.student.user.username }}
                             {% endif %}
                             <br><small>{{ app.student.user.email }}</small>
+                            </a>
                         </td>
                         <td>{{ app.applied_at|date:"Y-m-d H:i" }}</td>
                         <td>{{ app.get_status_display }}</td>

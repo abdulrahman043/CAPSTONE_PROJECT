@@ -1,0 +1,132 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-page" dir="rtl">
+  <section class="ads">
+    <h2 class="mb-4 page-title">
+      <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
+      طلبات تعديل معلومات الشركات
+      <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
+    </h2>
+  </section>
+
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb" style="--bs-breadcrumb-divider: '>'; ">
+      <li class="breadcrumb-item">
+        <a class="text-bluea" href="{% url 'accounts:user_list_view' %}">لوحة الإدارة</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">طلبات تعديل الشركات</li>
+    </ol>
+  </nav>
+
+  <div class="admin-container">
+    <nav class="sidebar">
+      <a href="{% url 'accounts:user_list_view' %}"
+         class="sidebar-btn teal text-center text-decoration-none">
+        لوحة الإدارة
+      </a>
+      <a href="{% url 'accounts:company_user_list_view' %}"
+         class="sidebar-btn orange text-center text-decoration-none">
+        الشركات
+      </a>
+    </nav>
+
+    <div class="main-content">
+      <div class="search-filter mb-4">
+        <form method="get" class="d-flex gap-2">
+          <input type="text" name="q" class="form-control-contact orange-border"
+                 placeholder="ابحث عن شركة…" value="{{ q }}">
+          <button type="submit" class="action-btn btn edit text-white">بحث</button>
+        </form>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="table-wrapper shadow-sm">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>اسم الشركة</th>
+                <th>الإيميل</th>
+                <th>المجال</th>
+                <th>المدينة</th>
+                <th>السجل التجاري</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for edit in edit_page %}
+              <tr>
+                <td>{{ edit.id }}</td>
+                <td>{{ edit.company.company_name }}</td>
+                <td>{{ edit.company.user.username }}</td>
+                <td>{{ edit.industry.arabic_name }}</td>
+                <td>{{ edit.city.arabic_name }}</td>
+                <td>
+                  {% if edit.crm_certificate %}
+                    <a href="{{ edit.crm_certificate.url }}"
+                       target="_blank"
+                       class="btn export-pdf-btn btn-sm">
+                      عرض PDF
+                    </a>
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+                <td class="d-flex justify-content-center gap-2">
+                  <button
+                    formaction="{% url 'accounts:approve_company_edit_request' edit.id %}"
+                    class="btn action-btn add text-white">
+                    قبول
+                  </button>
+                  <button
+                    formaction="{% url 'accounts:reject_company_edit_request' edit.id %}"
+                    class="btn action-btn delete-all text-white">
+                    رفض
+                  </button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center py-4">لا توجد طلبات تعديل حالياً.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </form>
+
+      <div class="pagination mt-4">
+        {% if edit_page.has_previous %}
+          <a href="?q={{ q }}&page=1">&laquo; الأولى</a>
+          <a href="?q={{ q }}&page={{ edit_page.previous_page_number }}">&lsaquo; السابق</a>
+        {% endif %}
+        <span>صفحة {{ edit_page.number }} من {{ edit_page.paginator.num_pages }}</span>
+        {% if edit_page.has_next %}
+          <a href="?q={{ q }}&page={{ edit_page.next_page_number }}">التالي &rsaquo;</a>
+          <a href="?q={{ q }}&page={{ edit_page.paginator.num_pages }}">الأخيرة &raquo;</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('form button[formaction]').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        // ensure it's a POST
+        btn.closest('form').setAttribute('method','post');
+      });
+    });
+  });
+</script>
+{% endblock %}
