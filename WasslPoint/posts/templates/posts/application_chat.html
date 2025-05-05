@@ -78,18 +78,7 @@
     <hr class="my-4">
 
      {# --- Display Filtered Django Flash Messages --- #}
-     {% if alert_messages %}
-        <div class="row justify-content-center mb-3">
-            <div class="col-md-10 col-lg-8">
-                 {% for msg in alert_messages %}
-                    <div class="alert alert-{% if msg.tags == 'error' %}danger{% elif msg.tags == 'warning'%}warning{% elif msg.tags == 'success'%}success{% else %}{{ msg.tags|default:'info' }}{% endif %} alert-dismissible fade show" role="alert">
-                        {{ msg|safe }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-             </div>
-         </div>
-     {% endif %}
+   
      {# --- End Filtered Alert Messages --- #}
 
     {# Chat Messages Area #}
