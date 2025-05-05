@@ -5,8 +5,10 @@ from django.conf import settings
 from posts.models import TrainingOpportunity, Application
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from profiles.models import StudentProfile, Industry, CompanyProfile, City
+from profiles.models import StudentProfile, Industry, CompanyProfile, City,Major
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+
 
 
 def home_view(request:HttpRequest):
@@ -49,12 +51,116 @@ def student_dashboard_view(request):
         'related_opps': related_opps,
     })
 
-def training_view(request:HttpRequest):
-    active_opportunities = TrainingOpportunity.objects.filter(
+def training_view(request):
+    """
+    Displays Training Opportunities with filtering, search, pagination,
+    and default major filtering for logged-in students on initial load.
+    """
+    # --- Get Filter, Search, and Page Parameters ---
+    selected_city_id = request.GET.get('city', '').strip()
+    selected_industry_id = request.GET.get('industry', '').strip()
+    # Check if majors_needed was explicitly passed in the GET request
+    majors_filter_applied = 'majors_needed' in request.GET
+    selected_major_ids = request.GET.getlist('majors_needed') # Get list even if empty
+    search_query = request.GET.get('q', '').strip()
+    page_number = request.GET.get('page')
+
+    # Convert submitted major IDs to integers for filtering, handle potential errors
+    major_ids_int = []
+    if majors_filter_applied:
+        try:
+            major_ids_int = [int(mid) for mid in selected_major_ids if mid]
+        except ValueError:
+            # Handle error if non-integer values are passed
+            pass # Or add a message
+
+    # --- Prepare Base Queryset ---
+    opportunities_list = TrainingOpportunity.objects.filter(
         status=TrainingOpportunity.Status.ACTIVE,
         application_deadline__gte=timezone.now().date()
-        ).select_related('company', 'city').order_by('-created_at')
-    return render(request,'main/training.html',{"opportunities":active_opportunities})
+    ).select_related(
+        'company__industry', 'city'
+    ).prefetch_related(
+        'majors_needed'
+    ).order_by('-created_at')
+
+    # --- Apply Text Search Filter ---
+    if search_query:
+        opportunities_list = opportunities_list.filter(
+            Q(company__company_name__icontains=search_query) |
+            Q(city__arabic_name__icontains=search_query) |
+            Q(requirements__icontains=search_query) |
+            Q(benefits__icontains=search_query)
+        ).distinct()
+
+    # --- Apply Explicit Dropdown/Select Filters ---
+    if selected_city_id:
+        opportunities_list = opportunities_list.filter(city__id=selected_city_id)
+
+    if selected_industry_id:
+        opportunities_list = opportunities_list.filter(company__industry__id=selected_industry_id)
+
+    # --- Determine and Apply Major Filter (Default or Explicit) ---
+    student_major_ids_for_default = []
+    apply_default_major_filter = False
+
+    # Check for default filtering conditions
+    if not majors_filter_applied and request.user.is_authenticated and hasattr(request.user, 'student_profile'):
+        # Attempt to get student's primary major ID(s)
+        # ** IMPORTANT: Adjust this logic based on your data model **
+        # Example: Get major ID from the *first* Education record found (if any)
+        try:
+            first_education = request.user.student_profile.education.filter(major__isnull=False).first()
+            if first_education and first_education.major:
+                student_major_ids_for_default = [first_education.major.id] # Use a list
+                apply_default_major_filter = True
+                # If using default, set the selected IDs for the template context
+                current_selected_major_ids_str = [str(mid) for mid in student_major_ids_for_default]
+            else:
+                 # Student has no major defined, don't apply default filter
+                 current_selected_major_ids_str = []
+        except Exception:
+            current_selected_major_ids_str = []
+            pass # Fail silently or log error
+
+    else:
+        # User applied filters explicitly or is not a student
+        current_selected_major_ids_str = [str(mid) for mid in major_ids_int]
+        if major_ids_int: # Apply filter only if valid IDs were selected/passed
+             opportunities_list = opportunities_list.filter(majors_needed__id__in=major_ids_int).distinct()
+
+    # Apply the default filter AFTER other explicit filters if needed
+    if apply_default_major_filter:
+         opportunities_list = opportunities_list.filter(majors_needed__id__in=student_major_ids_for_default).distinct()
+
+
+    # --- Pagination ---
+    paginator = Paginator(opportunities_list, 9) # Adjust items per page
+    try:
+        page_obj = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.get_page(1)
+    except EmptyPage:
+        page_obj = paginator.get_page(paginator.num_pages)
+
+    # --- Prepare Context Data for Template ---
+    all_cities = City.objects.filter(status=True).order_by('arabic_name')
+    all_industries = Industry.objects.filter(status=True).order_by('arabic_name')
+    all_majors = Major.objects.filter(status=True).order_by('ar_name')
+
+    context = {
+        'opportunities': page_obj.object_list, # Renamed to match template loop var
+        'page_obj': page_obj,
+        'all_cities': all_cities,
+        'all_industries': all_industries,
+        'all_majors': all_majors,
+        'selected_city_id': selected_city_id,
+        'selected_industry_id': selected_industry_id,
+        # This now correctly reflects either default or explicit major selection
+        'selected_major_ids': current_selected_major_ids_str,
+        'search_query': search_query,
+    }
+    return render(request, 'main/training.html', context)
 
 def about_view(request:HttpRequest):
     return render(request,'main/about.html')
