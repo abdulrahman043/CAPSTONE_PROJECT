@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from babel import Locale
 # استيراد لحساب العمر من تاريخ الميلاد
 from datetime import date
+from django.utils import timezone
 
 # تهيئة اللغة العربية في Babel
 locale_ar = Locale('ar')
@@ -278,6 +279,8 @@ class CompanyProfile(models.Model):
     crm_certificate               = models.FileField(upload_to='crm_certs/') # شهادة CRM
     commercial_register           = models.CharField(max_length=200)       # رقم السجل التجاري
     industry                       = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True) # الصناعة
+    city                = models.ForeignKey(City, on_delete=models.CASCADE, null=True) 
+
     address_line = models.CharField(max_length=255, null=True, blank=True)
     logo                = models.ImageField(
                               upload_to='company_logos/',
@@ -307,3 +310,37 @@ class ContactInformation(models.Model):
     city         = models.ForeignKey(City, on_delete=models.CASCADE, null=True) # ربط بالمدينة
     def __str__(self):
         return self.email
+
+class CompanyProfileEditRequest(models.Model):
+   
+    STATUS_CHOICES = [
+        ('PENDING',  "قيد المراجعة"),
+        ('APPROVED', "مقبول"),
+        ('REJECTED', "مرفوض"),
+    ]
+
+    company            = models.ForeignKey('CompanyProfile', on_delete=models.CASCADE, related_name="edit_requests")
+    company_name       = models.CharField(max_length=200)
+    commercial_register= models.CharField(max_length=200)
+    industry           = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True)
+    crm_certificate    = models.FileField(upload_to='crm_certs/', blank=True, null=True)
+    city                = models.ForeignKey(City, on_delete=models.CASCADE, null=True) 
+
+    status             = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    submitted_at       = models.DateTimeField(auto_now_add=True)
+
+    def approve(self, admin_user):
+        p = self.company
+        p.company_name        = self.company_name
+        p.commercial_register = self.commercial_register
+        p.industry_id         = self.industry_id
+        p.address_line        = self.address_line
+        if self.crm_certificate: p.crm_certificate = self.crm_certificate
+        p.save()
+        self.status      = self.STATUS_APPROVED
+        self.reviewed_at = timezone.now()
+        self.save()
+
+    def reject(self, admin_user, comment=None):
+        self.crm_certificate.delete(save=False)
+        self.delete()
