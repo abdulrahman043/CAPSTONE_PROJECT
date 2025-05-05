@@ -1132,3 +1132,15 @@ body {
   color: #FF7C34 !important;
   font-weight: bold;
 }
+
+
+.logo-img {
+  max-height: 70px;
+  object-fit: contain;
+  filter: grayscale(0.1);
+  transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.05);
+}
