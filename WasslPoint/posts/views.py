@@ -15,6 +15,8 @@ from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 import openpyxl
+from openpyxl.styles import Font
+from openpyxl.utils import get_column_letter
 
 # --- Helper Decorators ---
 def company_required(view_func):
