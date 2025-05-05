@@ -123,7 +123,7 @@ def company_view(request):
         page_obj = paginator.get_page(paginator.num_pages)
 
     # Data for Filter Dropdowns
-    industries = Industry.objects.filter(status=True).order_by('name')
+    industries = Industry.objects.filter(status=True).order_by('arabic_name')
 
     context = {
         'page_obj': page_obj,
