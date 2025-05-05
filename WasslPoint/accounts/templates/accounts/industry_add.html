@@ -1,0 +1,91 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-page" dir="rtl">
+  <section class="ads">
+    <h2 class="mb-4 page-title">
+      <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
+      اضافة مجال
+      <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
+    </h2>
+  </section>
+
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb" style="--bs-breadcrumb-divider: '>'; ">
+      <li class="breadcrumb-item">
+        <a class="text-bluea" href="{% url 'accounts:user_list_view' %}">لوحة الإدارة</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a class="text-bluea" href="{% url 'accounts:industry_view' %}">المجالات</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">اضافة مجال</li>
+    </ol>
+  </nav>
+
+  <div class="admin-container">
+    <nav class="sidebar">
+      <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">لوحة الإدارة</a>
+   
+      <a href="{% url 'accounts:industry_view' %}" class="sidebar-btn orange text-center text-decoration-none">المجالات</a>
+    </nav>
+
+    <div class="main-content">
+      <div class="form-wrapper shadow-sm p-4">
+        <form method="post" action="{% url 'accounts:add_industry_view' %}">
+          {% csrf_token %}
+
+          <div class="form-group mb-3">
+            <label for="id_ar_name">الاسم بالعربية</label>
+            <input
+              type="text"
+              name="arabic_name"
+              id="id_ar_name"
+              class="form-control-contact orange-border"
+              placeholder="أدخل الاسم بالعربية"
+              value="{{industry.arabic_name}}"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="id_en_name">الاسم بالإنجليزية</label>
+            <input
+              type="text"
+              name="english_name"
+              id="id_en_name"
+              class="form-control-contact orange-border text-start"
+              placeholder="Enter English name"
+              value="{{industry.english_name}}"
+
+              required
+            >
+          </div>
+
+          <div class="form-group mb-4 d-flex align-items-center">
+            <input
+              type="checkbox"
+              name="status"
+              id="id_status"
+              class="form-check-input me-2"
+              {%if industry.status%}
+              checked
+              {%endif%}
+            >
+            <label for="id_status" class="form-check-label">مُفعّل</label>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn action-btn add text-white">حفظ</button>
+            <a href="{% url 'accounts:industry_view' %}" class="btn action-btn delete-all">إلغاء</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
