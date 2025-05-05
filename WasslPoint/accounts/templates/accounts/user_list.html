@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="admin-page" dir="rtl">
-
+  
   <section class="ads">
     <h2 class="mb-4 page-title">
       <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
@@ -15,13 +15,20 @@
       <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
     </h2>
   </section>
-
+ 
   <div class="admin-container">
     <nav class="sidebar">
       <a href="{% url 'accounts:company_user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">الشركات</a>
       <a href="{% url 'accounts:student_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none">الطلاب</a>
       <a href="{% url 'accounts:subscription_view' %}" class="sidebar-btn teal text-center text-decoration-none">الاشتراكات</a>
+      <a href="{% url 'accounts:major_view' %}" class="sidebar-btn orange text-center text-decoration-none">التخصصات</a>
+      <a href="{% url 'accounts:city_view' %}" class="sidebar-btn teal text-center text-decoration-none">المدن</a>
+      <a href="{% url 'accounts:industry_view' %}" class="sidebar-btn orange text-center text-decoration-none">المجالات</a>
+
+
+
     </nav>
+    
 
     <div class="main-content">
 
@@ -31,7 +38,7 @@
             type="text"
             name="q"
             class="form-control-contact orange-border"
-            placeholder="ابحث عن مستخدم…"
+            placeholder="ابحث عن مجال"
             value="{{ q }}"
           >
           <select name="type" class="form-control-contact orange-border">

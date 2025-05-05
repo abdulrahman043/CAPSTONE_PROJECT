@@ -128,7 +128,7 @@
             <div class="card-header bg-white text-black fw-bold p-3">اللغات</div>
             <div class="card-body">
               {% for lang in profile.language.all %}
-                <span class="badge bg-success badge-skill">
+                <span class="badge bg-blue badge-skill">
                   {{ lang.get_name_display }} ({{ lang.get_proficiency_display }})
                 </span>
               {% empty %}

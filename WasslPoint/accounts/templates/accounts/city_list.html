@@ -11,48 +11,44 @@
   <section class="ads">
     <h2 class="mb-4 page-title">
       <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
-      التدريبات
+       المدن
       <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
     </h2>
   </section>
-  <nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb" style="--bs-breadcrumb-divider: '>'; ">
-      <li class="breadcrumb-item">
+  <nav aria-label="breadcrumb" class="mb-3 text-bluea ">
+    <ol class="breadcrumb " style="--bs-breadcrumb-divider: '>'; ">
+      <li class="breadcrumb-item ">
         <a class="text-bluea" href="{% url 'accounts:user_list_view' %}" >لوحة الاداراة</a>
       </li>
-      <li class="breadcrumb-item">
-        <a  class="text-bluea"href="{% url 'accounts:company_user_list_view' %}">الشركات</a>
-      </li>
       
-      <li class="breadcrumb-item active" aria-current="page">التدريبات</li>
+      <li class="breadcrumb-item active" aria-current="page">المدن </li>
     </ol>
   </nav>
   <div class="admin-container">
-    <!-- Sidebar -->
     <nav class="sidebar">
       <a href="{% url 'accounts:user_list_view' %}" class="sidebar-btn teal text-center text-decoration-none">لوحة الاداراة</a>
-      <a href="{% url 'accounts:company_user_list_view' %}" class="sidebar-btn orange text-center text-decoration-none"> الشركات</a>
+      <a href="{% url 'accounts:add_city_view' %}" class="sidebar-btn orange text-center text-decoration-none">اضافة مدن</a>
+      
     </nav>
 
-    <!-- Main content -->
     <div class="main-content">
 
-      <!-- Search bar -->
-      <div class="search-filter mb-3">
+      <div class="search-filter" style="margin-bottom:1rem;">
         <form method="get" class="d-flex align-items-center" style="gap:0.5rem;">
           <input
             type="text"
             name="q"
             class="form-control-contact orange-border"
-            placeholder="ابحث عن تدريب"
+            placeholder="ابحث عن مدينة"
             value="{{ q }}"
           >
-          <button type="submit" class="action-btn edit btn text-white">بحث</button>
+        
+          <button type="submit" class="action-btn btn edit text-white">بحث</button>
         </form>
       </div>
 
-      <!-- Students table & bulk-delete form -->
-      <form action="{% url 'accounts:opp_delete_all' %}" method="post">
+
+      <form action="{% url 'accounts:city_delete_all' %}" method="post">
         {% csrf_token %}
         <div class="table-wrapper shadow-sm">
           <table class="admin-table">
@@ -60,51 +56,51 @@
               <tr>
                 <th><input type="checkbox" id="select-all"></th>
                 <th>المعرّف</th>
-                <th>اسم الشركة</th>
-                <th>الايميل</th>
-                <th>المدينة </th>
+                <th> المدينة بالعربي</th>
+                <th>المدينة بالانقليزي</th>
                 <th>الحالة</th>
+                <th>الاجرائات</th>
               </tr>
             </thead>
             <tbody>
-              {% for opp in opportunity_page %}
+              {% for city in city_page %}
               <tr>
+                <td><input type="checkbox" class="select-row" name="selected_users" value="{{ city.id }}"></td>
+                <td>{{city.id }}</td>
+                <td>{{ city.arabic_name }}</td>
                 <td>
-                  <input type="checkbox" class="select-row"
-                         name="selected_users" value="{{ opp.id }}">
+                    {{ city.english_name }}
                 </td>
-                <td><a href="{%url 'posts:opportunity_detail' opp.id%}">{{ opp.id }}</a></td>
-                <td>{{ opp.company.company_name }}</td>
-                <td>
-                  <a href="{% url 'profiles:company_profile_view_admin' opp.company.user.id %}">
-                    {{ opp.company.user.username }}
-                  </a>
-                </td>
-                <td>{{ opp.city.arabic_name}}</td>
-                <td>
-                  {{opp.status}}
+                <td>{{ city.status }}</td>
+                
+               
+                <td class="d-flex gap-2 justify-content-center">
+                  <a
+                    href="{% url 'accounts:edit_city_view' city.id %}"
+                    class="btn action-btn   add text-white">
+                    تعديل
+                </a>
+                 
                 </td>
               </tr>
               {% empty %}
               <tr>
-                <td colspan="6" class="text-center py-4">لا يوجد تدريبات.</td>
+                <td colspan="7" class="text-center py-4">لا توجد مدن.</td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
 
-        <!-- Action buttons -->
-        <div class="actions">
-         <!--
-          <a href="#" class="action-btn add">اضافة</a>
-          <a href="#" class="action-btn edit">تعديل</a>
-          -->
-          <button type="submit" class="action-btn delete-all btn text-white">حذف</button>
+         <div class="actions">
+        
+         <!--<a href="#" class="action-btn edit">تعديل</a>-->
+          <a href="{%url 'accounts:add_city_view'%}" class="action-btn add">اضافة</a>
+          <button type="submit" class="btn action-btn delete-all text-white">حذف</button>
+
         </div>
       </form>
 
-      <!-- Pagination -->
       <div class="pagination">
         {% if user_page.has_previous %}
           <a href="?q={{ q }}&page=1">&laquo; الأولى</a>

@@ -26,7 +26,8 @@ class City(models.Model):
 
 class Industry(models.Model):
     # نموذج يمثل قطاعاً للصناعة مع حالة تفعيل
-    name = models.CharField(max_length=100)   # اسم القطاع
+    arabic_name = models.CharField(max_length=100)   # اسم القطاع
+    english_name = models.CharField(max_length=100)
     status = models.BooleanField(default=True) # علم التفعيل
     def __str__(self):
         return self.name
