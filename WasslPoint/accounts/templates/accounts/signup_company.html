@@ -136,7 +136,7 @@
         >
           <option value="" disabled selected>مجال عمل الشركة</option>
           {% for ind in industries %}
-            <option value="{{ ind.id }}">{{ ind.name }}</option>
+            <option value="{{ ind.id }}">{{ ind.arabic_name }}</option>
           {% endfor %}
         </select>
       </div>
