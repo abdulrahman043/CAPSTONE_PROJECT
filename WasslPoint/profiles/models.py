@@ -312,7 +312,9 @@ class ContactInformation(models.Model):
         return self.email
 
 class CompanyProfileEditRequest(models.Model):
-   
+    STATUS_PENDING  = "PENDING"
+    STATUS_APPROVED = "APPROVED"
+    STATUS_REJECTED = "REJECTED"
     STATUS_CHOICES = [
         ('PENDING',  "قيد المراجعة"),
         ('APPROVED', "مقبول"),
@@ -322,11 +324,12 @@ class CompanyProfileEditRequest(models.Model):
     company            = models.ForeignKey('CompanyProfile', on_delete=models.CASCADE, related_name="edit_requests")
     company_name       = models.CharField(max_length=200)
     commercial_register= models.CharField(max_length=200)
+    company_location= models.URLField(null=True,blank=True)
     industry           = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True)
     crm_certificate    = models.FileField(upload_to='crm_certs/', blank=True, null=True)
     city                = models.ForeignKey(City, on_delete=models.CASCADE, null=True) 
 
-    status             = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    status             = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
     submitted_at       = models.DateTimeField(auto_now_add=True)
 
     def approve(self, admin_user):
@@ -334,7 +337,8 @@ class CompanyProfileEditRequest(models.Model):
         p.company_name        = self.company_name
         p.commercial_register = self.commercial_register
         p.industry_id         = self.industry_id
-        p.address_line        = self.address_line
+        p.city_id         = self.city_id
+        p.company_location        = self.company_location
         if self.crm_certificate: p.crm_certificate = self.crm_certificate
         p.save()
         self.status      = self.STATUS_APPROVED
@@ -343,4 +347,7 @@ class CompanyProfileEditRequest(models.Model):
 
     def reject(self, admin_user, comment=None):
         self.crm_certificate.delete(save=False)
+        self.status      = self.STATUS_REJECTED
+
         self.delete()
+        

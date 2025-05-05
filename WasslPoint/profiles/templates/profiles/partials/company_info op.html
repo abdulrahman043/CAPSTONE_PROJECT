@@ -2,7 +2,6 @@
 <div class="card-view ">
     <div class="top-card border  d-flex justify-content-between align-items-center p-3 ">
         <h2 class="fs-6 p text-black fw-bold ">معلومات الشركة (اختياري)</h2>
-        {%if admin_view%}
 
         <a href="javascript:void(0) " class="edit-btn text-black"><svg xmlns="http://www.w3.org/2000/svg"
                 width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
@@ -10,7 +9,6 @@
                     d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
             </svg>
         </a>
-        {%endif%}
     </div>
     <div class="container mt-3">
         <div class="row mb-2">
@@ -18,7 +16,15 @@
                 <p>وصف الشركة  </p>
             </div>
             <div class="col">
-                <p>{{profile.company_description}}</p>
+                <p>{%if profile.company_description%} {{profile.company_description}} {%endif%}</p>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <p>عنوان الشركة  </p>
+            </div>
+            <div class="col">
+                <p>{%if profile.address_line%} {{profile.address_line}} {%endif%}</p>
             </div>
         </div>
         <div class="row mb-2">
@@ -26,17 +32,10 @@
                 <p>  موقع الشركة الالكتروني</p>
             </div>
             <div class="col">
-                <p>{{profile.user.company_description}}</p>
+                <p>{%if profile.company_url%}{{profile.company_url}}{%endif%}</p>
             </div>
         </div>
-        <div class="row mb-2">
-            <div class="col">
-                <p>موقع الشركة (قوقل ماب)</p>
-            </div>
-            <div class="col">
-                <p>{{profile.company_location}}</p>
-            </div>
-        </div>
+       
        
        
         
@@ -49,7 +48,7 @@
         <h2 class="fs-6 text-black fw-bold"> معلومات الشركة (اختياري)</h2>
 
     </div>
-    <form method="post" action="{%url 'profiles:add_edit_company_info' profile.user.id %}" enctype="multipart/form-data">
+    <form method="post" {%if admin_view%} action="{%url 'profiles:add_edit_moreinfo_company_admin' profile.user.id %}" {%else%} action="{%url 'profiles:add_edit_moreinfo_company'  %}"   {%endif%} enctype="multipart/form-data">
         {%csrf_token%}
         <div class="container mt-3">
             <div class="row mb-2">
@@ -57,23 +56,25 @@
                     <label class="form-label" for="company_description"> وصف الشركة </label>
                 </div>
                 <div class="col">
-                    <p><textarea class="form-control" name="company_description" rows="6" id="company_description">{{profile.company_description}}</textarea></p>
+                    <p><textarea class="form-control" name="company_description" rows="6" id="company_description">{%if profile.company_description%} {{profile.company_description}} {%endif%}</textarea></p>
                 </div>
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <label class="form-label required" for="company_url"> موقع الشركة الالكتروني         </label>
+                    <label class="form-label" for="address_line"> عنوان الشركة </label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="company_url" name="company_url" type="text" value="{{profile.company_url}}" disabled required ></p>
+                    <p><input class="form-control" id="address_line" name="address_line" type="text" {%if profile.address_line%} value="{{profile.address_line}}"  {%endif%}></p>
+
                 </div>
             </div>
+           
             <div class="row mb-2">
                 <div class="col">
-                    <label class="required" for="company_location">  موقع الشركة (قوقل ماب)                    </label>
+                    <label class="required" for="company_url">موقع الشركةالالكتروني</label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="company_location" name="company_location" type="text" value="{{profile.company_location}}" required ></p>
+                    <p><input class="form-control" id="company_url" name="company_url" type="text" {%if profile.company_url%} value="{{profile.company_url}}" {%endif%}  ></p>
 
                 </div>
             </div>

@@ -46,12 +46,21 @@
        
         <div class="row mb-2">
             <div class="col">
-                <p>العنوان</p>
+                <p>المدينة</p>
             </div>
             <div class="col">
-                <p>{{profile.address_line}}</p>
+                <p>{{profile.city.arabic_name}}</p>
             </div>
         </div>
+        <div class="row mb-2">
+            <div class="col">
+                <p>موقع الشركة (قوقل ماب)</p>
+            </div>
+            <div class="col">
+                <p>{%if profile.company_location%} {{profile.company_location}} {%endif%}</p>
+            </div>
+        </div>
+       
         <div class="row mb-2">
             <div class="col">
                 <p>ملف السجل التجاري</p>
@@ -119,11 +128,28 @@
            
             <div class="row mb-2">
                 <div class="col">
-                    <label class="required" for="address_line">العنوان</label>
+                    <label class="required" for="city">المدينة</label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="address_line" name="address_line" type="text" value="{{profile.address_line}}" required ></p>
-
+                    <p>  <select
+                        name="city"
+                        class="form-select"
+                        required
+                      >
+                        <option value="" disabled selected> اختر مدينة </option>
+                        {% for city in cities %}
+                          <option {%if profile.city.id == city.id %} selected {%endif%}  value="{{ city.id }}">{{ city.arabic_name }}</option>
+                        {% endfor %}
+                      </select>
+                    </p>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <label class="form-label " for="company_location"> موقع الشركة الالكتروني         </label>
+                </div>
+                <div class="col">
+                    <p><input class="form-control" id="company_location" name="company_location" type="text" {%if profile.company_location%} value="{{profile.company_location}}" {%endif%}  ></p>
                 </div>
             </div>
             <div class="row mb-2">

@@ -20,8 +20,11 @@
       <li class="breadcrumb-item ">
         <a class="text-bluea" href="{% url 'accounts:user_list_view' %}" >لوحة الاداراة</a>
       </li>
+      <li class="breadcrumb-item ">
+        <a class="text-bluea" href="{% url 'accounts:subscription_view' %}" >الاشتراكات </a>
+      </li>
       
-      <li class="breadcrumb-item active" aria-current="page">الاشتركات </li>
+      <li class="breadcrumb-item active" aria-current="page">المشتركين </li>
     </ol>
   </nav>
   <div class="admin-container">
@@ -39,7 +42,7 @@
             type="text"
             name="q"
             class="form-control-contact orange-border"
-            placeholder="ابحث عن اشتراك"
+            placeholder="ابحث عن مشتركين"
             value="{{ q }}"
           >
         
@@ -48,7 +51,7 @@
       </div>
 
 
-      <form action="{% url 'accounts:sub_delete_all' %}" method="post">
+      <form action="{% url 'accounts:subscription_detail_delete_all' plan.id %}" method="post">
         {% csrf_token %}
         <div class="table-wrapper shadow-sm">
           <table class="admin-table">
@@ -56,39 +59,33 @@
               <tr>
                 <th><input type="checkbox" id="select-all"></th>
                 <th>المعرّف</th>
-                <th> الاسم</th>
-                <th>المدة</th>
-                <th>السعر</th>
-                <th>الحالة</th>
-                <th>الاجرائات</th>
+                <th> اسم المشترك</th>
+                <th> اسم الخطة</th>
+                <th>بدايه الاشتراك</th>
+                <th>نهاية الاشتراك</th>
+                <th>معرف الدفع</th>
               </tr>
             </thead>
             <tbody>
-              {% for sub in subscription_page %}
+              {% for sub in subscriber_page %}
               <tr>
                 <td><input type="checkbox" class="select-row" name="selected_users" value="{{ sub.id }}"></td>
                 <td>{{ sub.id }}</td>
-                <td><a href="{%url 'accounts:subscription_detail_view' sub.id %}">{{ sub.name }}</a></td>
+                <td>{{ sub.user.username }}</td>
+                <td>{{ plan.name}}</td>
                 <td>
-                    {{ sub.duration_days }}
+                    {{ sub.start_date }}
                 </td>
-                <td>{{ sub.price }}</td>
+                <td>{{ sub.end_date }}</td>
                 
                 <td>
-                  {{sub.status}}
+                  {{sub.payment_id}}
                 </td>
-                <td class="d-flex gap-2 justify-content-center">
-                  <a
-                    href="{% url 'accounts:edit_subscription_view' sub.id %}"
-                    class="btn action-btn   add text-white">
-                    تعديل
-                </a>
-                 
-                </td>
+                
               </tr>
               {% empty %}
               <tr>
-                <td colspan="7" class="text-center py-4">لا توجد اشتراكات.</td>
+                <td colspan="7" class="text-center py-4">لا يوجد مشتركين .</td>
               </tr>
               {% endfor %}
             </tbody>
