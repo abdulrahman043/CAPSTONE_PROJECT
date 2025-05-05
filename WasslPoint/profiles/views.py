@@ -603,13 +603,15 @@ def add_edit_company_info_company(request: HttpRequest):
     company_name        = request.POST.get('company_name', '').strip()
     commercial_register = request.POST.get('commercial_register', '').strip()
     industry_id         = request.POST.get('industry', '').strip()
-    address_line        = request.POST.get('address_line', '').strip()
+    city_id         = request.POST.get('city', '').strip()
+    company_location        = request.POST.get('company_location', '').strip()
     crm_certificate     = request.FILES.get('crm_certificate')
 
     missing = []
     if not company_name:        missing.append('اسم الشركة')
     if not commercial_register: missing.append('رقم السجل التجاري')
     if not industry_id:         missing.append('المجال')
+    if not city_id:         missing.append('المدينة')
 
 
     if missing:
@@ -629,7 +631,7 @@ def add_edit_company_info_company(request: HttpRequest):
                 company_name        = company_name,
                 commercial_register = commercial_register,
                 industry            = industry,
-                address_line        = address_line or None,
+                address_line        = company_location or None,
             )
             if crm_certificate:
                 edit.crm_certificate = crm_certificate

@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from django.db import transaction
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.models import User
-from profiles.models import CompanyProfile,StudentProfile,PersonalInformation,Experience,Education,Skill,Language,Certification,ContactInformation,Industry,Major,City
+from profiles.models import CompanyProfile,StudentProfile,PersonalInformation,Experience,Education,Skill,Language,Certification,ContactInformation,Industry,Major,City,CompanyProfileEditRequest
 from django.contrib.admin.views.decorators import staff_member_required 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -1247,3 +1247,44 @@ def add_industry_view(request:HttpRequest):
         messages.success(request, "تم اضافة المجال بنجاح!")
         return redirect('accounts:industry_view')
     return render(request,'accounts/industry_add.html')
+
+@login_required
+@staff_member_required
+def company_edit_request_list(request):
+    q = request.GET.get('q','').strip()
+    qs = CompanyProfileEditRequest.objects.filter(status='PENDING')\
+          .select_related('company__user','industry','city')\
+          .order_by('-submitted_at')
+    if q:
+        qs = qs.filter(company__company_name__icontains=q)
+
+    # simple pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(qs, 10)
+    page = request.GET.get('page')
+    edit_page = paginator.get_page(page)
+
+    return render(request, 'accounts/company_edit_request_list.html', {
+        'edit_page': edit_page,
+        'q': q,
+    })
+
+@login_required
+@staff_member_required
+def approve_company_edit_request(request, pk):
+    edit = get_object_or_404(
+        CompanyProfileEditRequest, pk=pk, status='PENDING'
+    )
+    edit.approve(admin_user=request.user)
+    messages.success(request, "تم قبول طلب التعديل وحُفظ بنجاح.")
+    return redirect('accounts:company_edit_request_list')
+
+@login_required
+@staff_member_required
+def reject_company_edit_request(request, pk):
+    edit = get_object_or_404(
+        CompanyProfileEditRequest, pk=pk, status='PENDING'
+    )
+    edit.reject(admin_user=request.user)
+    messages.success(request, "تم رفض طلب التعديل وحُذف.")
+    return redirect('accounts:company_edit_request_list')
