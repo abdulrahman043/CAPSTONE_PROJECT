@@ -133,27 +133,27 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item"> {# Notification Icon #}
-                           {% if unread_notifications_count is defined %}
-                            <a class="nav-link position-relative text-white p-2" href="{%url 'notifications:notifications_page' %}" title="الإشعارات">
-                                <span class="material-symbols-outlined nav-icon-notification">
-                                  notifications
-                                </span>
-                                {% if unread_notifications_count > 0 %}
-                                    <span class="badge rounded-pill bg-danger nav-notification-badge">
-                                        {{ unread_notifications_count }}
-                                        <span class="visually-hidden">إشعارات غير مقروءة</span>
-                                    </span>
-                                {% endif %}
+                        <li class="nav-item">
+                          {% if user.is_authenticated %}
+                            <a class="nav-link position-relative text-white p-2"
+                               href="{% url 'notifications:notifications_page' %}"
+                               title="الإشعارات">
+                              
+                              {# الأيقونة دائماً مفتوحة #}
+                              <span class="material-symbols-outlined nav-icon-notification">
+                                notifications
+                              </span>
+                              
+                              {# نقطة حمراء فقط لو في إشعارات غير مقروءة #}
+                              {% if unread_notifications_count|default:0 > 0 %}
+                                <span class="nav-notification-dot"></span>
+                              {% endif %}
+                              
                             </a>
-                            {% else %}
-                             <a class="nav-link text-white-50 p-2" href="#" title="الإشعارات (غير متوفرة)">
-                                 <span class="material-symbols-outlined nav-icon-notification">
-                                    notifications_off
-                                 </span>
-                             </a>
-                            {% endif %}
+                          {% endif %}
                         </li>
+                        
+                        
                     {% else %}
                          {# --- Anonymous User Links --- #}
                          <li class="nav-item">
