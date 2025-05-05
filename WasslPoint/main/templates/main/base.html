@@ -135,7 +135,7 @@
                         </li>
                         <li class="nav-item"> {# Notification Icon #}
                            {% if unread_notifications_count is defined %}
-                            <a class="nav-link position-relative text-white p-2" href="#" title="الإشعارات">
+                            <a class="nav-link position-relative text-white p-2" href="{%url 'notifications:notifications_page' %}" title="الإشعارات">
                                 <span class="material-symbols-outlined nav-icon-notification">
                                   notifications
                                 </span>

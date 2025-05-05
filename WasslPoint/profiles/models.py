@@ -6,6 +6,8 @@ from babel import Locale
 # استيراد لحساب العمر من تاريخ الميلاد
 from datetime import date
 from django.utils import timezone
+from django.core.mail import send_mail
+from django.conf import settings
 
 # تهيئة اللغة العربية في Babel
 locale_ar = Locale('ar')
@@ -344,10 +346,38 @@ class CompanyProfileEditRequest(models.Model):
         self.status      = self.STATUS_APPROVED
         self.reviewed_at = timezone.now()
         self.save()
+        subject = '✅ تم قبول طلب تعديل معلومات شركتكم'
+        body = (
+            f'مرحباً {p.company_name},\n\n'
+            'لقد تم قبول طلب تعديل معلومات شركتكم بنجاح. '
+            'يمكنك الآن مراجعة التعديلات في حسابك.\n\n'
+            'شكراً لاستخدامك منصتنا.'
+        )
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [p.user.email],
+            fail_silently=False,
+        )
 
     def reject(self, admin_user, comment=None):
         self.crm_certificate.delete(save=False)
         self.status      = self.STATUS_REJECTED
-
+        subject = '❌ تم رفض طلب تعديل معلومات شركتكم'
+        body = (
+            f'مرحباً {self.company.company_name},\n\n'
+            'نأسف لإبلاغكم بأنه تم رفض طلب تعديل معلومات شركتكم.\n'
+            f'{"تعليق الإدارة: " + comment + "\n\n" if comment else ""}'
+            'يرجى مراجعة البيانات وإعادة إرسال الطلب إذا لزم الأمر.\n\n'
+            'شكراً لاستخدامك منصتنا.'
+        )
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [self.company.user.email],
+            fail_silently=False,
+        )
         self.delete()
         
