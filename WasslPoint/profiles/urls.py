@@ -47,7 +47,8 @@ urlpatterns = [
     path('<int:user_id>/add_language/',views.add_language,name='add_language_admin'), # Added int converter
     path('export/pdf/', views.export_cv_pdf, name='export_cv_pdf'),
     path('export/pdf/<int:user_id>/', views.export_cv_pdf, name='export_cv_pdf_admin'), # Changed <user_id> to <int:user_id>
-    path('profile/view/export/pdf/<int:user_id>/', views.student_company_export_cv_pdf, name='student_company_export_cv_pdf'), # Added slash at end
+    path('profile/view/export/pdf/<int:user_id>/', views.student_company_export_cv_pdf, name='student_company_export_cv_pdf'),
+    path('student/<int:student_id>/view/', views.company_student_profile, name='company_student_profile'),
     path('company/<int:company_id>/', views.public_company_profile_view, name='public_company_profile'),
 
 ]

@@ -46,7 +46,7 @@
 
     <div class="header-actions"> {# Wrapper for header and button #}
         <h2 class="mb-0">المتقدمون لفرصة: {{ opportunity.title }}</h2> {# Removed mb-3 #}
-        {# --- ADD EXPORT BUTTON (only if applications exist) --- #}
+        {# --- EXPORT BUTTON --- #}
         {% if applications %}
         <a href="{% url 'posts:export_applications_excel' opportunity.id %}" class="btn btn-success">
             <span class="material-symbols-outlined">download</span> تصدير إلى Excel
@@ -82,10 +82,9 @@
                     {% for app in applications %}
                         <tr>
                             <td>
-                                {# --- LINK UPDATED --- #}
-                                {# Now points to the admin/staff view of the student profile #}
-                                <a href="{% url 'profiles:profile_view_admin' app.student.user.id %}">
-                                {# --- END LINK UPDATE --- #}
+                                {# --- LINK IS CORRECT for viewing student profile by company --- #}
+                                <a href="{% url 'profiles:company_student_profile' app.student.user.id %}">
+                                {# --- END LINK --- #}
                                 {% if app.student.personal_info.full_name %}
                                    {{ app.student.personal_info.full_name }}
                                 {% else %}

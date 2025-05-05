@@ -810,6 +810,37 @@ def student_company_export_cv_pdf(request,user_id):
        
         return redirect('profiles:company_student_profile' ,user.id)
 
+@login_required
+def company_student_profile(request, student_id):
+    """
+    View for a company or admin to see a specific student's profile.
+    Renders a specific template for this view.
+    """
+    # Authorization: Allow staff or users with a company profile
+    if not (request.user.is_staff or hasattr(request.user, 'company_profile')):
+         messages.error(request, "ليس لديك الصلاحية لعرض ملفات الطلاب.")
+         # Redirect appropriately
+         return redirect('main:home_view') # Or company dashboard if appropriate
+
+    # Fetch student profile, optimize related data access if needed
+    profile = get_object_or_404(
+        StudentProfile.objects.select_related(
+            'user', 'personal_info', 'contact_info',
+            'personal_info__nationality', # Include nationality
+            'contact_info__city' # Include city
+        ).prefetch_related(
+            'experience', 'skill', 'language', 'education__major', 'certification'
+        ),
+        user__id=student_id
+    )
+
+    context = {
+        'profile': profile,
+        # Add any other context specific to this view if needed
+        # 'viewing_user_is_company': hasattr(request.user, 'company_profile'), # Example flag
+        }
+    # Render the specific template uploaded by the user
+    return render(request, 'profiles/company_student_profile.html', context)
 def public_company_profile_view(request, company_id):
     """
     Displays a public view of a company's profile.
