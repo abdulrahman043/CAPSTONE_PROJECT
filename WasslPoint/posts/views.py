@@ -1,5 +1,6 @@
 # WasslPoint/posts/views.py
 from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 # from django.contrib.admin.views.decorators import staff_member_required # Not used
@@ -13,6 +14,7 @@ from django.views.decorators.http import require_POST, require_http_methods
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+import openpyxl
 
 # --- Helper Decorators ---
 def company_required(view_func):
@@ -410,23 +412,22 @@ def opportunity_applications(request, opportunity_id):
     """ Company or Admin views applications for a specific opportunity. """
     opportunity = get_object_or_404(TrainingOpportunity, pk=opportunity_id)
 
+    # --- Authorization Check (THIS IS CORRECT) ---
     is_owner = hasattr(request.user, 'company_profile') and opportunity.company == request.user.company_profile
     if not request.user.is_staff and not is_owner:
-        # Translated Message
         messages.error(request, "ليس لديك الإذن لعرض المتقدمين على هذه الفرصة.")
-        raise PermissionDenied("ليس لديك الإذن لعرض المتقدمين على هذه الفرصة.") # Keep exception for flow control
+        # Consider redirecting instead of raising PermissionDenied if you want a friendlier message flow
+        # return redirect('main:home_view') # Or company dashboard
+        raise PermissionDenied("ليس لديك الإذن لعرض المتقدمين على هذه الفرصة.")
+    # --- End Authorization Check ---
 
     applications_qs = Application.objects.filter(
         opportunity=opportunity
-    ).select_related('student__user', 'student__personal_info').order_by('status', '-applied_at')
-
-    # --- Placeholder: Mark applications as seen ---
-    # if is_owner: # Or include staff?
-    #     Application.objects.filter(
-    #         opportunity=opportunity,
-    #         company_has_seen_application=False # Requires model field
-    #     ).update(company_has_seen_application=True)
-    # --- End Placeholder ---
+    ).select_related(
+        'student__user',
+        'student__personal_info', # For Name
+        'student__contact_info'   # For Phone
+        ).order_by('status', '-applied_at')
 
     context = {
         'opportunity': opportunity,
@@ -527,3 +528,93 @@ def application_chat(request, application_id):
         # No need to pass 'alert_messages' separately anymore
     }
     return render(request, "posts/application_chat.html", context)
+
+@login_required
+def export_opportunity_applications_excel(request, opportunity_id):
+    """
+    Exports the list of applicants for a specific opportunity to an Excel file.
+    Only accessible by the company that owns the opportunity or staff.
+    """
+    opportunity = get_object_or_404(TrainingOpportunity, pk=opportunity_id)
+    user = request.user
+
+    # --- Authorization Check (Same as opportunity_applications view) ---
+    is_owner = hasattr(user, 'company_profile') and opportunity.company == user.company_profile
+    if not user.is_staff and not is_owner:
+        messages.error(request, "ليس لديك الصلاحية لتصدير قائمة المتقدمين لهذه الفرصة.")
+        # Redirect or raise permission denied
+        return redirect('posts:opportunity_applications', opportunity_id=opportunity_id)
+    # --- End Authorization Check ---
+
+    applications = Application.objects.filter(
+        opportunity=opportunity
+    ).select_related(
+        'student__user',
+        'student__personal_info',
+        'student__contact_info'
+    ).order_by('status', '-applied_at')
+
+    # Create Excel Workbook and Sheet
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = f"Applications_{opportunity.id}"
+    sheet.sheet_view.rightToLeft = True # Set sheet direction to RTL
+
+    # Define Headers
+    headers = [
+        "اسم المتقدم", "البريد الإلكتروني", "رقم الهاتف",
+        "تاريخ التقديم", "الحالة", "رسالة التقديم"
+    ]
+    sheet.append(headers)
+
+    # Style Header Row (Optional)
+    header_font = Font(bold=True)
+    for col_num, header in enumerate(headers, 1):
+        cell = sheet.cell(row=1, column=col_num)
+        cell.font = header_font
+
+    # Populate Data
+    for app in applications:
+        # Safely get related data
+        student_name = getattr(app.student.personal_info, 'full_name', None) or \
+                       app.student.user.get_full_name() or \
+                       app.student.user.username
+        email = getattr(app.student.user, 'email', 'N/A')
+        phone = getattr(getattr(app.student, 'contact_info', None), 'phone', 'N/A')
+        applied_date = app.applied_at.strftime('%Y-%m-%d %H:%M') if app.applied_at else 'N/A'
+        status = app.get_status_display()
+        message = getattr(app, 'message', '')
+
+        sheet.append([
+            student_name, email, phone,
+            applied_date, status, message
+        ])
+
+    # Adjust Column Widths (Optional)
+    for col_num in range(1, sheet.max_column + 1):
+         column_letter = get_column_letter(col_num)
+         # Simple auto-fit simulation (adjust max length as needed)
+         max_length = 0
+         column = list(sheet.columns)[col_num-1] # Get column object
+         for cell in column:
+             try:
+                 if len(str(cell.value)) > max_length:
+                     max_length = len(str(cell.value))
+             except:
+                 pass
+         adjusted_width = (max_length + 2) * 1.2 # Add padding and factor
+         sheet.column_dimensions[column_letter].width = adjusted_width
+
+
+    # Create HTTP Response
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    )
+    safe_company_name = "".join(c if c.isalnum() else "_" for c in opportunity.company.company_name)
+    filename = f'applicants_{safe_company_name}_{opportunity_id}.xlsx'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    # Save workbook to response
+    workbook.save(response)
+
+    return response

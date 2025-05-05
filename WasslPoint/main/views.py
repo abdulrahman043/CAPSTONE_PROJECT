@@ -88,16 +88,17 @@ def contact_view(request):
     return render(request, 'main/contact.html')
 
 def company_view(request):
-    """ Displays a paginated list of registered companies with filters and search. """
-
-    # Base queryset
+    """
+    Displays a paginated list of registered companies with filters for Industry AND City,
+    and search by company name.
+    """
     company_list = CompanyProfile.objects.filter(
         user__is_active=True
-    ).select_related('user', 'industry').order_by('company_name')
+    ).select_related('user', 'industry', 'city').order_by('company_name')
 
-    # Get filter and search parameters from GET request
     selected_industry_id = request.GET.get('industry')
-    company_name_search = request.GET.get('company_name_search', '').strip() # Get search term, default to empty string
+    selected_city_id = request.GET.get('city')
+    company_name_search = request.GET.get('company_name_search', '').strip()
 
     # Apply Industry Filter
     if selected_industry_id:
@@ -107,13 +108,20 @@ def company_view(request):
         except (ValueError, TypeError):
             selected_industry_id = None
 
+    # Apply City Filter
+    if selected_city_id:
+       try:
+           selected_city_id_int = int(selected_city_id)
+           company_list = company_list.filter(city__id=selected_city_id_int)
+       except (ValueError, TypeError):
+           selected_city_id = None
+
     # Apply Company Name Search Filter
     if company_name_search:
-        # Using case-insensitive contains search on company_name
         company_list = company_list.filter(company_name__icontains=company_name_search)
 
     # Pagination
-    paginator = Paginator(company_list, 9) # 9 companies per page
+    paginator = Paginator(company_list, 9)
     page_number = request.GET.get('page')
     try:
         page_obj = paginator.get_page(page_number)
@@ -122,13 +130,17 @@ def company_view(request):
     except EmptyPage:
         page_obj = paginator.get_page(paginator.num_pages)
 
-    # Data for Filter Dropdowns
+    # --- >>>>> FIX: Order by 'arabic_name' based on FieldError <<<<< ---
     industries = Industry.objects.filter(status=True).order_by('arabic_name')
+    # --- >>>>> END FIX <<<<< ---
+    cities = City.objects.filter(status=True).order_by('arabic_name')
 
     context = {
         'page_obj': page_obj,
         'industries': industries,
+        'cities': cities,
         'selected_industry_id': selected_industry_id,
-        'company_name_search': company_name_search, # Pass search term back to template
+        'selected_city_id': selected_city_id,
+        'company_name_search': company_name_search,
     }
     return render(request, 'main/company.html', context)

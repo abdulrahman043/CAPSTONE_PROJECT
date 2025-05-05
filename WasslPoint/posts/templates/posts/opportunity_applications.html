@@ -1,13 +1,61 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}Applications for {{ opportunity }}{% endblock %}
+{% block title %}المتقدمون لـ: {{ opportunity.title }}{% endblock %}
+
+{% block style %}
+<style>
+    .applicant-table img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-inline-end: 10px;
+    }
+    .status-badge {
+        font-size: 0.85em;
+        padding: 0.4em 0.7em;
+    }
+    .action-buttons .btn {
+        margin: 0 2px; /* Spacing between action buttons */
+    }
+    /* Align button with header */
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .material-symbols-outlined {
+        vertical-align: text-bottom; /* Adjust alignment */
+        font-size: 1.1em;
+    }
+</style>
+{% endblock %}
+
 
 {% block content %}
-<div class="container mt-4">
-    <h3>Applications for: {{ opportunity.company.company_name }} - {{ opportunity.city.arabic_name }}</h3>
-    <p><strong>Deadline:</strong> {{ opportunity.application_deadline|date:"Y-m-d" }} | <strong>Status:</strong> {{ opportunity.get_status_display }}</p>
-    <hr>
+<div class="container mt-4 mb-5">
+
+    <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';"> {# Breadcrumb styling #}
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'posts:company_dashboard' %}">لوحة تحكم الشركة</a></li>
+        <li class="breadcrumb-item active" aria-current="page">المتقدمون للفرصة</li>
+      </ol>
+    </nav>
+
+    <div class="header-actions"> {# Wrapper for header and button #}
+        <h2 class="mb-0">المتقدمون لفرصة: {{ opportunity.title }}</h2> {# Removed mb-3 #}
+        {# --- ADD EXPORT BUTTON (only if applications exist) --- #}
+        {% if applications %}
+        <a href="{% url 'posts:export_applications_excel' opportunity.id %}" class="btn btn-success">
+            <span class="material-symbols-outlined">download</span> تصدير إلى Excel
+        </a>
+        {% endif %}
+        {# --- END EXPORT BUTTON --- #}
+    </div>
+    <p class="text-muted mb-3">شركة: {{ opportunity.company.company_name }}</p>
+
 
      {% if messages %}
         {% for message in messages %}
@@ -19,65 +67,97 @@
     {% endif %}
 
     {% if applications %}
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>المتقدمين</th>
-                    <th>تم التقديم في</th>
-                    <th>حالة الطلب</th>
-                    <th>أجراء</th>
-                    <th>محادثة</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for app in applications %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle applicant-table">
+                <thead class="table-light">
                     <tr>
-                        <td>
-                            <a href="{%url 'profiles:company_student_profile' app.student.user.id %}">
-                            {% if app.student.personal_info.full_name %}
-                               {{ app.student.personal_info.full_name }}
-                            {% else %}
-                                {{ app.student.user.username }}
-                            {% endif %}
-                            <br><small>{{ app.student.user.email }}</small>
-                            </a>
-                        </td>
-                        <td>{{ app.applied_at|date:"Y-m-d H:i" }}</td>
-                        <td>{{ app.get_status_display }}</td>
-                        <td>
-                            {% if app.status != 'WITHDRAWN' %}
-                                <form action="{% url 'posts:update_application_status' app.id %}" method="post" class="d-inline">
-                                    {% csrf_token %}
-                                    <div class="input-group input-group-sm">
-                                        <select name="status" class="form-select form-select-sm">
-                                            {% for value, label in statuses %}
-                                                {% if value != 'WITHDRAWN' %}
-                                                    <option value="{{ value }}" {% if app.status == value %}selected{% endif %}>{{ label }}</option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                        <button type="submit" class="btn btn-sm btn-outline-primary">تحديث</button>
-                                    </div>
-                                </form>
-                            {% else %}
-                                <span class="text-muted">تم سحب الطلب من قبل الطالب</span>
-                            {% endif %}
-                        </td>
-                         <td> {# Chat Button #}
-                             <a href="{% url 'posts:application_chat' app.id %}" class="btn btn-sm btn-outline-secondary">مراسلة</a>
-                         </td>
+                        <th>المتقدمين</th>
+                        <th>تم التقديم في</th>
+                        <th>حالة الطلب</th>
+                        <th>أجراء</th>
+                        <th>محادثة</th>
                     </tr>
-                    {% if app.message %}
-                    <tr class="table-light">
-                       <td colspan="5"><small><strong>مراسلة المتقدم</strong> {{ app.message|linebreaksbr }}</small></td>
-                    </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                        <tr>
+                            <td>
+                                {# --- LINK UPDATED --- #}
+                                {# Now points to the admin/staff view of the student profile #}
+                                <a href="{% url 'profiles:profile_view_admin' app.student.user.id %}">
+                                {# --- END LINK UPDATE --- #}
+                                {% if app.student.personal_info.full_name %}
+                                   {{ app.student.personal_info.full_name }}
+                                {% else %}
+                                    {{ app.student.user.username }}
+                                {% endif %}
+                                <br><small class="text-muted">{{ app.student.user.email }}</small>
+                                </a>
+                            </td>
+                            <td>{{ app.applied_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                {# Use status from Application model #}
+                                <span class="badge rounded-pill status-badge
+                                    {% if app.status == app.Status.PENDING %} bg-secondary
+                                    {% elif app.status == app.Status.ACCEPTED %} bg-success
+                                    {% elif app.status == app.Status.REJECTED %} bg-danger
+                                    {% elif app.status == app.Status.WITHDRAWN %} bg-warning text-dark
+                                    {% else %} bg-light text-dark {% endif %}">
+                                    {{ app.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if app.status != app.Status.WITHDRAWN %} {# Don't show update form if withdrawn #}
+                                    <form action="{% url 'posts:update_application_status' app.id %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <div class="input-group input-group-sm">
+                                            <select name="status" class="form-select form-select-sm" aria-label="تحديث حالة الطلب">
+                                                {# Loop through available statuses for update #}
+                                                {% for value, label in statuses %}
+                                                    {# Exclude PENDING and WITHDRAWN as direct choices here? Or allow setting back to PENDING? #}
+                                                    {# Let's allow setting PENDING, ACCEPTED, REJECTED #}
+                                                    {% if value != app.Status.WITHDRAWN %}
+                                                        <option value="{{ value }}" {% if app.status == value %}selected{% endif %}>{{ label }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">تحديث</button>
+                                        </div>
+                                    </form>
+                                {% else %}
+                                    <span class="text-muted small">تم سحب الطلب</span>
+                                {% endif %}
+                            </td>
+                             <td> {# Chat Button #}
+                                 <a href="{% url 'posts:application_chat' app.id %}" class="btn btn-sm btn-outline-secondary">
+                                    <span class="material-symbols-outlined" style="font-size: 1.2em;">chat</span>
+                                    <span class="d-none d-md-inline ms-1">مراسلة</span>
+                                 </a>
+                             </td>
+                        </tr>
+                        {% if app.message %}
+                        <tr class="table-light">
+                           <td colspan="5"><small><strong>رسالة المتقدم:</strong> {{ app.message|linebreaksbr }}</small></td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
-        <p>لا يوجد اي متقدمين حتى الأن</p>
+        <div class="alert alert-info mt-4" role="alert">
+            <h4 class="alert-heading">
+                 <span class="material-symbols-outlined align-middle me-2">info</span>لا يوجد متقدمون
+            </h4>
+            <p>لم يتقدم أي طالب لهذه الفرصة التدريبية حتى الآن.</p>
+        </div>
     {% endif %}
-     <a href="{% url 'posts:company_dashboard' %}" class="btn btn-secondary mt-3">العودة الى صفحة التحكم</a>
+
+     <div class="mt-4">
+        <a href="{% url 'posts:company_dashboard' %}" class="btn btn-secondary">
+            <span class="material-symbols-outlined">arrow_back</span> العودة إلى لوحة التحكم
+        </a>
+    </div>
+
 </div>
 {% endblock %}

@@ -809,9 +809,21 @@ def student_company_export_cv_pdf(request,user_id):
         print(e)
        
         return redirect('profiles:company_student_profile' ,user.id)
-@login_required
-def company_student_profile(request, student_id):
-   
-    profile = get_object_or_404(StudentProfile, user__id=student_id)
-    print(profile)
-    return render(request, 'profiles/company_student_profile.html', {'profile': profile })
+
+def public_company_profile_view(request, company_id):
+    """
+    Displays a public view of a company's profile.
+    Fetches the company profile based on its ID and ensures the associated user is active.
+    """
+    # Fetch the specific company profile, ensuring it's linked to an active user
+    # Use select_related for efficiency when accessing Industry and City
+    company_profile = get_object_or_404(
+        CompanyProfile.objects.select_related('user', 'industry', 'city'),
+        pk=company_id,
+        user__is_active=True # Only show profiles of active companies
+    )
+
+    context = {
+        'profile': company_profile,
+    }
+    return render(request, 'profiles/public_company_profile.html', context)

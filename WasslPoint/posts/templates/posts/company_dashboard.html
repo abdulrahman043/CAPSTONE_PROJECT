@@ -39,11 +39,11 @@
                         <td><span class="badge bg-{% if opp.status == 'ACTIVE' %}success{% elif opp.status == 'CLOSED' %}warning{% else %}danger{% endif %}">{{ opp.get_status_display }}</span></td>
                         <td>
                             <a href="{% url 'posts:opportunity_applications' opp.id %}" class="btn btn-sm btn-info">
-                                View ({{ opp.applications.count }})
+                                عرض المتقدمين ({{ opp.applications.count }})
                             </a>
                         </td>
                          <td>
-                             <a href="{% url 'posts:edit_opportunity' opp.id %}" class="btn btn-sm btn-primary me-1">Edit</a>
+                             <a href="{% url 'posts:edit_opportunity' opp.id %}" class="btn btn-sm btn-primary me-1">تعديل</a>
                              <form action="{% url 'posts:delete_opportunity' opp.id %}" method="post" class="d-inline" onsubmit="return confirm('هل انت متاكد من حذف الفرصة الوضيفية؟');">
                                  {% csrf_token %}
                                  <button type="submit" class="btn btn-sm btn-danger">حذف</button>
