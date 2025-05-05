@@ -271,7 +271,10 @@ class Certification(models.Model):
 class CompanyProfile(models.Model):
     # ملف الشركة المرتبط بالمستخدم
     user                          = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company_profile')
-    company_name                  = models.TextField(max_length=200) # اسم الشركة
+    company_name                  = models.CharField(max_length=200) # اسم الشركة
+    company_description           = models.TextField(null=True)  #وصف
+    company_url                   = models.URLField(null=True)  # اسم الشركة
+    company_location              = models.URLField(null=True)
     crm_certificate               = models.FileField(upload_to='crm_certs/') # شهادة CRM
     commercial_register           = models.CharField(max_length=200)       # رقم السجل التجاري
     industry                       = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True) # الصناعة
@@ -282,7 +285,7 @@ class CompanyProfile(models.Model):
     def __str__(self):
         return self.company_name
 class ContactPerson(models.Model):
-    company_profile = models.OneToOneField(
+        company_profile = models.OneToOneField(
         to='profiles.CompanyProfile',
         on_delete=models.CASCADE,
         related_name='contact_person',
