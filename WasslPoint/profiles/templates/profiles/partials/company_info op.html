@@ -23,20 +23,21 @@
         </div>
         <div class="row mb-2">
             <div class="col">
+                <p>عنوان الشركة  </p>
+            </div>
+            <div class="col">
+                <p>{{profile.address_line}}</p>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
                 <p>  موقع الشركة الالكتروني</p>
             </div>
             <div class="col">
                 <p>{{profile.user.company_description}}</p>
             </div>
         </div>
-        <div class="row mb-2">
-            <div class="col">
-                <p>موقع الشركة (قوقل ماب)</p>
-            </div>
-            <div class="col">
-                <p>{{profile.company_location}}</p>
-            </div>
-        </div>
+       
        
        
         
@@ -62,18 +63,20 @@
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <label class="form-label required" for="company_url"> موقع الشركة الالكتروني         </label>
+                    <label class="form-label" for="company_description"> عنوان الشركة </label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="company_url" name="company_url" type="text" value="{{profile.company_url}}" disabled required ></p>
+                    <p><input class="form-control" id="company_description" name="company_description" type="text" value="{{profile.company_description}}"  ></p>
+
                 </div>
             </div>
+           
             <div class="row mb-2">
                 <div class="col">
                     <label class="required" for="company_location">  موقع الشركة (قوقل ماب)                    </label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="company_location" name="company_location" type="text" value="{{profile.company_location}}" required ></p>
+                    <p><input class="form-control" id="company_location" name="company_location" type="text" value="{{profile.company_location}}"  ></p>
 
                 </div>
             </div>

@@ -515,12 +515,13 @@ def company_profile_view(request:HttpRequest,user_id=None):
             return redirect('main:home_view')
  
     industries = Industry.objects.filter(status=True)
+    cities = City.objects.filter(status=True) 
 
     total_applications = Application.objects.filter(
         opportunity__company=profile
     ).count()
 
-    return render(request,'profiles/company_profile.html',{'profile':profile,'admin_view':bool(user_id),'industries':industries,'total_applications':total_applications})
+    return render(request,'profiles/company_profile.html',{'profile':profile,'admin_view':bool(user_id),'industries':industries,'cities':cities,'total_applications':total_applications})
 
 @login_required
 def add_edit_contact_person(request:HttpRequest,user_id=None):
