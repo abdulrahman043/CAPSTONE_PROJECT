@@ -120,7 +120,6 @@
 
                                  {% if user.is_staff %}
                                       <li><hr class="dropdown-divider"></li>
-                                      <li><a class="dropdown-item" href="{% url 'admin:index' %}" target="_blank">لوحة تحكم Django</a></li>
                                       <li><a class="dropdown-item" href="{% url 'accounts:pending_company_requests_view' %}">طلبات الشركات المعلقة</a></li>
                                  {% endif %}
                                 <li><hr class="dropdown-divider"></li>
