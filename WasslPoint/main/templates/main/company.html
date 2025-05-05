@@ -201,7 +201,7 @@
                             <option value="">كل المجالات</option>
                             {% for industry in industries %}
                                 <option value="{{ industry.id }}" {% if selected_industry_id == industry.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ industry.name }}
+                                    {{ industry }}
                                 </option>
                             {% endfor %}
                         </select>
