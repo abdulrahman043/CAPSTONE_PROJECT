@@ -1,7 +1,7 @@
 {% extends "main/base.html" %}
 
 {% block style %}
-  <!-- Custom CSS for notifications -->
+  <!-- الأستايل الأصلي مع علامة النقطة للإشعارات الجديدة -->
   <style>
     .notification-item {
       border-left: 4px solid transparent;
@@ -20,6 +20,15 @@
       margin-inline-end: .75rem;
       color: #0d6efd;
     }
+    /* نقطة جانبية للإشعار الجديد */
+    .unread-dot {
+      width: .5rem;
+      height: .5rem;
+      background-color: #0d6efd;
+      border-radius: 50%;
+      margin-inline-end: .75rem;
+      flex-shrink: 0;
+    }
     .notification-empty {
       padding: 3rem 1rem;
     }
@@ -31,29 +40,34 @@
       font-size: .85rem;
       color: #6c757d;
     }
+    .badge-new {
+      margin-inline-start: .5rem;
+      font-size: .75rem;
+    }
   </style>
 {% endblock %}
 
 {% block content %}
 <div class="container py-5" dir="rtl">
 
-  <!-- Header with "Mark all as read" -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">الإشعارات</h2>
-   
   </div>
 
-  <!-- Notifications list -->
   <div class="list-group">
     {% for n in notifications %}
       <a href="{{ n.url }}"
-         class="list-group-item list-group-item-action d-flex align-items-start notification-item {% if not n.is_read %}unread{% endif %}">
-        <!-- Optional icon -->
+         class="list-group-item list-group-item-action d-flex align-items-start notification-item {% if n.was_unread %}unread{% endif %}">
         <i class="bi bi-bell-fill notification-icon"></i>
 
         <div class="flex-fill">
           <div class="d-flex w-100 justify-content-between align-items-center">
-            <p class="mb-1">{{ n.message }}</p>
+            <p class="mb-1">
+              {{ n.message }}
+              {% if n.was_unread %}
+                <span class="badge bg-primary badge-new">جديد</span>
+              {% endif %}
+            </p>
             <small class="timestamp">{{ n.created_at|date:"Y-m-d H:i" }}</small>
           </div>
         </div>
