@@ -98,10 +98,17 @@
                 </p>
                 <p class="text-secondary fw-bold">Tuwaiq Academy</p>
                 <div class="d-flex justify-content-around mt-3">
-                    <a href="{% url 'posts:my_applications' %}" class="text-info"><i class="fi fi-rr-bell"></i><br>الطلبات</a>
-                    <a href="{% url 'main:contact_view' %}" class="text-warning"><i class="fi fi-rr-envelope"></i><br>الرسائل</a>
-                    <a href="{% url 'profiles:profile_view' %}" class="text-dark"><i class="fi fi-rr-user"></i><br>الملف</a>
-                </div>
+                  <a href="{% url 'posts:my_applications' %}" style="color: #13A7B1;">
+                      <i class="fi fi-rr-bell"></i><br>الطلبات
+                  </a>
+                  <a href="{%url 'notifications:notifications_page' %}" style="color: #FF7C34;">
+                      <i class="fi fi-rr-envelope"></i><br>الرسائل
+                  </a>
+                  <a href="{% url 'profiles:profile_view' %}" class="text-dark">
+                      <i class="fi fi-rr-user"></i><br>الملف
+                  </a>
+              </div>
+              
             </div>
         </div>
     </div>
@@ -198,8 +205,8 @@
       </div>
 
       <!-- الصورة يسار -->
-      <div class="col-md-6 p-0 ps-md-5 pe-0">
-        <img src="{% static 'images/HomeBanner.jpg' %}" alt="Hero Banner" class="img-fluid w-100 banner-img">
+      <div class="col-md-6 p-0 ps-md-4 pe-0 d-flex justify-content-center">
+        <img src="{% static 'images/HomeBanner.jpg' %}" alt="Hero Banner" class="img-fluid banner-img" style="max-width: 90%;">
       </div>
     </div>
   </div>
@@ -214,7 +221,7 @@
         <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
       </h2>
   
-      <div id="trustedByCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+      <div id="trustedByCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000" style="height: 100px;">
         <div class="carousel-inner active">
           <div class="carousel-item active">
             <div class="d-flex justify-content-center flex-wrap gap-4">
@@ -248,18 +255,8 @@
 
   
 
-<footer class="py-3 mt-5" style="background-color: #4CB8B3;">
-    <div class="container text-center">
-      <div class="mb-2 d-flex justify-content-center gap-3">
-        <a href="#" class="text-white fs-4"><i class="fi fi-brands-linkedin"></i></a>
-        <a href="#" class="text-white fs-4"><i class="fi fi-brands-twitter-alt-square"></i></a>
-        <a href="mailto:info@yourdomain.com" class="text-white fs-4"><i class="fi fi-sr-envelope"></i></a>
-      </div>
-      <p class="text-white mb-0" style="font-size: 0.95rem;">
-        © 2025 جميع الحقوق محفوظة لشركة تعاون التقنية — شروط الاستخدام، سياسة الخصوصية، وسياسة ملفات تعريف الارتباط
-      </p>
-    </div>
-</footer>
+
+
   
   
 {% endblock %}
