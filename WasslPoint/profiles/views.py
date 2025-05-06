@@ -13,6 +13,7 @@ from django.db import transaction
 from posts.models import Application
 from django.contrib.admin.views.decorators import staff_member_required 
 from decimal import Decimal
+from django.core.paginator import Paginator
 
 # Create your views here.
 @login_required
@@ -858,14 +859,15 @@ def public_company_profile_view(request, company_id):
         'profile': company_profile,
     }
     return render(request, 'profiles/public_company_profile.html', context)
-
 @login_required
 def company_edit_requests(request):
     company = get_object_or_404(CompanyProfile, user=request.user)
-    edit_requests = CompanyProfileEditRequest.objects.filter(
-        company=company
-    ).order_by('-submitted_at')
-
+    qs = CompanyProfileEditRequest.objects.filter(company=company).order_by('-submitted_at')
+    paginator = Paginator(qs, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    requests_list = list(page_obj)
     return render(request, 'profiles/company_edit_requests.html', {
-        'edit_requests': edit_requests
+        'edit_requests': requests_list,
+        'page_obj': page_obj,
     })

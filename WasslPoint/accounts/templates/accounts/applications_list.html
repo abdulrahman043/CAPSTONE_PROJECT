@@ -104,16 +104,15 @@
         </div>
       </form>
 
-      <!-- Pagination -->
       <div class="pagination">
-        {% if user_page.has_previous %}
+        {% if applications_page.has_previous %}
           <a href="?q={{ q }}&page=1">&laquo; الأولى</a>
-          <a href="?q={{ q }}&page={{ user_page.previous_page_number }}">&lsaquo; السابق</a>
+          <a href="?q={{ q }}&page={{ applications_page.previous_page_number }}">&lsaquo; السابق</a>
         {% endif %}
-        <span>صفحة {{ user_page.number }} من {{ user_page.paginator.num_pages }}</span>
-        {% if user_page.has_next %}
-          <a href="?q={{ q }}&page={{ user_page.next_page_number }}">التالي &rsaquo;</a>
-          <a href="?q={{ q }}&page={{ user_page.paginator.num_pages }}">الأخيرة &raquo;</a>
+        <span>صفحة {{ applications_page.number }} من {{ applications_page.paginator.num_pages }}</span>
+        {% if applications_page.has_next %}
+          <a href="?q={{ q }}&page={{ applications_page.next_page_number }}">التالي &rsaquo;</a>
+          <a href="?q={{ q }}&page={{ applications_page.paginator.num_pages }}">الأخيرة &raquo;</a>
         {% endif %}
       </div>
 
