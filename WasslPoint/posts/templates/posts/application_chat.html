@@ -89,7 +89,7 @@
                  {% for message in messages %}
                      <div class="message {% if message.sender == user %}sent{% else %}received{% endif %}">
                           <span class="sender">
-                            {% if message.sender == user %}أنا{% else %}{{ message.sender.get_full_name|default:message.sender.username }}{% endif %} {# Display 'Me' or sender name #}
+                            {% if message.sender == user %}أنا{% else %} {%if message.sender.student_profile %}{{ message.sender.student_profile.personal_info.full_name|default:message.sender.username }}{%if message.sender.student_profile.contact_info.email%} |{{ message.sender.student_profile.contact_info.email}} {%endif%} {%else%} {{ message.sender.company_profile.company_name|default:message.sender.username }} {%endif%} {% endif %} {# Display 'Me' or sender name #}
                           </span>
                           <span class="content">{{ message.content|linebreaksbr }}</span>
                           <small class="msg-time">{{ message.sent_at|date:"Y-m-d H:i" }}</small>

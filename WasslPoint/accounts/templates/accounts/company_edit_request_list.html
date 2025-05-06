@@ -76,11 +76,11 @@
               <td>{{ edit.industry.arabic_name }}</td>
               <td>{{ edit.city.arabic_name }}</td>
               <td>
-                {% if edit.crm_certificate %}
-                  <a href="{{ edit.crm_certificate.url }}"
+                {% if edit.company.crm_certificate %}
+                  <a href="{{ edit.company.crm_certificate.url }}"
                      target="_blank"
                      class="btn export-pdf-btn btn-sm">
-                    عرض PDF
+                     عرض السجل التجاري
                   </a>
                 {% else %}
                   -

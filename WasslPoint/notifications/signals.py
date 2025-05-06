@@ -116,13 +116,10 @@ def notify_on_message(sender, instance, created, **kwargs):
     if not created:
         return
     app = instance.application
-    # Determine recipient and chat URL
     recipient = None
     if instance.sender == app.student.user:
-        # Student sent message -> notify company
         recipient = app.opportunity.company.user
     else:
-        # Company sent message -> notify student
         recipient = app.student.user
     url = reverse('posts:application_chat', args=[app.id])
     message = (
