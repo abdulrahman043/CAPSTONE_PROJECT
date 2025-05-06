@@ -70,9 +70,15 @@
           name="terms"
           required
         >
-        <label class="form-check-label" for="terms">
-          الشروط والأحكام
-        </label>
+       <!-- رابط مبسّط وأنيق يفتح المودال -->
+       <a href="#termsModal"
+       class="terms-link d-inline-flex align-items-center gap-1"
+       data-bs-toggle="modal"
+       data-bs-target="#termsModal"
+       role="button">
+       <i class="fa-regular fa-file-lines"></i>
+       الشروط والأحكام
+    </a>
       </div>
       <div class="extra-links text-center mb-4">
         <a href="{% url 'accounts:login_view' %}">
@@ -84,6 +90,47 @@
       </div>
       <button type="submit" class="send-btn w-100">إنشاء حساب</button>
     </form>
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
+        <div class="modal-content" dir="rtl">
+          <div class="modal-header">
+            <h5 class="modal-title" id="termsLabel">الشروط والأحكام</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+          </div>
+    
+          <div class="modal-body" style="line-height:1.8">
+            <ol class="pe-2">
+              <li>
+                باستخدامك لمنصة <strong>نقطة وصل</strong> فإنك توافق على الالتزام بجميع
+                القوانين واللوائح المعمول بها في المملكة العربية السعودية.
+              </li>
+              <li>
+                تلتزم الشركات بتقديم معلومات صحيحة حول فرص التدريب المُعلَنة،
+                وتتحمّل المسؤولية الكاملة عن دقة البيانات.
+              </li>
+              <li>
+                يلتزم الطالب بتزويد بياناته الشخصية والأكاديمية الصحيحة،
+                ويقرّ بأن أي معلومات مُضلِّلة قد تؤدي إلى إلغاء حسابه.
+              </li>
+              <li>
+                تحتفظ المنصة بحقّ تعديل هذه الشروط في أي وقت،
+                وسيتم إشعار المستخدمين بالتغييرات عبر البريد الإلكتروني أو الإشعارات داخل الموقع.
+              </li>
+              <li>
+                أي إساءة استخدام للخدمة، بما في ذلك إرسال رسائل عشوائية (Spam) أو
+                محتوى مخالف للأخلاق، تؤدي إلى إيقاف الحساب دون إشعار مسبق.
+              </li>
+             
+            </ol>
+          </div>
+    
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">أوافق</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}

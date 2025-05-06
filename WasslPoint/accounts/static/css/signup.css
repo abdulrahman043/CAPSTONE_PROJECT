@@ -11,7 +11,19 @@
     font-weight: bold;
     margin-bottom: 40px;
   }
-  
+  /* رابط الشروط بنفس لون الهوية */
+.terms-link{
+  color:#009999;          /* اللون المطلوب */
+  font-weight:600;
+  text-decoration:none;
+  transition:color .2s;
+}
+.terms-link:hover,
+.terms-link:focus{
+  color:#FF7C34;          /* درجة أغمق للتمييز عند المرور */
+  text-decoration:underline;
+}
+
   .signup-title span {
     font-size: 1.2rem;
   }
