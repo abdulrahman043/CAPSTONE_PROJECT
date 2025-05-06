@@ -156,6 +156,31 @@
   .form-control-contact.blue-border {
     color: #009999;
   }
+  .contact-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;               
+    font-size: clamp(1.5rem, 5vw, 2rem); 
+    white-space: nowrap;       
+    margin: 2rem 0;
+  }
+  
+  .contact-title .divider {
+    flex: 1;                  
+    height: 1px;
+    background-color: #FF7C34;
+  }
+  
+  
+  @media (max-width: 576px) {
+    .contact-title {
+      gap: 0.25rem;
+    }
+    .contact-title .divider {
+      height: 0.8px;
+    }
+  }
   .form-control-contact.blue-border::placeholder {
     color: #009999;
     opacity: 0.8;

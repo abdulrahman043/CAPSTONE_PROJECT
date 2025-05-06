@@ -3,6 +3,32 @@
 
 {% block style %}
   <style>
+    .contact-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;               
+  font-size: clamp(1.5rem, 5vw, 2rem); 
+  white-space: nowrap;       
+  margin: 2rem 0;
+}
+
+.contact-title .divider {
+  flex: 1;                  
+  height: 1px;
+  background-color: #FF7C34;
+}
+
+
+@media (max-width: 576px) {
+  .contact-title {
+    gap: 0.25rem;
+  }
+  .contact-title .divider {
+    height: 0.8px;
+  }
+}
+
     .notification-item {
       border-left: 4px solid transparent;
       transition: background-color .2s, border-color .2s;
@@ -55,9 +81,10 @@
 {% block content %}
 <div class="container py-5" dir="rtl">
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">الإشعارات</h2>
-  </div>
+  <h2 class="contact-title text-center">
+    <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸</span> 
+الاشعارات    <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
+  </h2>
 
   <div class="list-group">
     {% for n in notifications %}

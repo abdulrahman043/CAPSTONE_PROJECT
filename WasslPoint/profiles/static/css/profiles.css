@@ -11,6 +11,31 @@
     gap: 10px;
     margin-top: 30px;
 }
+.contact-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;               /* مسافة بين الشريط والنص */
+  font-size: clamp(1.5rem, 5vw, 2rem); /* يكبر ويصغر بحسب الشاشة */
+  white-space: nowrap;       /* لا يكسر السطر */
+  margin: 2rem 0;
+}
+
+.contact-title .divider {
+  flex: 1;                   /* يشغل المساحة المتبقية */
+  height: 1px;
+  background-color: #FF7C34;
+}
+
+/* على الشاشات الضيقة نقلص سمك الشريط والمسافة */
+@media (max-width: 576px) {
+  .contact-title {
+    gap: 0.25rem;
+  }
+  .contact-title .divider {
+    height: 0.8px;
+  }
+}
 .card{
   width: 100%;
   
