@@ -1,38 +1,64 @@
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  .avatar-editable i.edit-icon{
+    position:absolute;
+    bottom:-10px;
+    right:60px;
+    font-size:1rem !important; 
+    color:#000 !important;        
+    width:auto !important;        
+    height:auto !important;
+    background:#fff;
+    border:1px solid #dee2e6;
+    border-radius:50%;
+    padding:2px;
+    line-height:1;
+    pointer-events:none;
+    z-index:2;
+  }
+  /* حافظة الصورة نفسها */
+  .avatar-editable{
+    position:relative;
+    display:inline-block;
+  }
+</style>
+
 <form method="post"
       enctype="multipart/form-data"
       class="row align-items-center gy-2 p-4"
-      style="max-width: 500px;"
+      style="max-width:500px;"
       {% if admin_view %}
         action="{% url 'profiles:profile_view_admin' profile.user.id %}"
-      {% endif %}
->
+      {% endif %}>
   {% csrf_token %}
 
+  <!-- صورة الملف الشخصي -->
   <div class="col-auto">
-    <input
-      type="file"
-      id="picture-input"
-      name="picture"
-      accept="image/*"
-      style="display: none;"
-      onchange="this.form.submit()"
-    >
-    <label for="picture-input" style="cursor: pointer;">
-      <img
-        src="{% if profile.personal_info.picture %}{{ profile.personal_info.picture.url }}{% else %}/static/default-avatar.png{% endif %}"
-        alt="الصورة الشخصية"
-        class="rounded-circle border"
-        style="width: 80px; height: 80px; object-fit: cover; "
-      >
+    <input type="file"
+           id="picture-input"
+           name="picture"
+           accept="image/*"
+           style="display:none"
+           onchange="this.form.submit()">
+
+    <label for="picture-input" class="avatar-editable" style="cursor:pointer;"
+    title="انقر لتغيير الصورة">
+      <img src="{% if profile.personal_info.picture %}{{ profile.personal_info.picture.url }}{% else %}/static/default-avatar.png{% endif %}"
+           alt="الصورة الشخصية"
+           class="rounded-circle border"
+           style="width:80px;height:80px;object-fit:cover;">
+      <!-- أيقونة الكاميرا -->
+      <i class="fa-solid fa-camera edit-icon"></i>
     </label>
   </div>
 
+  <!-- بيانات المستخدم -->
   <div class="col">
     <h5 class="mb-1">{{ profile.personal_info.full_name }}</h5>
     {% if profile.education.exists %}
-      <p class="mb-0 text-muted">
-        {{ profile.education.first.major.ar_name }}
-      </p>
+      <p class="mb-0 text-muted">{{ profile.education.first.major.ar_name }}</p>
     {% endif %}
   </div>
 </form>
