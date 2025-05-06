@@ -77,16 +77,16 @@
 
     <hr class="my-4">
 
-     {# --- Display Filtered Django Flash Messages --- #}
+     {# --- Display Filtered Django Flash messages_qs --- #}
    
-     {# --- End Filtered Alert Messages --- #}
+     {# --- End Filtered Alert messages_qs --- #}
 
-    {# Chat Messages Area #}
+    {# Chat messages_qs Area #}
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-8">
              <div class="chat-box shadow-sm" id="chatBox">
-                 {# Loop through 'messages' context variable (actual chat history) #}
-                 {% for message in messages %}
+                 {# Loop through 'messages_qs' context variable (actual chat history) #}
+                 {% for message in messages_qs %}
                      <div class="message {% if message.sender == user %}sent{% else %}received{% endif %}">
                           <span class="sender">
                             {% if message.sender == user %}أنا{% else %} {%if message.sender.student_profile %}{{ message.sender.student_profile.personal_info.full_name|default:message.sender.username }}{%if message.sender.student_profile.contact_info.email%} |{{ message.sender.student_profile.contact_info.email}} {%endif%} {%else%} {{ message.sender.company_profile.company_name|default:message.sender.username }} {%endif%} {% endif %} {# Display 'Me' or sender name #}
@@ -95,7 +95,7 @@
                           <small class="msg-time">{{ message.sent_at|date:"Y-m-d H:i" }}</small>
                      </div>
                  {% empty %}
-                     <p class="text-center text-muted mt-3">لا توجد رسائل حتى الآن.</p> {# No messages yet #}
+                     <p class="text-center text-muted mt-3">لا توجد رسائل حتى الآن.</p> {# No messages_qs yet #}
                  {% endfor %}
              </div>
          </div>

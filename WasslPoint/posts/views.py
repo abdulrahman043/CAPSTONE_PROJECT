@@ -524,7 +524,7 @@ def application_chat(request, application_id):
     # Prepare context for rendering the template (GET request part)
     context = {
         "application": application,
-        "messages": messages_qs, # Pass the actual chat messages
+        "messages_qs": messages_qs, # Pass the actual chat messages
         "is_student_view": is_student,
         "is_company_view": is_company,
         # No need to pass 'alert_messages' separately anymore

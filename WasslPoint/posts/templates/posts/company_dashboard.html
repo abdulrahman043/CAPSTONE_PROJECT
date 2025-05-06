@@ -8,14 +8,7 @@
     <h2>لوحة تحكم شركة: {{ company_profile.company_name }}</h2>
     <a href="{% url 'posts:create_opportunity' %}" class="btn btn-success mb-3">انشاء فرصة تدريبية جديدة</a>
     <hr>
-     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+   
 
     <h3>فرصك الوظيفية المقدمه</h3>
     {% if opportunities %}
