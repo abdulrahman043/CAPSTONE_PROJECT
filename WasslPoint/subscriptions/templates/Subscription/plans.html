@@ -54,7 +54,7 @@
           <img src="{% static 'images/cash.png' %}" class="img-fluid my-3" alt="طرق الدفع" style="max-width: 75%;">
 
           {% if not current_subscription %}
-            <a href="{% url 'subscriptions:payment' plan.id %}"
+            <a href="{% url 'subscriptions:checkout' plan.id %}"
                class="btn w-50"
                style="background-color: {% if forloop.counter == 1 %}#FF7C34{% else %}#13A7B1{% endif %};
                       color: white; font-weight: bold; border-radius: 8px;">
