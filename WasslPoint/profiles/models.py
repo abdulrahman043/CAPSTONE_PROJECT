@@ -383,11 +383,11 @@ class CompanyProfileEditRequest(models.Model):
         )
         subject = '❌ تم رفض طلب تعديل معلومات شركتكم'
         body = (
-            f'مرحباً {self.company.company_name},\n\n'
-            'نأسف لإبلاغكم بأنه تم رفض طلب تعديل معلومات شركتكم.\n'
-            f'{"تعليق الإدارة: " + comment + "\n\n" if comment else ""}'
-            'يرجى مراجعة البيانات وإعادة إرسال الطلب إذا لزم الأمر.\n\n'
-            'شكراً لاستخدامك منصتنا.'
+                f'مرحباً {self.company.company_name},\n\n' +
+                'نأسف لإبلاغكم بأنه تم رفض طلب تعديل معلومات شركتكم.\n' +
+                (f'تعليق الإدارة: {comment}\n\n' if comment else "") +  # Made the conditional part cleaner
+                'يرجى مراجعة البيانات وإعادة إرسال الطلب إذا لزم الأمر.\n\n' +
+                'شكراً لاستخدامك منصتنا.'
         )
         send_mail(
             subject,
