@@ -50,5 +50,7 @@ urlpatterns = [
     path('profile/view/export/pdf/<int:user_id>/', views.student_company_export_cv_pdf, name='student_company_export_cv_pdf'),
     path('student/<int:student_id>/view/', views.company_student_profile, name='company_student_profile'),
     path('company/<int:company_id>/', views.public_company_profile_view, name='public_company_profile'),
-
+      path('company/edit-requests/',views.company_edit_requests,name='company_edit_requests'),
 ]
+
+
