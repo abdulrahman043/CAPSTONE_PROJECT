@@ -139,9 +139,14 @@
           name="terms"
           required
         >
-        <label class="form-check-label" for="terms">
-          الشروط والأحكام
-        </label>
+        <a href="#termsModal"
+       class="terms-link d-inline-flex align-items-center gap-1"
+       data-bs-toggle="modal"
+       data-bs-target="#termsModal"
+       role="button">
+       <i class="fa-regular fa-file-lines"></i>
+       الشروط والأحكام
+    </a>
       </div>
       
       <div class="extra-links text-center mb-4">
@@ -158,6 +163,60 @@
      
     </form>
   </div>
+  <!-- نافذة الشروط والأحكام الخاصة بالشركات -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
+    <div class="modal-content" dir="rtl">
+      <div class="modal-header">
+        <h5 class="modal-title" id="termsLabel">الشروط والأحكام للشركات</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+      </div>
+
+      <div class="modal-body" style="line-height:1.9">
+        <ol class="pe-2 mb-0">
+          <li>
+            تُقرّ الشركة بأن جميع البيانات المقدَّمة في نموذج التسجيل صحيحة وحديثة،
+            وتتعهد بتحديثها فور حدوث أي تغيير جوهري.
+          </li>
+
+          <li>
+            تلتزم الشركة بإدراج فرص تدريبية حقيقية تتوافق مع اللوائح
+            والتعليمات المعمول بها في المملكة العربية السعودية،
+            وبألا تقل مدة التدريب عن المدة المطلوبة من جهة الطالب التعليمية.
+          </li>
+
+          <li>
+            تُمنع الشركة من طلب أي مبالغ مالية من المتدرب لقاء قبوله أو تدريبه،
+            كما تُمنع من فرض أعمال خارج نطاق الوصف التدريبي المُعلن.
+          </li>
+
+          <li>
+            تحتفظ منصة <strong>نقطة وصل</strong> بحق مراجعة الإعلانات
+            وحذف أو تعديل أي إعلان تدريبي يخالف السياسات دون إشعار مُسبق.
+          </li>
+
+          <li>
+            أي استخدام مسيء للمنصة (نشر محتوى مضلل، انتهاك حقوق الملكية الفكرية،
+            أو التواصل غير اللائق مع المتدربين) يعرّض حساب الشركة للإيقاف الفوري
+            وإحالة المخالفة للجهات المختصة عند الحاجة.
+          </li>
+
+          <li>
+            يحق للمنصة تعديل هذه الشروط في أي وقت.ويتم إشعار الشركات المسجلة
+            بالتعديلات عبر البريد الإلكتروني أو إشعار داخل المنصة،
+            ويُعتبر استمرار استخدام المنصة موافقةً ضمنية على البنود المحدثة.
+          </li>
+        </ol>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">أوافق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </section>
 <script>
   function updateFileLabel(input) {
