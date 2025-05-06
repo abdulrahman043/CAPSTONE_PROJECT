@@ -85,23 +85,29 @@ def notify_student_on_status_change(sender, instance, created, **kwargs):
     if old_status and old_status != new_status:
         old_status = Application.ApplicationStatus(old_status).label
         new_status = Application.ApplicationStatus(new_status).label
-        print(old_status)
-        print(new_status)
+       
         student_user = instance.student.user
         url = reverse('posts:my_applications')
         message = (
-            f"تم تحديث حالة طلبك للفرصة \"{instance.opportunity.title}\" "
+            f"  تم تحديث حالة طلبكم للفرصة التدريبية, "
             f"من {old_status} إلى {new_status}"
         )
         # Create notification
         Notification.objects.create(user=student_user, message=message, url=url)
         # Send email
+        email = "wasslpoint@gmail.com"
+
         subject = "تحديث حالة طلب التدريب التعاوني"
+        name = student_user.get_full_name() or student_user.student_profile.personal_info.full_name
+
         body = (
-            f"مرحباً {student_user.get_full_name() or student_user.student_profile.personal_info.full_name},\n\n"
-            f"{message}.\n\n"
-            f"يمكنك مراجعة الطلب  من الموقع"
-        )
+        f"مرحبًا {name}\n\n"
+        f"{message}\n\n"
+        "يمكنك مراجعة الطلب من خلال الموقع\n\n"
+        "للاستفسار يرجى التواصل مع الدعم عبر البريد الإلكتروني\n"
+        f"{email}\n\n"
+        "شكرًا لاستخدامك منصتنا"
+    )
         send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [student_user.email], fail_silently=True)
 
 @receiver(post_save, sender=Message)
@@ -110,13 +116,10 @@ def notify_on_message(sender, instance, created, **kwargs):
     if not created:
         return
     app = instance.application
-    # Determine recipient and chat URL
     recipient = None
     if instance.sender == app.student.user:
-        # Student sent message -> notify company
         recipient = app.opportunity.company.user
     else:
-        # Company sent message -> notify student
         recipient = app.student.user
     url = reverse('posts:application_chat', args=[app.id])
     message = (

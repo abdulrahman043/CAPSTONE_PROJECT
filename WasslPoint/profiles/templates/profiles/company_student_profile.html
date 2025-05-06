@@ -1,5 +1,6 @@
 {% extends "main/base.html" %}
 {% load static %}
+{% block title %}عرض ملف الشخصي -{{profile.personal_info.full_name}}{% endblock %}
 
 {% block style %}
   <link rel="stylesheet" href="{% static 'css/profiles.css' %}">
