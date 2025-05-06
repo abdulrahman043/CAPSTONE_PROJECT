@@ -2,13 +2,142 @@
 {% load static %}
 {% block content %}
 
-<!-- ===== صفحة اتصل بنا ===== -->
-<section class="py-5 text-center bg-light position-relative stats-section">
+<section class="support-section py-5 text-center">
+  <div class="container">
+    <h1 class="fw-bold mb-3">تواصل مع فريق الدعم لدينا</h1>
+    <p class="fs-5 mb-1">واجهتك مشكلة تقنية؟</p>
+    <p class="fs-5 mb-5">لديك بعض الإستفسارات فيما يخص الباقات؟</p>
+
+    <div class="row text-center gy-4">
+      <!-- الدعم التقني -->
+      <div class="col-md-3 col-6">
+        <h4 class="fw-bold">الدعم التقني</h4>
+        <p>واجهتني مشكلة تقنية</p>
+      </div>
+
+      <!-- الباقات والفواتير -->
+      <div class="col-md-3 col-6">
+        <h4 class="fw-bold">الباقات والفواتير</h4>
+        <p>أستفسارات حول الأسعار</p>
+      </div>
+
+      <!-- الاستشارة والمساعدة -->
+      <div class="col-md-3 col-6">
+        <h4 class="fw-bold">الاستشارة والمساعدة</h4>
+        <p>أحتاج إلى مساعدة في إدارة حسابي؟</p>
+      </div>
+
+      <!-- تساؤلات عامة -->
+      <div class="col-md-3 col-6">
+        <h4 class="fw-bold">تساؤلات عامة</h4>
+        <p>لدي سؤال عام؟</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== قسم الأسئلة الشائعة ===== -->
+<section class="py-5 text-center position-relative">
   <h2 class="contact-title">
     <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸</span> 
-    اتصل بنا 
+    الأسئلة الشائعة 
     <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
   </h2>
+
+  <div class="container mt-4 text-end">
+    <div class="accordion" id="faqAccordion">
+
+      <!-- سؤال 1 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeadingOne">
+          <button class="accordion-button collapsed text-end" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseOne" aria-expanded="false" aria-controls="faqCollapseOne">
+            كيف يمكنني التسجيل في المنصة؟
+          </button>
+        </h2>
+        <div id="faqCollapseOne" class="accordion-collapse collapse" aria-labelledby="faqHeadingOne" data-bs-parent="#faqAccordion">
+          <div class="accordion-body text-end" dir="rtl">
+            يمكنك التسجيل عن طريق الضغط على زر "سجل الآن" في الصفحة الرئيسية وتعبئة بياناتك الشخصية والجامعية.
+          </div>
+        </div>
+      </div>
+
+      <!-- سؤال 2 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeadingTwo">
+          <button class="accordion-button collapsed text-end" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseTwo" aria-expanded="false" aria-controls="faqCollapseTwo">
+            هل التسجيل مجاني؟
+          </button>
+        </h2>
+        <div id="faqCollapseTwo" class="accordion-collapse collapse" aria-labelledby="faqHeadingTwo" data-bs-parent="#faqAccordion">
+          <div class="accordion-body text-end" dir="rtl">
+            نعم، التسجيل واستخدام المنصة مجاني بالكامل لكل الطلاب والجهات.
+          </div>
+        </div>
+      </div>
+
+      <!-- سؤال 3 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeadingThree">
+          <button class="accordion-button collapsed text-end" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseThree" aria-expanded="false" aria-controls="faqCollapseThree">
+            كيف أعرف أن طلبي تم قبوله؟
+          </button>
+        </h2>
+        <div id="faqCollapseThree" class="accordion-collapse collapse" aria-labelledby="faqHeadingThree" data-bs-parent="#faqAccordion">
+          <div class="accordion-body text-end" dir="rtl">
+            سيتم إشعارك عبر لوحة التحكم الخاصة بك، وستتلقى بريدًا إلكترونيًا في حال تم قبولك من قبل الجهة.
+          </div>
+        </div>
+      </div>
+
+      <!-- سؤال 4 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeadingFour">
+          <button class="accordion-button collapsed text-end" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseFour" aria-expanded="false" aria-controls="faqCollapseFour">
+            هل أستطيع التقديم على أكثر من فرصة تدريبية؟
+          </button>
+        </h2>
+        <div id="faqCollapseFour" class="accordion-collapse collapse" aria-labelledby="faqHeadingFour" data-bs-parent="#faqAccordion">
+          <div class="accordion-body text-end" dir="rtl">
+            نعم، يمكنك التقديم على عدة فرص تدريبية طالما أنها متاحة ولم يتم قبولك في إحداها بعد.
+          </div>
+        </div>
+      </div>
+
+      <!-- سؤال 5 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeadingFive">
+          <button class="accordion-button collapsed text-end" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseFive" aria-expanded="false" aria-controls="faqCollapseFive">
+            هل المنصة معتمدة من الجامعات؟
+          </button>
+        </h2>
+        <div id="faqCollapseFive" class="accordion-collapse collapse" aria-labelledby="faqHeadingFive" data-bs-parent="#faqAccordion">
+          <div class="accordion-body text-end" dir="rtl">
+            نعم، العديد من الجامعات تعتمد المنصة كجزء من برنامج التدريب التعاوني لطلابها.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== قسم التواصل العام ===== -->
+<section class="py-5 text-center">
+  <div class="container">
+    <h2 class="fw-bold" style="font-size: 2.5rem;">
+      فريقنا مستعد للرد على استفساراتك أو اقتراحاتك
+    </h2>
+    <p class="mt-4" style="font-size: 1.25rem; color: #555;">
+      لا تتردد في استخدام النموذج أدناه للتواصل. يعمل فريق الدعم لدينا من الأحد إلى الخميس، من الساعة 9 صباحًا حتى 5 مساءً بتوقيت السعودية، ونهدف إلى الرد على استفساراتك خلال يوم عمل واحد.
+    </p>
+  </div>
+</section>
+
+
+<!-- ===== صفحة اتصل بنا ===== -->
+<section class="py-5 text-center bg-light position-relative stats-section">
   <div>
     {% if success %}
       <div class="alert alert-success" role="alert">
@@ -43,5 +172,25 @@
     </form>
   </div>
 </section>
+
+<!-- ===== قسم الخريطة ===== -->
+<section class="py-5" style="background-color: #f8f9fa;">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4" style="color: #009999;">موقعنا على الخريطة</h2>
+    <p class="mb-4" style="font-size: 1.1rem; color: #555;">تفضل بزيارتنا في مقر الأكاديمية – نحن في انتظارك!</p>
+    <div class="map-container" style="position: relative; overflow: hidden; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3696.4087318108313!2d46.715503392563235!3d24.854080264126726!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2efbd2d9c324c7%3A0x9124f530f1b56443!2z2KfZg9in2K_ZitmF2YrYqSDYt9mI2YrZgg!5e0!3m2!1sar!2ssa!4v1746501275722!5m2!1sar!2ssa" 
+        width="100%" 
+        height="450" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+</section>
+
 
 {% endblock %}

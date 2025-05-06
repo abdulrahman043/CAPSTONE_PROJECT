@@ -29,6 +29,7 @@ body {
   background-color: #F8F9FA !important; /* أو أي لون رمادي فاتح تحبه */
 }
 
+
 #heroCarousel {
   position: relative;
 }
@@ -157,14 +158,6 @@ body {
 
 .site-footer .footer-links a:hover {
   text-decoration: underline;
-}
-
-.hero-slide-image {
-  height: 100vh;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 100%;
 }
 
 /* لضبط خلفيات السلايدر الحديثة */
@@ -684,13 +677,6 @@ body {
     text-decoration: underline;
   }
 
-  .hero-slide-image {
-    height: 100vh;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 100%;
-  }
 
   /* لضبط خلفيات السلايدر الحديثة */
   .hero-slide-image {
@@ -1129,4 +1115,112 @@ body {
   transform: scale(1.05);
 }
 
+/* صوره اسفل الاحصايات */
+.hero-banner {
+  background-color: #f8f9fa;
+  padding: 0;
+}
 
+.banner-text {
+  padding-top: 60px;
+  padding-bottom: 60px;
+  text-align: right;
+  direction: rtl;
+}
+
+.banner-img {
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+.btn-custom {
+  background-color: #FF7C34;
+  color: white;
+  font-weight: bold;
+  padding: 10px 30px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-custom:hover {
+  background-color: #009999;
+  color: white;
+}
+
+.collab-banner {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 60vh;
+  position: relative;
+}
+
+.collab-banner h2,
+.collab-banner p {
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.btn-custom-orange {
+  background-color: #FF7C34;
+  color: white;
+  font-size: 1.1rem;
+  transition: 0.3s ease;
+}
+
+.btn-custom-orange:hover {
+  background-color: #13A7B1;
+  color: white;
+}
+
+.collab-banner {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.collab-banner .container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+
+.feature-tab {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  width: 100%;
+  border: 2px solid #4ca8b3;
+  border-radius: 12px;
+  background-color: #f8f8f8;
+  color: black;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.feature-tab.active {
+  background-color: #FF7C34;
+  color: white;
+  border-color: #FF7C34;
+}
+
+.feature-tab i {
+  font-size: 1.4rem;
+}
+
+
+.support-section {
+  background-color: #f8f9fa; /* لون خلفية رمادي فاتح */
+  direction: rtl;
+}
+
+.support-section h2 {
+  color: #000;
+}
+
+.support-section p {
+  color: #333;
+}

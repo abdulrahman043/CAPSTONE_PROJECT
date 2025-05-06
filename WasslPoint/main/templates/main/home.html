@@ -2,14 +2,26 @@
 {% load static %}
 {% block content %}
 
-<!-- صورة ثابتة مع حقل بحث -->
-<section class="hero-banner d-flex align-items-center justify-content-center text-center" style="background-image: url('{% static "images/banner4.jpg" %}'); height: 100vh; background-size: cover; background-position: center;">
-  <div class="search-container">
-    <h1 class="hero-title mb-4">اكتشف الفرص الآن</h1>
-    <form action="{% url 'main:training_view' %}" method="GET" class="search-form">
-      <input type="text" name="q" placeholder="أرامكو ، سابك ، طويق ..." class="search-input">
-      <button type="submit" class="search-button">بحث</button>
-    </form>
+<!-- قسم تعريف عن نقطة وصل -->
+<section class="py-5 bg-white border-top border-3" style="border-color: #13A7B1;">
+  <div class="container">
+    <div class="row align-items-center">
+      <!-- الصورة -->
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <img src="{% static 'images/graduate.avif' %}" alt="حفل التخرج" class="img-fluid rounded shadow">
+      </div>
+      <!-- النص -->
+      <div class="col-lg-6 text-end">
+        <h6 class="text-orange mb-2" style="color: #FF7C34;">للتدريب التعاوني</h6>
+        <h2 class="fw-bold mb-3" style="color: #13A7B1;">بوابتك المهنية تبدأ مع <span class="text-dark">نقطة وصل</span></h2>
+        <p class="text-muted" style="font-size: 1.1rem; color: #000000 !important;">
+          نقطة وصل هي منصة تجمع الطلاب المقبلين على التخرج والشركات التي تقدم برامج تدريبية تساهم في تحضير الطلاب وتطوير مهاراتهم. تخلق لك تجربة عملية لإكمال مقرر التدريب التعاوني، وتساعد صاحب المنشأة في عملية التطوير والاستثمار البشري.
+        </p>
+        <a href="#" class="btn btn-lg px-4 mt-3 text-white" style="background-color: #FF7C34;">
+          اقرأ المزيد
+        </a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -68,72 +80,79 @@
   </div>
 </section>
 
-<!-- ==== سلايدر ==== -->
-<section class="hero-slider mt-5">
-  <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
-
-    <div class="carousel-inner">
-
-      <div class="carousel-item active">
-        <div class="hero-slide-image" style="background-image: url('{% static "images/banner1.jpg" %}');">
-          <div class="carousel-caption">
-            <h1>كن جاهزاً لسوق العمل..</h1>
-            <a href="{% url 'accounts:signup_view' %}" class="btn" style="background-color: #FF7C34; color: white; border-radius: 8px;">سجّل الآن</a>
-          </div>
-        </div>
+<section class="hero-banner">
+  <div class="container-fluid">
+    <div class="row align-items-center">
+      <!-- النص يمين -->
+      <div class="col-md-6 text-end banner-text pe-2 ps-5">
+        <h2 class="fw-bold text-black">نقطة وصل</h2>
+        <h2 class="fw-bold" style="color: #13A7B1;">تصنع الفرص</h2>
+        <p class="fs-5 text-black">لتتمكن من صنع مستقبلك</p>
+        <a href="{% url 'accounts:signup_view' %}" class="btn btn-custom">سجل الآن</a>
       </div>
 
-      <div class="carousel-item">
-        <div class="hero-slide-image" style="background-image: url('{% static "images/banner2.jpg" %}');">
-          <div class="carousel-caption">
-            <h1>اكتشف فرص تدريب مذهلة..</h1>
-            <a href="{% url 'main:training_view' %}" class="btn" style="background-color: #FF7C34; color: white; border-radius: 8px;">ابدأ رحلتك</a>
-          </div>
-        </div>
+      <!-- الصورة يسار -->
+      <div class="col-md-6 p-0 ps-md-5 pe-0">
+        <img src="{% static 'images/HomeBanner.jpg' %}" alt="Hero Banner" class="img-fluid w-100 banner-img">
       </div>
-
-      <div class="carousel-item">
-        <div class="hero-slide-image" style="background-image: url('{% static "images/banner3.jpg" %}');">
-          <div class="carousel-caption">
-            <h1>من هم نقطه وصل..</h1>
-            <a href="{% url 'main:about_view' %}" class="btn" style="background-color: #FF7C34; color: white; border-radius: 8px;">تعرف علينا اكثر</a>
-          </div>
-        </div>
-      </div>
-
     </div>
-
-    <!-- أزرار التنقل -->
-    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">السابق</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">التالي</span>
-    </button>
-
-    <div class="carousel-indicators">
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
-    </div>
-
   </div>
 </section>
 
-<!-- ======= الفوتر ======= -->
-<footer class="site-footer text-center py-4 mt-5">
-  <div class="container">
-    <p>© 2025 نقطة وصل - جميع الحقوق محفوظة.</p>
-    <small>منصة تربط الطلاب والخريجين بأفضل الفرص التدريبية والشركات الرائدة.</small>
-    <div class="mt-3">
-      <a href="#" class="me-3">من نحن</a>
-      <a href="#" class="me-3">التدريبات</a>
-      <a href="#" class="me-3">الشركات</a>
-      <a href="#">اتصل بنا</a>
+
+<section class="text-center bg-light position-relative stats-section" style="padding-bottom: 0; margin-bottom: 0;">
+    <div class="container py-5 text-center">
+      <h2 class="contact-title mb-4">
+        <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸</span>
+        فخورين بثقتكم 
+        <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
+      </h2>
+  
+      <div id="trustedByCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+        <div class="carousel-inner active">
+          <div class="carousel-item active">
+            <div class="d-flex justify-content-center flex-wrap gap-4">
+              <img src="{% static 'images/sec.png' %}" alt="SEC" class="img-fluid logo-img" style="max-height: 70px;">
+              <img src="{% static 'images/aramco.png' %}" alt="Aramco" class="img-fluid logo-img" style="max-height: 70px;">
+              <img src="{% static 'images/sabic.png' %}" alt="SABIC" class="img-fluid logo-img" style="max-height: 70px;">
+              <img src="{% static 'images/safe.png' %}" alt="SAFE" class="img-fluid logo-img" style="max-height: 70px;">
+              <img src="{% static 'images/NWC.png' %}" alt="NWC" class="img-fluid logo-img" style="max-height: 70px;">
+              <img src="{% static 'images/stc.jpg' %}" alt="STC" class="img-fluid logo-img" style="max-height: 70px;">
+              <img src="{% static 'images/mobily.webp' %}" alt="Mobily" class="img-fluid logo-img" style="max-height: 70px;">
+              <img src="{% static 'images/zain.png' %}" alt="Zain" class="img-fluid logo-img" style="max-height: 70px;">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
+  
+<section class="collab-banner" style="background-image: url('{% static "images/DashBanner.jpg" %}'); margin-top: 0;">
+    <div class="container h-100 d-flex flex-column justify-content-center align-items-center text-center text-white">
+      <h1 class="fw-bold mb-3" style="color: white; font-size: 6rem;">نقطه وصل تضمن لك</h1>
+      <h2 class="display-5 mb-4 text-white">
+        مواجهة واقع عملي يعزز مهاراتك العملية
+      </h2>
+      <a href="{% url 'accounts:signup_view' %}" class="btn btn-custom-orange text-white fw-bold px-4 py-2 rounded-pill">
+        <i class="fi fi-rr-angle-left ms-2"></i> سجّل الآن
+      </a>
+    </div>
+</section>
+  
+
+  
+
+<footer class="py-3 mt-5" style="background-color: #4CB8B3;">
+    <div class="container text-center">
+      <div class="mb-2 d-flex justify-content-center gap-3">
+        <a href="#" class="text-white fs-4"><i class="fi fi-brands-linkedin"></i></a>
+        <a href="#" class="text-white fs-4"><i class="fi fi-brands-twitter-alt-square"></i></a>
+        <a href="mailto:info@yourdomain.com" class="text-white fs-4"><i class="fi fi-sr-envelope"></i></a>
+      </div>
+      <p class="text-white mb-0" style="font-size: 0.95rem;">
+        © 2025 جميع الحقوق محفوظة لشركة تعاون التقنية — شروط الاستخدام، سياسة الخصوصية، وسياسة ملفات تعريف الارتباط
+      </p>
+    </div>
 </footer>
 
 {% endblock %}
