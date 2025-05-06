@@ -1,20 +1,24 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from notifications.models import Notification
+from django.core.paginator import Paginator
 
 
 @login_required
 def notifications_page(request):
-    # 1. جلب الإشعارات
     qs = Notification.objects.filter(user=request.user).order_by('-created_at')
-    # 2. حول الـ QuerySet إلى قائمة لكي نضيف لها خاصية was_unread
-    notifs = list(qs)
-    # 3. علمها بناءً على is_read
+    
+    paginator = Paginator(qs, 10)
+    page_number = request.GET.get('page')  
+    page_obj = paginator.get_page(page_number)
+    
+    notifs = list(page_obj)
     for n in notifs:
         n.was_unread = not n.is_read
-    # 4. بعد العلامة، حدّث جميع الغير مقروءة لتصبح مقروءة
+    
     qs.filter(is_read=False).update(is_read=True)
-
+    
     return render(request, 'notifications/notifications.html', {
-        'notifications': notifs
+        'notifications': notifs,
+        'page_obj': page_obj,
     })
