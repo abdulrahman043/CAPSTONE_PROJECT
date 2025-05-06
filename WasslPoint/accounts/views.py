@@ -16,6 +16,8 @@ from decimal import Decimal
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
+from django.urls import reverse
+
 from .models import EmailOTP
 from django.core.mail   import send_mail
 from django.contrib.auth.password_validation import validate_password

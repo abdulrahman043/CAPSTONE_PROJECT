@@ -1,0 +1,84 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/profiles.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="container py-4" dir="rtl">
+  <h2 class="contact-title mb-4">
+    <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸</span>
+    طلبات تعديل معلومات الشركة
+    <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂</span>
+  </h2>
+
+  {% if edit_requests %}
+    <ul class="list-group">
+      {% for req in edit_requests %}
+        <li class="list-group-item mb-2">
+          <p>
+            <strong>اسم الشركة الجديد:</strong>
+            {{ req.company_name }}
+          </p>
+          <p>
+            <strong>إيميل الشركة:</strong>
+            {{ req.company.user.email }}
+          </p>
+          <p>
+            <strong>رقم السجل التجاري الجديد:</strong>
+            {{ req.commercial_register }}
+          </p>
+          <p>
+            <strong>المجال:</strong>
+            {% if req.industry %}
+              {{ req.industry.arabic_name }}
+            {% else %}
+              &mdash;
+            {% endif %}
+          </p>
+          <p>
+            <strong>المدينة:</strong>
+            {% if req.city %}
+              {{ req.city.arabic_name }}
+            {% else %}
+              &mdash;
+            {% endif %}
+          </p>
+          <p>
+            <strong>موقع الشركة (قوقل ماب):</strong>
+            {% if req.company_location %}
+              <a href="{{ req.company_location }}" target="_blank">
+                {{ req.company_location }}
+              </a>
+            {% else %}
+              &mdash;
+            {% endif %}
+          </p>
+          <p>
+            <strong>ملف السجل التجاري:</strong>
+            {% if req.crm_certificate %}
+              <a href="{{ req.crm_certificate.url }}" download>
+                تحميل الملف
+              </a>
+            {% else %}
+              &mdash;
+            {% endif %}
+          </p>
+          <small class="text-muted">
+            حالة الطلب: {{ req.get_status_display }} —  
+            بتاريخ {{ req.submitted_at|date:"Y-m-d H:i" }}
+            {% if req.reviewed_at %}
+              <br>تمت المراجعة بتاريخ {{ req.reviewed_at|date:"Y-m-d H:i" }}
+            {% endif %}
+          </small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="text-center text-muted py-5">
+      لم تقدّم أي طلبات تعديل حتى الآن.
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

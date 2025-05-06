@@ -29,7 +29,7 @@
           {% include 'profiles/partials/company_info.html' %}
         </div>
         <div class="card border bg-white radius mb-4">
-          {% include 'profiles/partials/company_info op.html' %}
+          {% include 'profiles/partials/company_info_op.html' %}
         </div>
 
         <div class="card border bg-white radius mb-4">
@@ -42,7 +42,9 @@
               <div class="prog border bg-white p-3 radius ">
                 <h5 class="mb-3 orange">التدريبات المضافة:{{profile.opportunities.count}}</h5>
                 <h5 class="mb-3 orange">اجمالي التقديمات:{{total_applications}}</h5>
-                  <h5><a href={% url 'posts:company_dashboard' %}>للذهاب الى صفحة التحكم</a></h5>
+                  <h5><a class="text-decoration-none" href="{% url 'posts:company_dashboard' %}">للذهاب الى صفحة التحكم</a></h5>
+                  <h5><a class="text-decoration-none" href="{% url 'profiles:company_edit_requests' %}">   عرض طلبات التفعيل</a></h5>
+
               </div>
             </div>
 

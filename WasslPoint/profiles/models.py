@@ -8,6 +8,8 @@ from datetime import date
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
+from notifications.models import Notification
+from django.urls import reverse
 
 # تهيئة اللغة العربية في Babel
 locale_ar = Locale('ar')
@@ -330,6 +332,7 @@ class CompanyProfileEditRequest(models.Model):
     industry           = models.ForeignKey(Industry, on_delete=models.SET_NULL, null=True)
     crm_certificate    = models.FileField(upload_to='crm_certs/', blank=True, null=True)
     city                = models.ForeignKey(City, on_delete=models.CASCADE, null=True) 
+    reviewed_at  = models.DateTimeField(null=True, blank=True)
 
     status             = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
     submitted_at       = models.DateTimeField(auto_now_add=True)
@@ -343,6 +346,11 @@ class CompanyProfileEditRequest(models.Model):
         p.company_location        = self.company_location
         if self.crm_certificate: p.crm_certificate = self.crm_certificate
         p.save()
+        Notification.objects.create(
+            user=p.user,
+            message="✅ تم قبول طلب تعديل معلومات شركتكم بنجاح.",
+            url=reverse('profiles:company_profile_view')
+        )
         self.status      = self.STATUS_APPROVED
         self.reviewed_at = timezone.now()
         self.save()
@@ -364,13 +372,22 @@ class CompanyProfileEditRequest(models.Model):
     def reject(self, admin_user, comment=None):
         self.crm_certificate.delete(save=False)
         self.status      = self.STATUS_REJECTED
+        self.reviewed_at = timezone.now()
+
+        self.save()
+
+        Notification.objects.create(
+            user=self.company.user,
+            message="❌ نأسف! تم رفض طلب تعديل معلومات شركتكم.",
+            url=reverse('profiles:company_profile_view')
+        )
         subject = '❌ تم رفض طلب تعديل معلومات شركتكم'
         body = (
-            f'مرحباً {self.company.company_name},\n\n'
-            'نأسف لإبلاغكم بأنه تم رفض طلب تعديل معلومات شركتكم.\n'
-            f'{"تعليق الإدارة: " + comment + "\n\n" if comment else ""}'
-            'يرجى مراجعة البيانات وإعادة إرسال الطلب إذا لزم الأمر.\n\n'
-            'شكراً لاستخدامك منصتنا.'
+                f'مرحباً {self.company.company_name},\n\n' +
+                'نأسف لإبلاغكم بأنه تم رفض طلب تعديل معلومات شركتكم.\n' +
+                (f'تعليق الإدارة: {comment}\n\n' if comment else "") +  # Made the conditional part cleaner
+                'يرجى مراجعة البيانات وإعادة إرسال الطلب إذا لزم الأمر.\n\n' +
+                'شكراً لاستخدامك منصتنا.'
         )
         send_mail(
             subject,
@@ -379,5 +396,4 @@ class CompanyProfileEditRequest(models.Model):
             [self.company.user.email],
             fail_silently=False,
         )
-        self.delete()
         

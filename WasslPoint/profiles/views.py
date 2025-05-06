@@ -858,3 +858,14 @@ def public_company_profile_view(request, company_id):
         'profile': company_profile,
     }
     return render(request, 'profiles/public_company_profile.html', context)
+
+@login_required
+def company_edit_requests(request):
+    company = get_object_or_404(CompanyProfile, user=request.user)
+    edit_requests = CompanyProfileEditRequest.objects.filter(
+        company=company
+    ).order_by('-submitted_at')
+
+    return render(request, 'profiles/company_edit_requests.html', {
+        'edit_requests': edit_requests
+    })

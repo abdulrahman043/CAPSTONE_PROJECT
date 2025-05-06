@@ -91,7 +91,7 @@
                     <label class="form-label required" for="company_name"> اسم الشركة</label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="company_name" name="company_name" type="text" value="{{profile.company_name}}" required ></p>
+                    <p><input class="form-control" id="company_name" name="company_name" min="3" max="50" type="text" value="{{profile.company_name}}" required ></p>
                 </div>
             </div>
             <div class="row mb-2">
@@ -107,7 +107,7 @@
                     <label class="required" for="commercial_register">رقم السجل التجاري</label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="commercial_register" name="commercial_register" type="text" value="{{profile.commercial_register}}" required ></p>
+                    <p><input class="form-control" min="5" id="commercial_register" name="commercial_register" type="text" value="{{profile.commercial_register}}" required ></p>
 
                 </div>
             </div>
@@ -149,7 +149,7 @@
                     <label class="form-label " for="company_location"> موقع الشركة الالكتروني         </label>
                 </div>
                 <div class="col">
-                    <p><input class="form-control" id="company_location" name="company_location" type="text" {%if profile.company_location%} value="{{profile.company_location}}" {%endif%}  ></p>
+                    <p><input class="form-control" min="7" id="company_location" name="company_location" type="text" {%if profile.company_location%} value="{{profile.company_location}}" {%endif%}  ></p>
                 </div>
             </div>
             <div class="row mb-2">
@@ -176,11 +176,11 @@
                   >
                 </div>
               </div>
-            <div class="row mb-2">
+            <div class="row mb-2 mt-3">
                 <div class="col">
                 </div>
                 <div class="col">
-                    <button name="personal-submit" type="submit" class="btn btn-primary">حفظ</button>
+                    <button name="personal-submit" type="submit" class="btn btn-primary">طلب تعديل</button>
                     <button type="button"
                         class="btn btn-outline-secondary cancel-btn">الغاء</button>
                 </div>
