@@ -3,12 +3,19 @@
 {% block content %}
 
 <!-- ===== قسم عن وصل ===== -->
-<section class="hero-banner-about d-flex flex-column align-items-center justify-content-center text-center" style="background-image: url('{% static "images/banner3.jpg" %}');">
+<section class="hero-banner-about d-flex flex-column align-items-center justify-content-center text-center position-relative" style="background-image: url('{% static "images/banner3.jpg" %}');"> 
+  <!-- طبقة التغبيش -->
+  <div class="position-absolute top-0 start-0 w-100 h-100" style="backdrop-filter: blur(4px); z-index: 1;"></div>
+
+  <!-- المحتوى فوق التغبيش -->
+  <div class="position-relative z-2">
     <img src="{% static 'images/WasslLogo.png' %}" alt="لوقو وصل" class="hero-logo-img">
-    <p class="hero-description">
+    <p class="hero-description text-white" style="font-size: 1.7rem;">
       مشروعنا يسهل على طلاب الجامعات إيجاد فرص تدريب تعاوني مناسبة، من خلال منصة تجمع بين الطلاب، الجامعات، والشركات في مكان واحد، مما يعزز من سرعة القبول ويضمن جودة التدريب.
     </p>
-  </section>
+  </div>
+</section>
+
 
 <!-- ===== عنوان من نحن ===== -->
 <section class="py-5 text-center bg-light position-relative stats-section">
@@ -19,42 +26,131 @@
   </h2>
 
   <!-- ===== بطاقات الفريق ===== -->
-<div class="container mt-5">
-  <div class="row justify-content-center g-4">
+  <div class="container mt-5">
+    <div class="row justify-content-center g-4">
 
-    <!-- عضو 1 -->
-    <div class="col-md-4 col-6">
-      <a href="https://www.linkedin.com/in/mohammed-albushier-682728260/" target="_blank" style="text-decoration: none; color: inherit;">
-        <div class="team-card p-4 text-center">
-          <i class="fi fi-rr-user"></i>
-          <h5 class="mt-3">محمد البشير</h5>
-        </div>
-      </a>
+      <!-- عضو 1 -->
+      <div class="col-md-4 col-6">
+        <a href="https://www.linkedin.com/in/mohammed-albushier-682728260/" target="_blank" class="text-decoration-none text-dark">
+          <div class="team-card p-4 text-center">
+            <i class="fi fi-rr-user"></i>
+            <h5 class="mt-3">محمد البشير</h5>
+            <p class="mb-1">طالب أكاديمية طويق</p>
+            <p class="mb-1">مبرمج باك اند ودجانغو</p>
+            <p class="mb-0">المسؤول التقني</p>
+            <i class="fi fi-brands-linkedin fs-4 mt-2" style="color: #0e76a8;"></i>
+          </div>
+        </a>
+      </div>
+
+      <!-- عضو 2 -->
+      <div class="col-md-4 col-6">
+        <a href="https://www.linkedin.com/in/ahmed-alghamdi-hi/" target="_blank" class="text-decoration-none text-dark">
+          <div class="team-card p-4 text-center">
+            <i class="fi fi-rr-user" style="color: #FF7C34;"></i>
+            <h5 class="mt-3">احمد الغامدي</h5>
+            <p class="mb-1">طالب أكاديمية طويق</p>
+            <p class="mb-1">مبرمج باك اند ودجانغو ، مصمم ومطور واجهات</p>
+            <p class="mb-0">مؤسس ومدير مشروع نقطة وصل</p>
+            <i class="fi fi-brands-linkedin fs-4 mt-2" style="color: #0e76a8;"></i>
+          </div>
+        </a>
+      </div>
+
+      <!-- عضو 3 -->
+      <div class="col-md-4 col-6">
+        <a href="https://www.linkedin.com/in/abudulrahman-aidarous-5b5318307/" target="_blank" class="text-decoration-none text-dark">
+          <div class="team-card p-4 text-center">
+            <i class="fi fi-rr-user"></i>
+            <h5 class="mt-3">عبدالرحمن عيدروس</h5>
+            <p class="mb-1">طالب أكاديمية طويق</p>
+            <p class="mb-1">مطور شامل Full Stack</p>
+            <p class="mb-0">المسؤول عن تكامل</p>
+            <i class="fi fi-brands-linkedin fs-4 mt-2" style="color: #0e76a8;"></i>
+          </div>
+        </a>
+      </div>
+
     </div>
-
-    <!-- عضو 2 -->
-    <div class="col-md-4 col-6">
-      <a href="https://www.linkedin.com/in/ahmed-alghamdi-hi/" target="_blank" style="text-decoration: none; color: inherit;">
-        <div class="team-card p-4 text-center">
-          <i class="fi fi-rr-user" style="color: #FF7C34;"></i>
-          <h5 class="mt-3">احمد الغامدي</h5>
-        </div>
-      </a>
-    </div>
-
-    <!-- عضو 3 -->
-    <div class="col-md-4 col-6">
-      <a href="https://www.linkedin.com/in/abudulrahman-aidarous-5b5318307/" target="_blank" style="text-decoration: none; color: inherit;">
-        <div class="team-card p-4 text-center">
-          <i class="fi fi-rr-user"></i>
-          <h5 class="mt-3">عبدالرحمن عيدروس</h5>
-        </div>
-      </a>
-    </div>
-
   </div>
-</div>
-
 </section>
+
+
+
+<section class="why-wassl-section d-flex align-items-center justify-content-center text-center text-white" style="background-color: #13A7B1; min-height: 300px; border-radius: 15px; padding: 40px;">
+  <div class="container">
+    <h2 class="fw-bold mb-4" style="font-size: 2.8rem;">لماذا نقطة وصل؟</h2>
+    <p style="font-size: 1.3rem; max-width: 900px; margin: auto;">
+      نسعى دائمًا لتمكين الشباب من الوصول إلى طموحاتهم وتحقيق إنجازاتهم في جميع مجالات العمل، حيث نسعى لدعمهم في الحصول على أفضل الفرص في القطاع الخاص وسد الفجوة بين ما يتعلمه الطلاب والمتطلبات المتغيرة في سوق العمل.
+    </p>
+  </div>
+</section>
+
+<section class="features-section py-5">
+  <div class="container d-flex flex-wrap justify-content-between align-items-stretch">
+    <!-- اليمين: الأزرار -->
+    <div class="feature-buttons d-flex flex-column gap-3 col-md-4">
+      <button class="feature-tab active" data-content="content1">
+        <i class="fi fi-rr-source-document me-2"></i> المشاركة
+      </button>
+      <button class="feature-tab" data-content="content2">
+        <i class="fi fi-rr-practice me-2"></i> المواجهة
+      </button>
+      <button class="feature-tab" data-content="content3">
+        <i class="fi fi-rr-meeting me-2"></i> التواصل
+      </button>
+      <button class="feature-tab" data-content="content4">
+        <i class="fi fi-rr-ranking-star me-2"></i> المنافسة
+      </button>
+    </div>
+
+    <!-- اليسار: الكارد الخاص بالنص -->
+    <div class="feature-content-box col-md-7 bg-white p-4 rounded shadow" id="featureContent">
+      <h4 class="text-dark">أن نقود المستقبل بشباب اليوم!</h4>
+      <p class="text-muted mt-2">مشاركة جهات الأعمال والمؤسسات التعليمية من أجل تعزيز مخرجاتها</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const tabs = document.querySelectorAll('.feature-tab');
+  const contentBox = document.getElementById('featureContent');
+
+  const contents = {
+    content1: {
+      title: "أن نقود المستقبل بشباب اليوم!",
+      text: "مشاركة جهات الأعمال والمؤسسات التعليمية من أجل تعزيز مخرجاتها"
+    },
+    content2: {
+      title: "المواجهة",
+      text: "مواجهة واقع عملي يعزز المهارات العملية."
+    },
+    content3: {
+      title: "التواصل",
+      text: "تواصل الطلاب مع شبكات الأعمال وبناء علاقات عملية جيدة"
+    },
+    content4: {
+      title: "المنافسة",
+      text: "منافســـة الطــــلاب فـــي بينهــم من خلال التسويــق الذاتي للحصول على فرصة لدى جهات الأعمال."
+    }
+  };
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // إزالة active من الكل
+      tabs.forEach(t => t.classList.remove('active'));
+      // إضافة active للعنصر الحالي
+      tab.classList.add('active');
+
+      const key = tab.getAttribute('data-content');
+      contentBox.innerHTML = `
+        <h4 class="text-dark">${contents[key].title}</h4>
+        <p class="text-muted mt-2">${contents[key].text}</p>
+      `;
+    });
+  });
+</script>
+
+
 
 {% endblock %}
