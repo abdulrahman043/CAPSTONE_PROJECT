@@ -798,7 +798,7 @@ def student_company_export_cv_pdf(request,user_id):
     user = get_object_or_404(User, id=user_id)
     profile=user.student_profile
     try:
-        html=render_to_string('profiles/cv_pdf.html',{'profile':profile})
+        html = render_to_string('profiles/cv_pdf.html',{'profile':profile})
         response=HttpResponse(content_type='application/pdf')
         response['Content-Disposition']=f'filename={user.username}_cv.pdf'
         HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf(response)
