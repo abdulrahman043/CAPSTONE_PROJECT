@@ -771,7 +771,9 @@ def add_subscription_view(request:HttpRequest):
         price   = request.POST.get('price', '').strip()
         description   = request.POST.get('description', '').strip()
         status        = bool(request.POST.get('status')) 
-
+        print(price)
+        print(description)
+        print(request.POST)
         missing = []
         if not name:
             missing.append('اسم الاشتراك')
@@ -807,13 +809,17 @@ def add_subscription_view(request:HttpRequest):
                     duration_days = duration_days,
                     price         = price,
                     description   = description,
-                    status        = status
+                    status        = status,
+                    stripe_price_id=price
                 )
             except Exception as e:
+                print(e)
                 messages.error(
                     request,
                     "❌ عذرًا، لم نتمكن من إضافة خطة الاشتراك. الرجاء التحقق من البيانات والمحاولة مرة أخرى."
                 )
+                return redirect('accounts:add_subscription_view')
+
 
 
         messages.success(request, "تم إضافة الاشتراك بنجاح!")

@@ -11,6 +11,8 @@ class SubscriptionPlan(models.Model):
     price         = models.DecimalField(max_digits=6, decimal_places=2)
     stripe_price_id = models.CharField(max_length=60, blank=True)   # NEW
     status        = models.BooleanField(default=True)
+    description = models.TextField(blank=True)
+
 
     def __str__(self):
         return f"{self.name} ({self.duration_days} days) - {self.price} SAR"

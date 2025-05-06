@@ -10,26 +10,24 @@ from datetime import timedelta
 from .models import SubscriptionPlan, UserSubscription, has_active_subscription
 
 # اربط مفتاح Stripe السرّي فور تحميل الملف
-stripe.api_key = settings.STRIPE_SECRET_KEY
 def _ensure_price(plan):
-    """إنشاء Product/Price على Stripe إذا لم يوجد، ثم إرجاع price_id."""
-    if plan.stripe_price_id:
-        return plan.stripe_price_id
+    pid = plan.stripe_price_id or ""
+    if pid.startswith("price_"):
+        return pid
 
-    # ❶ إنشاء منتج
+    # 1) إنشاء أو استخدام Product
     product = stripe.Product.create(name=plan.name)
 
-    # ❷ إنشاء سعر one‑time (القيمة بالهللات)
+    # 2) إنشاء سعر بالهللات
     price = stripe.Price.create(
         product     = product.id,
-        unit_amount = int(plan.price * 100),  # 100 هللة = 1 SAR
+        unit_amount = int(plan.price * 100),
         currency    = "sar",
     )
 
-    # ❸ حفظ المعرّف في قاعدة البيانات
+    # 3) حفظ المعرف في DB
     plan.stripe_price_id = price.id
     plan.save(update_fields=["stripe_price_id"])
-
     return price.id
 
 @login_required
@@ -84,11 +82,32 @@ def checkout_view(request, plan_id):
 
 @login_required
 def payment_success_view(request):
-    """
-    صفحة نجاح بسيطة (Stripe عاد المستخدم بالفعل).
-    لا ننشئ الاشتراك هنا بل في الـ webhook.
-    """
-    return render(request, "Subscription/payment_success.html")
+    session_id = request.GET.get("session_id")
+    if not session_id:
+        return redirect("subscriptions:payment_cancel")
+
+    try:
+        session = stripe.checkout.Session.retrieve(session_id)
+        if session.payment_status != "paid":
+            return redirect("subscriptions:payment_cancel")
+
+        pi = session.get("payment_intent")
+        exists = UserSubscription.objects.filter(payment_id=pi).exists()
+        if not exists:
+            return redirect("subscriptions:payment_cancel")
+
+        plan_id = session.metadata.get("plan_id")
+        plan = SubscriptionPlan.objects.filter(id=plan_id).first()
+        plan_name = plan.name if plan else ""
+
+        messages.success(
+            request,
+            f"تم الاشتراك بنجاح{' في ' + plan_name if plan_name else ''}!"
+        )
+        return render(request, "Subscription/payment_success.html")
+
+    except stripe.error.StripeError:
+        return redirect("subscriptions:payment_cancel")
 
 
 @login_required
@@ -96,7 +115,12 @@ def payment_cancel_view(request):
     messages.info(request, "تم إلغاء عملية الدفع الخاصة بك.")
     return render(request, "Subscription/payment_cancel.html")
 
-
+@login_required
+def payment_failed_view(request):
+    """
+    صفحة تعرض عند إلغاء أو فشل الدفع.
+    """
+    return render(request, "Subscription/payment_failed.html")
 @login_required
 def my_subscription_view(request):
     latest = (
