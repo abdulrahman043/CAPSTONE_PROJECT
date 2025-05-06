@@ -5,13 +5,12 @@ from django.utils import timezone
 from datetime import timedelta
 
 
-#لعرض الاشتراكات
 class SubscriptionPlan(models.Model):
-    name = models.CharField(max_length=100)
-    duration_days = models.IntegerField(help_text="Duration in days")
-    price = models.DecimalField(max_digits=6, decimal_places=2, help_text="Price in SAR")
-    description = models.TextField(blank=True)
-    status = models.BooleanField(default=True) 
+    name          = models.CharField(max_length=100)
+    duration_days = models.PositiveIntegerField()
+    price         = models.DecimalField(max_digits=6, decimal_places=2)
+    stripe_price_id = models.CharField(max_length=60, blank=True)   # NEW
+    status        = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.name} ({self.duration_days} days) - {self.price} SAR"
