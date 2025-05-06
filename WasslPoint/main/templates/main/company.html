@@ -150,14 +150,14 @@
 {% block content %}
 
 {# Hero Banner with Search Bar #}
-<section class="hero-banner d-flex align-items-center justify-content-center text-center" style="background-image: url('{% static "images/banner5.jpg" %}'); height: 450px; background-size: cover; background-position: center;">
-  <div class="search-container">
-    <h1 class="hero-title mb-4">الشركات المسجلة</h1>
-    <form action="{% url 'main:company_view' %}" method="GET" class="search-form">
-      <input type="text" name="company_name_search" value="{{ company_name_search|default:'' }}" placeholder="ابحث عن اسم شركة..." class="search-input" aria-label="Search by company name">
-      <button type="submit" class="search-button">بحث</button>
-    </form>
-  </div>
+<section class="hero-banner d-flex align-items-center justify-content-center text-center" style="background-image: url('{% static "images/banner5.jpg" %}'); height: 500px; background-size: cover; background-position: center;">
+    <div class="search-container">
+      <h1 class="hero-title mb-4">اكتشف الفرص الآن</h1>
+      <form action="{% url 'main:training_view' %}" method="GET" class="search-form">
+        <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="ابحث بالاسم، الشركة..." class="search-input">
+        <!-- تم حذف زر البحث -->
+      </form>
+    </div>
 </section>
 
 {# Main Content Area #}
@@ -205,9 +205,9 @@
 
                     {# Submit Button for Filters #}
                     <div>
-                         <button type="submit" class="btn btn-secondary btn-sm">
-                            <span class="material-symbols-outlined" style="font-size: 1.2em; vertical-align: middle;">filter_alt</span>
-                            تطبيق الفلاتر
+                        <button type="submit" class="btn custom-filter-btn btn-sm">
+                          <span class="material-symbols-outlined" style="font-size: 1.2em; vertical-align: middle;">filter_alt</span>
+                          تطبيق الفلاتر
                         </button>
                     </div>
                 </form>

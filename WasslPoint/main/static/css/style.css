@@ -1136,6 +1136,8 @@ body {
   color: white;
 }
 
+
+/* صوره في الاخير */
 .collab-banner {
   background-size: cover;
   background-position: center;
@@ -1161,14 +1163,23 @@ body {
   color: white;
 }
 
-.collab-banner {
-  padding-top: 0 !important;
-  margin-top: 0 !important;
+
+.collab-banner .banner-content {
+  max-width: 600px;
+  margin-right: auto;
+  margin-left: 0;
+  padding-left: 3rem; /* المسافة من اليسار */
+  text-align: right;
 }
 
 .collab-banner .container {
-  padding-top: 0 !important;
-  margin-top: 0 !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start !important; /* محاذاة لليسار */
+  padding-left: 10vw; /* مسافة من اليسار */
+  height: 100%;
+  text-align: right;
 }
 
 
@@ -1212,3 +1223,26 @@ body {
 .support-section p {
   color: #333;
 }
+
+
+.custom-filter-btn {
+  background-color: #FF7C34;
+  color: white;
+  border: none;
+}
+
+.custom-filter-btn:hover {
+  background-color: #13A7B1;
+  color: white;
+}
+
+/*  */
+.carousel {
+  height: 100px;
+}
+
+.carousel-inner {
+  height: 100px;
+}
+
+
