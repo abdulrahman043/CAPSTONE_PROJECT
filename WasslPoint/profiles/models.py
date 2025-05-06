@@ -355,12 +355,16 @@ class CompanyProfileEditRequest(models.Model):
         self.reviewed_at = timezone.now()
         self.save()
         subject = '✅ تم قبول طلب تعديل معلومات شركتكم'
+        email = "wasslpoint@gmail.com"
+
         body = (
-            f'مرحباً {p.company_name},\n\n'
-            'لقد تم قبول طلب تعديل معلومات شركتكم بنجاح. '
-            'يمكنك الآن مراجعة التعديلات في حسابك.\n\n'
-            'شكراً لاستخدامك منصتنا.'
-        )
+        f"مرحبًا {p.company_name}\n\n"
+        "تم قبول طلب تعديل معلومات شركتكم بنجاح\n\n"
+        "يمكنكم الآن مراجعة التعديلات من خلال حسابكم\n\n"
+        "للاستفسار يرجى التواصل مع فريق الدعم عبر البريد الإلكتروني\n"
+        f"{email}\n\n"
+        "شكرًا لاستخدامكم منصتنا"
+    )
         send_mail(
             subject,
             body,
@@ -382,12 +386,15 @@ class CompanyProfileEditRequest(models.Model):
             url=reverse('profiles:company_profile_view')
         )
         subject = '❌ تم رفض طلب تعديل معلومات شركتكم'
+        email = "wasslpoint@gmail.com"
+       
         body = (
-                f'مرحباً {self.company.company_name},\n\n' +
-                'نأسف لإبلاغكم بأنه تم رفض طلب تعديل معلومات شركتكم.\n' +
-                (f'تعليق الإدارة: {comment}\n\n' if comment else "") +  # Made the conditional part cleaner
-                'يرجى مراجعة البيانات وإعادة إرسال الطلب إذا لزم الأمر.\n\n' +
-                'شكراً لاستخدامك منصتنا.'
+            f"مرحبًا {self.company.company_name}\n\n"
+            "نأسف لإبلاغكم بأن طلب تعديل معلومات شركتكم قد رُفض\n\n"
+            "يرجى مراجعة البيانات وإعادة إرسال الطلب عند التأكد من صحتها\n\n"
+            "للاستفسار تواصلوا مع فريق الدعم عبر البريد الإلكتروني\n"
+            f"{email}\n\n"
+            "شكرًا لاستخدامكم منصتنا"
         )
         send_mail(
             subject,

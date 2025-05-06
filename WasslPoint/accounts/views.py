@@ -461,12 +461,15 @@ def user_reject(request, user_id):
         pass
     elif request.user!=user:
         subject = "❌ تم رفض طلب تسجيل شركتكم"
+        email = "wasslpoint@gmail.com"
+
         body = (
-            f"مرحباً {user.company_profile.company_name},\n\n"
-            "نأسف لإبلاغكم بأن طلب تسجيل شركتكم في منصتنا قد تم رفضه.\n"
-            "للاستفسار أكثر، يرجى التواصل مع الدعم.\n\n"
-            "شكراً لتفهمكم."
-        )
+        f"مرحبًا {user.company_profile.company_name}\n\n"
+        "نأسف لإبلاغكم بأن طلب تسجيل شركتكم في منصتنا قد تم رفضه\n\n"
+        "للاستفسار أو لمزيد من المعلومات يرجى التواصل مع فريق الدعم عبر البريد الإلكتروني\n"
+        f"\u202A{email}\u202C\n\n"
+        "شكرًا لتفهمكم"
+    )
         send_mail(
             subject,
             body,
@@ -657,12 +660,16 @@ def approve_company(request, user_id):
         
 
         subject = "✅ تم تفعيل حساب شركتكم"
+        email = "wasslpoint@gmail.com"
+
         body = (
-            f"مرحباً {user.company_profile.company_name},\n\n"
-            "يسرنا إبلاغكم بأنه قد تم تفعيل حساب شركتكم في منصتنا.\n"
-            f"يمكنكم الآن تسجيل الدخول لحسابكم"
-            "شكرًا لاستخدامكم منصتنا."
-        )
+        f"مرحبًا {user.company_profile.company_name}\n\n"
+        "يسرنا إبلاغكم بأنه قد تم تفعيل حساب شركتكم في منصتنا بنجاح\n\n"
+        "يمكنكم الآن تسجيل الدخول إلى حسابكم والاستفادة من جميع الميزات\n\n"
+        "للاستفسار أو الدعم يمكنكم التواصل معنا عبر البريد الإلكتروني\n"
+        f"\u202A{email}\u202C\n\n"
+        "شكرًا لاستخدامكم منصتنا"
+    )
         send_mail(
             subject,
             body,
