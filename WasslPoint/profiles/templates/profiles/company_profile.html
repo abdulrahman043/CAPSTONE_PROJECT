@@ -43,9 +43,11 @@
               <div class="prog border bg-white p-3 radius ">
                 <h5 class="mb-3 orange">التدريبات المضافة:{{profile.opportunities.count}}</h5>
                 <h5 class="mb-3 orange">اجمالي التقديمات:{{total_applications}}</h5>
+                {%if not admin_view%}
+
                   <h5><a class="text-decoration-none" href="{% url 'posts:company_dashboard' %}">للذهاب الى صفحة التحكم</a></h5>
                   <h5><a class="text-decoration-none" href="{% url 'profiles:company_edit_requests' %}">   عرض طلبات التفعيل</a></h5>
-
+                {%endif%}
               </div>
             </div>
 
