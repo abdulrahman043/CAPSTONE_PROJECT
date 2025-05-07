@@ -29,6 +29,10 @@ import ssl
 from django.db.models       import Q
 from posts.models import Application,TrainingOpportunity
 # Create your views here.
+from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
+import re
+PRICE_REGEX = re.compile(r"^\d{1,4}(\.\d{1,2})?$")   # يسمح حتى 9999.99
+
 def signup_company_email(request):
     if request.user.is_authenticated:
         return redirect('main:home_view')
@@ -75,15 +79,15 @@ def signup_view(request: HttpRequest):
             messages.error(request,
                 "هذه الحقول مطلوبة: " + ", ".join(missing)
             )
-            return render(request, 'accounts/signup.html')
+            return render(request, 'accounts/signup.html',{"full_name":full_name,"email":email})
 
         if password != password2:
             messages.error(request, "كلمتا السر غير متطابقتين.")
-            return render(request, 'accounts/signup.html')
+            return render(request, 'accounts/signup.html',{"full_name":full_name,"email":email})
 
         if User.objects.filter(username=email).exists():
             messages.error(request, "هذا البريد مسجل مسبقًا.")
-            return render(request, 'accounts/signup.html')
+            return render(request, 'accounts/signup.html',{"full_name":full_name,"email":email})
         try:
             validate_password(password, user=None)
 
@@ -91,22 +95,22 @@ def signup_view(request: HttpRequest):
             for e in error.error_list:
                 if e.code=='password_too_short':
                     messages.error(request, 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.')
-                    return render(request, 'accounts/signup.html')
+                    return render(request, 'accounts/signup.html',{"full_name":full_name,"email":email})
                 elif e.code == 'password_entirely_numeric':
                     messages.error(request,"لا يمكن أن تكون كلمة المرور أرقامًا فقط.")
-                    return render(request, 'accounts/signup.html')
+                    return render(request, 'accounts/signup.html',{"full_name":full_name,"email":email})
 
                 elif e.code == 'password_too_common':
                     messages.error(request,"هذه كلمة مرور شائعة جدًا، اختر كلمة أخرى أكثر أمانًا.")
-                    return render(request, 'accounts/signup.html')
+                    return render(request, 'accounts/signup.html',{"full_name":full_name,"email":email})
 
                 elif e.code == 'password_similar_to_username':
                     messages.error(request,"كلمة المرور قريبة من البريد الإلكتروني أو الاسم، اختر كلمة أخرى.")
-                    return render(request, 'accounts/signup.html')
+                    return render(request, 'accounts/signup.html',{"full_name":full_name,"email":email})
 
                 else:
                     messages.error(request,error)
-                    return render(request, 'accounts/signup.html')
+                    return render(request, 'accounts/signup.html',{"full_name":full_name,"email":email})
 
 
         otp_code = f"{random.randint(0, 999999):06d}"
@@ -762,29 +766,25 @@ def opp_delete_all(request:HttpRequest):
         )
     return redirect('accounts:opportunity_list_view')
 
+
+
 @login_required
 @staff_member_required
-def add_subscription_view(request:HttpRequest):
-    if request.method=='POST':
-        name          = request.POST.get('name', '').strip()
-        duration = request.POST.get('duration_days', '').strip()
-        price   = request.POST.get('price', '').strip()
-        description   = request.POST.get('description', '').strip()
-        status        = bool(request.POST.get('status')) 
-        print(price)
-        print(description)
-        print(request.POST)
-        missing = []
-        if not name:
-            missing.append('اسم الاشتراك')
-        if not duration:
-            missing.append('المدة')
-        if not price:
-            missing.append('السعر')
+def add_subscription_view(request):
+    if request.method == "POST":
+        name        = request.POST.get("name", "").strip()
+        duration    = request.POST.get("duration_days", "").strip()
+        price_raw   = request.POST.get("price", "").strip()
+        description = request.POST.get("description", "").strip()
+        status      = bool(request.POST.get("status"))
 
+        missing = []
+        if not name:      missing.append("اسم الاشتراك")
+        if not duration:  missing.append("المدة")
+        if not price_raw: missing.append("السعر")
         if missing:
             messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
-            return redirect('accounts:add_subscription_view')
+            return redirect("accounts:add_subscription_view")
 
         try:
             duration_days = int(duration)
@@ -792,126 +792,117 @@ def add_subscription_view(request:HttpRequest):
                 raise ValueError
         except ValueError:
             messages.error(request, "المدة يجب أن تكون عدداً صحيحاً أكبر من صفر.")
-            return redirect('accounts:add_subscription_view')
+            return redirect("accounts:add_subscription_view")
+
+        if not PRICE_REGEX.match(price_raw):
+            messages.error(request, "السعر يجب أن يكون بصيغة صحيحة مثل 99 أو 99.99")
+            return redirect("accounts:add_subscription_view")
 
         try:
-            price = Decimal(price)
-            if price < 0:
-                raise ValueError
-        except:
+            price = (
+                Decimal(price_raw)
+                .quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)  # منزلتان فقط
+            )
+            if price > Decimal("9999.99") or price < Decimal("0.00"):
+                raise ValueError  # يتعدى max_digits أو سالب
+        except (InvalidOperation, ValueError):
             messages.error(request, "السعر غير صالح.")
-            return redirect('accounts:add_subscription_view')
+            return redirect("accounts:add_subscription_view")
 
-        with transaction.atomic():
-            try:
+        try:
+            with transaction.atomic():
                 SubscriptionPlan.objects.create(
-                    name          = name,
-                    duration_days = duration_days,
-                    price         = price,
-                    description   = description,
-                    status        = status,
-                    stripe_price_id=price
+                    name=name,
+                    duration_days=duration_days,
+                    price=price,
+                    description=description,
+                    status=status,
                 )
-            except Exception as e:
-                print(e)
-                messages.error(
-                    request,
-                    "❌ عذرًا، لم نتمكن من إضافة خطة الاشتراك. الرجاء التحقق من البيانات والمحاولة مرة أخرى."
-                )
-                return redirect('accounts:add_subscription_view')
-
-
+        except Exception as e:
+            print(e)  
+            messages.error(
+                request,
+                "❌ عذرًا، لم نتمكن من إضافة خطة الاشتراك. الرجاء التحقق من البيانات والمحاولة مرة أخرى.",
+            )
+            return redirect("accounts:add_subscription_view")
 
         messages.success(request, "تم إضافة الاشتراك بنجاح!")
-        return redirect('accounts:subscription_view')
-    return render(request,'accounts/subscription_add.html')
+        return redirect("accounts:subscription_view")
+
+    return render(request, "accounts/subscription_add.html")
+
 @login_required
 @staff_member_required
-def edit_subscription_view(request:HttpRequest,id):
-    subscription=SubscriptionPlan.objects.get(pk=id)
+def edit_subscription_view(request, id):
+    subscription = get_object_or_404(SubscriptionPlan, pk=id)
 
-    if request.method=='POST':
-        name          = request.POST.get('name', '').strip()
-        duration = request.POST.get('duration_days', '').strip()
-        price   = request.POST.get('price', '').strip()
-        description   = request.POST.get('description', '').strip()
-        status        = bool(request.POST.get('status')) 
+    if request.method == "POST":
+        name        = request.POST.get("name", "").strip()
+        duration    = request.POST.get("duration_days", "").strip()
+        price_raw   = request.POST.get("price", "").strip()
+        description = request.POST.get("description", "").strip()
+        status      = bool(request.POST.get("status"))
+
+        ctx = {
+            "subscription": subscription,
+            "name":         name,
+            "duration":     duration,
+            "price":        price_raw,
+            "description":  description,
+            "status":       status,
+        }
 
         missing = []
-        if not name:
-            missing.append('اسم الاشتراك')
-        if not duration:
-            missing.append('المدة')
-        if not price:
-            missing.append('السعر')
-
+        if not name:      missing.append("اسم الاشتراك")
+        if not duration:  missing.append("المدة")
+        if not price_raw: missing.append("السعر")
         if missing:
             messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
-            return render(request, 'accounts/subscription_edit.html', {
-                'subscription': subscription,
-                'name':         name,
-                'duration':     duration,
-                'price':        price,
-                'description':  description,
-                'status':       status,
-            })
+            return render(request, "accounts/subscription_edit.html", ctx)
+
         try:
             duration_days = int(duration)
             if duration_days < 1:
                 raise ValueError
         except ValueError:
             messages.error(request, "المدة يجب أن تكون عدداً صحيحاً أكبر من صفر.")
-            return render(request, 'accounts/subscription_edit.html', {
-                'subscription': subscription,
-                'name':         name,
-                'duration':     duration,
-                'price':        price,
-                'description':  description,
-                'status':       status,
-            })
+            return render(request, "accounts/subscription_edit.html", ctx)
+
+        if not PRICE_REGEX.match(price_raw):
+            messages.error(request, "السعر يجب أن يكون بصيغة صحيحة مثل 99 أو 99.99")
+            return render(request, "accounts/subscription_edit.html", ctx)
 
         try:
-            price = Decimal(price)
-            if price < 0:
+            price = (
+                Decimal(price_raw)
+                .quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            )
+            if price < 0 or price > Decimal("9999.99"):
                 raise ValueError
-        except:
+        except (InvalidOperation, ValueError):
             messages.error(request, "السعر غير صالح.")
-            return render(request, 'accounts/subscription_edit.html', {
-                'subscription': subscription,
-                'name':         name,
-                'duration':     duration,
-                'price':        price,
-                'description':  description,
-                'status':       status,
-            })
+            return render(request, "accounts/subscription_edit.html", ctx)
 
-        with transaction.atomic():
-            try:
-                subscription.name=name
-                subscription.duration_days=duration_days
-                subscription.price=price
-                subscription.description=description
-                subscription.status=status
+        try:
+            with transaction.atomic():
+                subscription.name          = name
+                subscription.duration_days = duration_days
+                subscription.price         = price
+                subscription.description   = description
+                subscription.status        = status
                 subscription.save()
-            except Exception as e:
-                messages.error(
-                    request,
-                    "❌ عذرًا، لم نتمكن من التعديل على خطة الاشتراك. الرجاء التحقق من البيانات والمحاولة مرة أخرى."
-                )
-                return render(request, 'accounts/subscription_edit.html', {
-                'subscription': subscription,
-                'name':         name,
-                'duration':     duration,
-                'price':        price,
-                'description':  description,
-                'status':       status,
-            })
+        except Exception as e:
+            print(e)  
+            messages.error(
+                request,
+                "❌ عذرًا، لم نتمكن من التعديل على خطة الاشتراك. الرجاء التحقق من البيانات والمحاولة مرة أخرى.",
+            )
+            return render(request, "accounts/subscription_edit.html", ctx)
 
+        messages.success(request, "تم تعديل الاشتراك بنجاح!")
+        return redirect("accounts:subscription_view")
 
-
-        messages.success(request, "تم التعديل الاشتراك بنجاح!")
-        return redirect('accounts:subscription_view')
-    return render(request,'accounts/subscription_edit.html',{"subscription":subscription})
+    return render(request, "accounts/subscription_edit.html", {"subscription": subscription})
 @login_required
 @staff_member_required
 def edit_major_view(request:HttpRequest,id):

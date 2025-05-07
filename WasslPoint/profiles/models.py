@@ -35,7 +35,7 @@ class Industry(models.Model):
     english_name = models.CharField(max_length=100)
     status = models.BooleanField(default=True) # علم التفعيل
     def __str__(self):
-        return self.name
+        return self.arabic_name
 
     # الرمز البريدي
 
