@@ -19,9 +19,9 @@
 <div class="admin-page" dir="rtl">
   <section class="ads">
     <h2 class="mb-4 page-title">
-      <span style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
-      طلبات تعديل معلومات الشركات
-      <span style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
+      <span class="side-arrows" style="color: #FF7C34;">▸▸▸▸▸▸▸▸▸▸▸</span>
+      طلبات التعديل  
+      <span class="side-arrows" style="color: #FF7C34;">◂◂◂◂◂◂◂◂◂◂◂</span>
     </h2>
   </section>
 
@@ -175,7 +175,7 @@
       <div class="modal-footer">
         <form method="post" action="{% url 'accounts:approve_company_edit_request' edit.id %}" class="d-inline">
           {% csrf_token %}
-          <button class="btn btn-success">قبول</button>
+          <button  class="btn btn-success">قبول</button>
         </form>
         <form method="post" action="{% url 'accounts:reject_company_edit_request' edit.id %}" class="d-inline">
           {% csrf_token %}
