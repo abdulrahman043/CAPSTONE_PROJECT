@@ -4,22 +4,7 @@
 {% block title %}{{ opportunity.company.company_name }} - {{ opportunity.title|truncatewords:5 }}{% endblock %}
 
 {% block style %}
-  <style>
-    .card-header h4 {
-      margin-bottom: 0;
-    }
-    .badge {
-      font-size: 0.9em;
-    }
-    .action-buttons .btn, .action-buttons .alert {
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem; /* Added for spacing */
-    }
-    .form-label.required::after {
-        content: " *";
-        color: red;
-    }
-  </style>
+    <link rel="stylesheet" href="{% static 'css/posts.css' %}">
 {% endblock %}
 
 {% block content %}

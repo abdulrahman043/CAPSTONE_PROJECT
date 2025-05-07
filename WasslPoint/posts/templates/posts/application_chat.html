@@ -4,63 +4,7 @@
 {% block title %}محادثة بخصوص التقديم{% endblock %} {# Chat Regarding Application #}
 
 {% block style %}
-{# Chat styles #}
-<style>
-    .chat-box {
-        height: 400px; /* Adjust as needed */
-        overflow-y: scroll;
-        border: 1px solid #eee;
-        padding: 15px;
-        margin-bottom: 15px;
-        background-color: #f8f9fa; /* Light background */
-        border-radius: 5px;
-    }
-    .message {
-        margin-bottom: 15px;
-        padding: 10px 15px;
-        border-radius: 15px;
-        max-width: 75%;
-        word-wrap: break-word;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        display: flex; /* Use flexbox for alignment */
-        flex-direction: column; /* Stack sender/content/time vertically */
-    }
-    .message.sent {
-        background-color: #dcf8c6; /* WhatsApp-like green for sent */
-        margin-left: auto; /* Align right (RTL: appears left) */
-        align-items: flex-end; /* Align text content right */
-        border-bottom-right-radius: 0;
-    }
-    .message.received {
-        background-color: #ffffff; /* White for received */
-        border: 1px solid #eee;
-        margin-right: auto; /* Align left (RTL: appears right) */
-        align-items: flex-start; /* Align text content left */
-        border-bottom-left-radius: 0;
-    }
-    .message .sender {
-        font-weight: bold;
-        font-size: 0.9em;
-        margin-bottom: 3px;
-        color: #555; /* Or a theme color */
-    }
-     .message .content {
-        font-size: 1em;
-        color: #333;
-        text-align: start; /* Ensure text aligns start within bubble */
-        margin-bottom: 4px;
-     }
-    .message small.msg-time {
-        font-size: 0.75em;
-        color: #999;
-        margin-top: 5px;
-        align-self: flex-end; /* Keep time aligned bottom-right within bubble */
-        display: block; /* Ensure it takes its own line if needed */
-    }
-    .message.received small.msg-time {
-         align-self: flex-end; /* Also align time right for received */
-     }
-</style>
+<link rel="stylesheet" href="{% static 'css/posts.css' %}">
 {% endblock %}
 
 {% block content %}

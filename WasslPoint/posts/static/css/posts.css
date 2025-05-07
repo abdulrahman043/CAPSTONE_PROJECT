@@ -1,0 +1,124 @@
+.chat-box {
+        height: 400px; /* Adjust as needed */
+        overflow-y: scroll;
+        border: 1px solid #eee;
+        padding: 15px;
+        margin-bottom: 15px;
+        background-color: #f8f9fa; /* Light background */
+        border-radius: 5px;
+    }
+    .message {
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        border-radius: 15px;
+        max-width: 75%;
+        word-wrap: break-word;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        display: flex; /* Use flexbox for alignment */
+        flex-direction: column; /* Stack sender/content/time vertically */
+    }
+    .message.sent {
+        background-color: #dcf8c6; /* WhatsApp-like green for sent */
+        margin-left: auto; /* Align right (RTL: appears left) */
+        align-items: flex-end; /* Align text content right */
+        border-bottom-right-radius: 0;
+    }
+    .message.received {
+        background-color: #ffffff; /* White for received */
+        border: 1px solid #eee;
+        margin-right: auto; /* Align left (RTL: appears right) */
+        align-items: flex-start; /* Align text content left */
+        border-bottom-left-radius: 0;
+    }
+    .message .sender {
+        font-weight: bold;
+        font-size: 0.9em;
+        margin-bottom: 3px;
+        color: #555; /* Or a theme color */
+    }
+     .message .content {
+        font-size: 1em;
+        color: #333;
+        text-align: start; /* Ensure text aligns start within bubble */
+        margin-bottom: 4px;
+     }
+    .message small.msg-time {
+        font-size: 0.75em;
+        color: #999;
+        margin-top: 5px;
+        align-self: flex-end; /* Keep time aligned bottom-right within bubble */
+        display: block; /* Ensure it takes its own line if needed */
+    }
+    .message.received small.msg-time {
+         align-self: flex-end; /* Also align time right for received */
+     }
+    .application-card {
+        border-color: #e0e0e0; /* Lighter border */
+        transition: box-shadow .3s ease-in-out;
+    }
+    .application-card:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.1); /* Subtle shadow on hover */
+    }
+    .status-badge {
+        font-size: 0.85em;
+        padding: 0.4em 0.7em;
+    }
+    .pagination .page-link {
+        color: #13A7B1; /* Match navbar color */
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #13A7B1;
+        border-color: #13A7B1;
+        color: white;
+    }
+    /* Style for the title like in company profile */
+    .contact-title {
+        color: #333; /* Adjust color if needed */
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+    }
+    .contact-title span {
+        color: #FF7C34; /* Orange accent color */
+        font-weight: bold;
+        display: inline-block;
+        margin: 0 0.5em;
+    }
+    .applicant-table img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-inline-end: 10px;
+    }
+    .status-badge {
+        font-size: 0.85em;
+        padding: 0.4em 0.7em;
+    }
+    .action-buttons .btn {
+        margin: 0 2px; /* Spacing between action buttons */
+    }
+    /* Align button with header */
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .material-symbols-outlined {
+        vertical-align: text-bottom; /* Adjust alignment */
+        font-size: 1.1em;
+    }
+        .card-header h4 {
+      margin-bottom: 0;
+    }
+    .badge {
+      font-size: 0.9em;
+    }
+    .action-buttons .btn, .action-buttons .alert {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem; /* Added for spacing */
+    }
+    .form-label.required::after {
+        content: " *";
+        color: red;
+    }
