@@ -95,7 +95,7 @@
       <ul>
         {% for edu in profile.education.all %}
           <li>
-            <span class="institution">{{ edu.university }}</span>، {{ edu.get_degree_display }} — {{ edu.graduating_date|date:'Y' }}<br>
+            <span class="institution">{{ edu.university }}</span>، {{ edu.get_degree_display }} — {{ edu.graduating_date|date:'Y-m' }}<br>
             التخصص: {{ edu.major.ar_name }}{% if edu.GPA %} | المعدل: {{ edu.GPA }}/{{ edu.gpa_scale }}{% endif %}
           </li>
         {% endfor %}
@@ -108,7 +108,7 @@
       <h2>المهارات</h2>
       <ul>
         {% for skill in profile.skill.all %}
-          <li>{{ skill.name }}</li>
+          <li>{{ skill.name }} - {{ skill.get_proficiency_display }}</li>
         {% endfor %}
       </ul>
     </div>
@@ -130,8 +130,8 @@
       <h2>الشهادات</h2>
       <ul>
         {% for cert in profile.certification.all %}
-          <li>{{ cert.name }}، {{ cert.issuer }}<br>
-            تاريخ الإصدار: {{ cert.issue_date|date:'Y-m-d' }}{% if cert.expiry_date %} | تاريخ الانتهاء: {{ cert.expiry_date|date:'Y-m-d' }}{% endif %}
+          <li>{{ cert.name }}  -  {{ cert.issuer }}<br>
+            تاريخ الإصدار: {{ cert.issue_date|date:'Y-m' }}{% if cert.expiry_date %} | تاريخ الانتهاء: {{ cert.expiry_date|date:'Y-m-d' }}{% endif %}
           </li>
         {% endfor %}
       </ul>

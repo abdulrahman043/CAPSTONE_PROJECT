@@ -132,16 +132,20 @@ def edit_exp(request:HttpRequest,exp_id,user_id=None):
         if request.method=='POST':
             start_str = request.POST.get('start_date')
             end_str   = request.POST.get('end_date')
-            start_date = end_date = None
-            if start_str:
-                y, m = map(int, start_str.split('-'))
-                start_date = date(y, m, 1)
-            if end_str:
-                y, m = map(int, end_str.split('-'))
-                end_date = date(y, m, 1)
-            if start_date and end_date and start_date > end_date:
-                messages.error(request, "تاريخ البدء لا يمكن أن يكون بعد تاريخ الانتهاء.")
-                return (redirect('profiles:profile_view_admin', user_id=user_id)if user_id else redirect('profiles:profile_view'))
+            start_date = end_date= y =m = None
+            try:
+                if start_str:
+                    y, m = map(int, start_str.split('-'))
+                    start_date = date(y, m, 1)
+                if end_str:
+                    y, m = map(int, end_str.split('-'))
+                    end_date = date(y, m, 1)
+                if start_date and end_date and start_date > end_date:
+                    messages.error(request, "تاريخ البدء لا يمكن أن يكون بعد تاريخ الانتهاء.")
+                    return (redirect('profiles:profile_view_admin', user_id=user_id)if user_id else redirect('profiles:profile_view'))
+            except Exception as e:
+                    messages.error(request,"صيغة  غير صحيحة. استخدم YYYY‑MM مثل 2025‑05")
+                    return (redirect('profiles:profile_view_admin', user_id=user_id)if user_id else redirect('profiles:profile_view'))
 
 
             profile = get_target_profile(request, user_id)
@@ -282,29 +286,33 @@ def edit_edu(request:HttpRequest,edu_id,user_id=None):
         return redirect('profiles:profile_view')
     try:
         if request.method=='POST':
-            profile = get_target_profile(request, user_id)
-            education = get_object_or_404(Education, pk=edu_id, profile=profile)
-            education.university  = request.POST.get('university')
-            education.degree  = request.POST.get('degree')
-            education.GPA  = request.POST.get('gpa')
-            education.gpa_scale  = request.POST.get('gpa_scale')
-            graduating_date = request.POST.get('graduating_date') 
-            major_id = request.POST.get('major')
-            if major_id:
-                education.major = Major.objects.get(pk=major_id)  
-            if graduating_date:
-                year, month = map(int, graduating_date.split('-'))
-                education.graduating_date = date(year, month, 1)
-           
+            with transaction.atomic():
+
+                profile = get_target_profile(request, user_id)
+                education = get_object_or_404(Education, pk=edu_id, profile=profile)
+                education.university  = request.POST.get('university')
+                education.degree  = request.POST.get('degree')
+                education.GPA  = request.POST.get('gpa')
+                education.gpa_scale  = request.POST.get('gpa_scale')
+                graduating_date = request.POST.get('graduating_date') 
+                major_id = request.POST.get('major')
+                if major_id:
+                    education.major = Major.objects.get(pk=major_id)  
+                if graduating_date:
+                    year, month = map(int, graduating_date.split('-'))
+                    education.graduating_date = date(year, month, 1)
             
-            education.save()
-            messages.success(request, "تم التعديل على المؤهل التعليمي بنجاح.")
+                
+                education.save()
+                messages.success(request, "تم التعديل على المؤهل التعليمي بنجاح.")
 
     
     except Exception as e:
         messages.error(request, "عذراً، حدث خطأ أثناء تعديل المؤهل التعليمي. حاول مرة أخرى.")
+        if user_id:
+            return redirect('profiles:profile_view_admin', user_id=user_id)
+        return redirect('profiles:profile_view')
 
-        print(e)
     if user_id:
         return redirect('profiles:profile_view_admin', user_id=user_id)
     return redirect('profiles:profile_view')
@@ -419,16 +427,20 @@ def add_exp(request: HttpRequest, user_id=None):
 
     start_str = request.POST.get('start_date')
     end_str   = request.POST.get('end_date')
-    start_date = end_date = None
-    if start_str:
-        y, m = map(int, start_str.split('-'))
-        start_date = date(y, m, 1)
-    if end_str:
-        y, m = map(int, end_str.split('-'))
-        end_date = date(y, m, 1)
-    if start_date and end_date and start_date > end_date:
-        messages.error(request, "تاريخ البدء لا يمكن أن يكون بعد تاريخ الانتهاء.")
-        return (redirect('profiles:profile_view_admin', user_id=user_id)if user_id else redirect('profiles:profile_view'))
+    start_date = end_date= y =m = None
+    try:
+        if start_str:
+            y, m = map(int, start_str.split('-'))
+            start_date = date(y, m, 1)
+        if end_str:
+            y, m = map(int, end_str.split('-'))
+            end_date = date(y, m, 1)
+        if start_date and end_date and start_date > end_date:
+            messages.error(request, "تاريخ البدء لا يمكن أن يكون بعد تاريخ الانتهاء.")
+            return (redirect('profiles:profile_view_admin', user_id=user_id)if user_id else redirect('profiles:profile_view'))
+    except Exception as e:
+            messages.error(request,"صيغة  غير صحيحة. استخدم YYYY‑MM مثل 2025‑05")
+            return (redirect('profiles:profile_view_admin', user_id=user_id)if user_id else redirect('profiles:profile_view'))
 
 
     try:
@@ -514,24 +526,28 @@ def add_edu(request:HttpRequest,user_id=None):
         return redirect('profiles:profile_view')
     try:
         if request.method=='POST':
-            education = Education.objects.create(profile = get_target_profile(request, user_id))
-            education.university  = request.POST.get('university')
-            education.degree  = request.POST.get('degree')
-            education.GPA  = request.POST.get('gpa')
-            education.gpa_scale  = request.POST.get('gpa_scale')
-            graduating_date = request.POST.get('graduating_date') 
-            major_id = request.POST.get('major')
-            if major_id:
-                education.major = Major.objects.get(pk=major_id)  
-            if graduating_date:
-                year, month = map(int, graduating_date.split('-'))
-                education.graduating_date = date(year, month, 1)    
-            education.save()
-            messages.success(request, "تم إضافة المؤهل التعليمي بنجاح.")
+            with transaction.atomic():
+                education = Education.objects.create(profile = get_target_profile(request, user_id))
+                education.university  = request.POST.get('university')
+                education.degree  = request.POST.get('degree')
+                education.GPA  = request.POST.get('gpa')
+                education.gpa_scale  = request.POST.get('gpa_scale')
+                graduating_date = request.POST.get('graduating_date') 
+                major_id = request.POST.get('major')
+                if major_id:
+                    education.major = Major.objects.get(pk=major_id)  
+                if graduating_date:
+                    year, month = map(int, graduating_date.split('-'))
+                    education.graduating_date = date(year, month, 1)    
+                education.save()
+                messages.success(request, "تم إضافة المؤهل التعليمي بنجاح.")
 
       
     except Exception as e:
         messages.error(request, "عذراً، حدث خطأ أثناء إضافة المؤهل التعليمي. حاول مرة أخرى.")
+        if user_id:
+            return redirect('profiles:profile_view_admin', user_id=user_id)
+        return redirect('profiles:profile_view')
 
         print(e)
     if user_id:
