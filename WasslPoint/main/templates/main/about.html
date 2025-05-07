@@ -2,18 +2,93 @@
 {% load static %}
 {% block content %}
 
-<!-- ===== قسم عن وصل ===== -->
-<section class="hero-banner-about d-flex flex-column align-items-center justify-content-center text-center position-relative" style="background-image: url('{% static "images/banner3.jpg" %}');"> 
-  <!-- طبقة التغبيش -->
-  <div class="position-absolute top-0 start-0 w-100 h-100" style="backdrop-filter: blur(4px); z-index: 1;"></div>
+<style>
+  body {
+    background-color: #f4f6f9;
+    font-family: Arial, sans-serif;
+  }
+  .vision-container {
+    padding: 60px 0;
+  }
+  .vision-title {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .vision-card {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 40px 20px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    text-align: center;
+    transition: all 0.3s ease;
+    }
+    .vision-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    .vision-card img {
+      width: 80px;
+      margin-bottom: 20px;
+    }
+    .vision-card h4 {
+      font-size: 1.8rem;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .vision-card ul {
+      list-style-type: none;
+      padding: 0;
+      color: #555;
+      font-size: 1.2rem;
+      line-height: 2;
+    }
+    .vision-card ul li::before {
+      content: "✔";
+      color: #58a65e;
+      margin-right: 10px;
+    }
+</style>
 
-  <!-- المحتوى فوق التغبيش -->
-  <div class="position-relative z-2">
-    <img src="{% static 'images/WasslLogo.png' %}" alt="لوقو وصل" class="hero-logo-img">
-    <p class="hero-description text-white" style="font-size: 1.7rem;">
-      مشروعنا يسهل على طلاب الجامعات إيجاد فرص تدريب تعاوني مناسبة، من خلال منصة تجمع بين الطلاب، الجامعات، والشركات في مكان واحد، مما يعزز من سرعة القبول ويضمن جودة التدريب.
-    </p>
-  </div>
+<section>
+    <div class="container vision-container">
+        <h1 class="vision-title">رؤيه نقطه وصل</h1>
+        <div class="row gy-4">
+            <div class="col-md-4">
+                <div class="vision-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2825/2825154.png" alt="مجتمع حيوي">
+                    <h4>مجتمع حيوي</h4>
+                    <ul>
+                        <li> تعزيز قيم الاتقان والانضباط </li>
+                        <li> تعزيز قيم العزة والمثابرة </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="vision-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2896/2896382.png" alt="اقتصاد مزدهر">
+                    <h4>اقتصاد مزدهر</h4>
+                    <ul>
+                        <li> تطوير رأس المال البشري بما يتواءم مع احتياجات سوق العمل </li>
+                        <li> تحسين مخرجات التعليم الأساسية </li>
+                        <li> تحسين ترتيب المؤسسات التعليمية </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="vision-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1087/1087097.png" alt="وطن طموح">
+                    <h4>وطن طموح</h4>
+                    <ul>
+                        <li> تمكين الشركات من المساهمة الاجتماعية </li>
+                        <li> تعزيز اهتمام الشركات باستدامة الاقتصاد الوطني </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 
