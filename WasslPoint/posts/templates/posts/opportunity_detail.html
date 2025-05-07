@@ -46,7 +46,7 @@
                         </svg>
                         تعديل
                     </a>
-                    <form action="{% url 'posts:delete_opportunity' opportunity.id %}" method="post" class="d-inline" onsubmit="return confirm('هل انت متأكد من حذف هذه الفرصة التدريبية؟ لا يمكن التراجع عن هذا الإجراء.');">
+                    <form action="{% url 'posts:delete_opportunity' opportunity.id %}" method="post" class="d-inline">
                          {% csrf_token %}
                          <button type="submit" class="btn btn-sm btn-outline-danger">
                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3 me-1" viewBox="0 0 16 16">
@@ -132,7 +132,7 @@
                         </div>
 
                         {% if can_withdraw %}
-                            <form action="{% url 'posts:withdraw_application' application.id %}" method="post" class="mt-2" onsubmit="return confirm('هل أنت متأكد من سحب هذا الطلب؟');">
+                            <form action="{% url 'posts:withdraw_application' application.id %}" method="post" class="mt-2">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-warning btn-sm">سحب الطلب</button>
                             </form>

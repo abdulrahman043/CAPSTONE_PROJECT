@@ -72,12 +72,13 @@
                 <h5 class="text-center text-info">تدريبات ذات صلة</h5>
                 <hr>
                 {% for opp in related_opps %}
-                    <div class="mb-3">
+                    <a class="text-decoration-none w-100" href="{% url 'posts:opportunity_detail' opp.id %}">
+                        <div class="mb-3">
                         <span class="related-badge">جديد</span>
                         <strong class="d-block text-info">{{ opp.title }}</strong>
                         <small class="text-muted">{{ opp.city.arabic_name }}</small>
                         <img src="{{ opp.company.logo.url }}" class="float-end" width="35">
-                    </div>
+                    </div></a>
                 {% empty %}
                     <p class="text-muted">لا توجد تدريبات مشابهة حالياً.</p>
                 {% endfor %}
@@ -88,12 +89,7 @@
 
         <div class="col-md-6">
             <div class="section-box">
-                <form method="GET" action="#">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="ابحث عن فرص تدريبية...">
-                        <button class="btn btn-outline-warning fw-bold" type="submit">بحث</button>
-                    </div>
-                </form>
+
                 {% for app in applications %}
                     <div class="border orange-border rounded mb-3 p-3">
                     <a class="text-decoration-none w-100" href="{% url 'posts:opportunity_detail' app.opportunity.id %}">
