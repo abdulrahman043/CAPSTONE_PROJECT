@@ -84,11 +84,7 @@
       font-variation-settings:
       'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
     }
-    /* Ensure dropdown menu aligns correctly from right */
-    .dropdown-menu-start {
-        right: auto !important;
-        left: 0 !important;
-    }
+    
   </style>
 </head>
 <body>
@@ -104,8 +100,8 @@
                 {# --- User/Notification Area --- #}
                 <ul class="navbar-nav align-items-center me-lg-auto">
                     {% if user.is_authenticated %}
-                        <li class="nav-item dropdown me-2"> {# User Dropdown #}
-                            <a class="nav-link dropdown-toggle text-white mx-5" href="#" id="navbarDropdownUserWassl" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <li class="nav-item dropdown me-2 "> {# User Dropdown #}
+                            <a class="nav-link dropdown-toggle text-white " href="#" id="navbarDropdownUserWassl" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {# Display Name based on User Type #}
                                 {% if user.student_profile and user.student_profile.personal_info.full_name %}
                                     {{ user.student_profile.personal_info.full_name }}
