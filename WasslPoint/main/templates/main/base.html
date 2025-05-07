@@ -214,8 +214,7 @@
           {% if not message_str|slice:":12" == 'Message from ' %}
             <div
               class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'warning'%}warning{% elif message.tags == 'success'%}success{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show"
-              role="alert"
-            >
+              role="alert">
               {{ message|safe }}
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -252,7 +251,7 @@
     
         <!-- حقوق النشر -->
         <p class="text-white mb-0" style="font-size: 0.95rem;">
-          © 2025 جميع الحقوق محفوظة لشركة تعاون التقنية — شروط الاستخدام، سياسة الخصوصية، وسياسة ملفات تعريف الارتباط
+          © 2025 جميع الحقوق محفوظة لشركة .وصل — شروط الاستخدام، سياسة الخصوصية، وسياسة ملفات تعريف الارتباط
         </p>
       </div>
     </footer>
