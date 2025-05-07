@@ -4,33 +4,7 @@
 {% block title %}المتقدمون لـ: {{ opportunity.title }}{% endblock %}
 
 {% block style %}
-<style>
-    .applicant-table img {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        border-radius: 50%;
-        margin-inline-end: 10px;
-    }
-    .status-badge {
-        font-size: 0.85em;
-        padding: 0.4em 0.7em;
-    }
-    .action-buttons .btn {
-        margin: 0 2px; /* Spacing between action buttons */
-    }
-    /* Align button with header */
-    .header-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    .material-symbols-outlined {
-        vertical-align: text-bottom; /* Adjust alignment */
-        font-size: 1.1em;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/posts.css' %}">
 {% endblock %}
 
 

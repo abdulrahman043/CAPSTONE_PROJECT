@@ -4,6 +4,7 @@
 {% block title %}{{ opportunity.company.company_name }} - {{ opportunity.title|truncatewords:5 }}{% endblock %}
 
 {% block style %}
+<<<<<<< HEAD
   <style>
     .card-header h4 {
       margin-bottom: 0;
@@ -20,6 +21,9 @@
         color: red;
     }
   </style>
+=======
+    <link rel="stylesheet" href="{% static 'css/posts.css' %}">
+>>>>>>> 7093eac7f6ad99e17cbca7407968f503c6597afe
 {% endblock %}
 
 {% block content %}
