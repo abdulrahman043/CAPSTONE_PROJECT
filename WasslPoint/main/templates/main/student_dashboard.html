@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <style>
-  
+
     .section-box {
         border: 2px solid #13A7B1;
         border-radius: 10px;
@@ -85,6 +85,7 @@
         </div>
 
         <!-- الطلبات التي تم التقديم عليها -->
+
         <div class="col-md-6">
             <div class="section-box">
                 <form method="GET" action="#">
@@ -95,6 +96,7 @@
                 </form>
                 {% for app in applications %}
                     <div class="border orange-border rounded mb-3 p-3">
+                    <a class="text-decoration-none w-100" href="{% url 'posts:opportunity_detail' app.opportunity.id %}">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="mb-1 text-warning">{{ app.opportunity.company.company_name }}</h6>
@@ -102,8 +104,11 @@
                                 <span class="badge status-btn status-{{ app.status }}">{{ app.get_status_display }}</span>
                             </div>
                             <img src="{{ app.opportunity.company.logo.url }}" width="60">
+
                         </div>
+                        </a>
                     </div>
+
                 {% empty %}
                     <p class="text-muted">لم تقم بالتقديم على أي تدريب بعد.</p>
                 {% endfor %}
