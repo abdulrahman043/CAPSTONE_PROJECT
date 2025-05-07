@@ -1,9 +1,9 @@
 {
-    "$schema":"https://railway.app/railway.schema.json",
-    "build":{
-        "builder":"NIXPACKS"
-    },
-    "deploy":{
-        "startCommand":"cd WasslPoint python manage.py migrate &&  pyton manage.py collectstatic --noinput && gunicorn WasslPoint.wsgi"
-    }
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "Nixpacks"
+  },
+  "deploy": {
+    "startCommand": "cd WasselPoint && python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn WasselPoint.wsgi:application --bind 0.0.0.0:$PORT"
+  }
 }
