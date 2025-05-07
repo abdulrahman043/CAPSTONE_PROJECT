@@ -11,43 +11,32 @@
     gap: 10px;
     margin-top: 30px;
 }
-/* العنوان نفسه */
-.contact-title{
-  display:flex;
-  flex-wrap:wrap;         /* يسمح بالالتفاف إلى سطر ثانٍ */
-  justify-content:center;
-  align-items:center;
-  gap:.5rem;
 
-  font-size:clamp(1.25rem,4vw,2.4rem);
-  line-height:1.4;
-  margin:2rem 0;
-  text-align:center;
+.contact-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;               /* مسافة بين الشريط والنص */
+  font-size: clamp(1.5rem, 5vw, 2rem); /* يكبر ويصغر بحسب الشاشة */
+  white-space: nowrap;       /* لا يكسر السطر */
+  margin: 2rem 0;
 }
 
-/* الأسهم تُنشأ عبر ::before لتسهيل تبديل عددها حسب المقاس */
-.side-arrows::before{
-  content:"▸▸▸▸▸▸▸▸▸▸";   /* السلسلة الافتراضية */
-  color:#FF7C34;
-  font-size:.85em;
-  white-space:nowrap;     /* تُبقي الأسهم كتلة واحدة */
+.contact-title .divider {
+  flex: 1;                   /* يشغل المساحة المتبقية */
+  height: 1px;
+  background-color: #FF7C34;
 }
 
-.side-arrows.right::before{        /* أسهم الجهة المقابلة */
-  content:"◂◂◂◂◂◂◂◂◂◂";
+/* على الشاشات الضيقة نقلص سمك الشريط والمسافة */
+@media (max-width: 576px) {
+  .contact-title {
+    gap: 0.25rem;
+  }
+  .contact-title .divider {
+    height: 0.8px;
+  }
 }
-
-/* ✦ على الشاشات المتوسطة: قلِّل عدد الأسهم */
-@media(max-width:480px){
-  .side-arrows.left::before  {content:"▸▸▸▸▸";}
-  .side-arrows.right::before {content:"◂◂◂◂◂";}
-}
-
-/* ✦ على الشاشات الأصغر من 360px: أخفِ الأسهم تماماً */
-@media(max-width:360px){
-  .side-arrows{display:none;}
-}
-
 .card{
   width: 100%;
   
