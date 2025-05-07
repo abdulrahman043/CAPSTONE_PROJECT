@@ -307,7 +307,7 @@ def create_opportunity(request):
         except ValueError:
              errors.append("تنسيق التاريخ غير صالح (YYYY-MM-DD).")
 
-        if start_date and application_deadline and application_deadline < start_date:
+        if start_date and application_deadline and application_deadline > start_date:
              errors.append("لا يمكن أن يكون الموعد النهائي للتقديم قبل تاريخ البدء.")
 
         if errors:
