@@ -4,40 +4,7 @@
 {% block title %}طلباتي{% endblock %} {# My Applications #}
 
 {% block style %}
-{# Add specific styles if needed #}
-<style>
-    .application-card {
-        border-color: #e0e0e0; /* Lighter border */
-        transition: box-shadow .3s ease-in-out;
-    }
-    .application-card:hover {
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.1); /* Subtle shadow on hover */
-    }
-    .status-badge {
-        font-size: 0.85em;
-        padding: 0.4em 0.7em;
-    }
-    .pagination .page-link {
-        color: #13A7B1; /* Match navbar color */
-    }
-    .pagination .page-item.active .page-link {
-        background-color: #13A7B1;
-        border-color: #13A7B1;
-        color: white;
-    }
-    /* Style for the title like in company profile */
-    .contact-title {
-        color: #333; /* Adjust color if needed */
-        margin-bottom: 1.5rem;
-        font-weight: 700;
-    }
-    .contact-title span {
-        color: #FF7C34; /* Orange accent color */
-        font-weight: bold;
-        display: inline-block;
-        margin: 0 0.5em;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/posts.css' %}">
 {% endblock %}
 
 {% block content %}
