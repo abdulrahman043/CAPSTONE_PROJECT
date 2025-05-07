@@ -53,38 +53,95 @@ def opportunity_list(request):
     return render(request, 'posts/opportunity_list.html', {'opportunities': opportunities})
 
 def opportunity_detail(request, opportunity_id):
-    """ Displays details of a specific opportunity. Viewable by anyone. """
+    """
+    تفاصيل فرصة تدريبية. متاحة للجميع، مع منطق كامل لزر التقديم
+    وظهور الرسائل بحسب حالة الطالب/الاشتراك/الموعد.
+    """
     opportunity = get_object_or_404(
-        TrainingOpportunity.objects.select_related('company', 'city').prefetch_related('majors_needed'),
+        TrainingOpportunity.objects
+            .select_related("company", "city")
+            .prefetch_related("majors_needed"),
         pk=opportunity_id
     )
 
-    context = {'opportunity': opportunity}
-    application = None
-    can_apply = False
-    can_withdraw = False
-    subscription_needed_msg = False # Flag for template message
+    # 0) متغيّرات أساسية
+    today              = timezone.now().date()
+    application_closed = (
+        opportunity.status != TrainingOpportunity.Status.ACTIVE
+        or opportunity.application_deadline < today
+    )
 
-    if request.user.is_authenticated and hasattr(request.user, 'student_profile') and request.user.student_profile:
-        student_profile = request.user.student_profile
-        try:
-            application = Application.objects.get(opportunity=opportunity, student=student_profile)
-            context['application'] = application
-            if application.status in [Application.ApplicationStatus.PENDING, Application.ApplicationStatus.ACCEPTED]:
-                 can_withdraw = True
-        except Application.DoesNotExist:
-            if opportunity.status == TrainingOpportunity.Status.ACTIVE and opportunity.application_deadline >= timezone.now().date():
-                 if has_active_subscription(request.user):
-                      can_apply = True
-                 else:
-                      subscription_needed_msg = True
+    # أعلام (flags) يُطلبها القالب
+    is_student            = False
+    is_opportunity_owner  = False
+    already_applied       = False
+    can_withdraw          = False
+    show_apply_form       = False
+    needs_subscription    = False
+    show_reapply_form     = False
+    application           = None
 
-    context['can_apply'] = can_apply
-    context['can_withdraw'] = can_withdraw
-    context['subscription_needed_msg'] = subscription_needed_msg
+    # 1) مستخدم مسجَّل؟
+    if request.user.is_authenticated:
 
-    return render(request, 'posts/opportunity_detail.html', context)
+        # 1‑A) هل هو صاحب الشركة التي أنشأت الفرصة؟
+        if hasattr(request.user, "company_profile") and request.user.company_profile:
+            is_opportunity_owner = (request.user.company_profile == opportunity.company)
 
+        # 1‑B) هل هو طالب؟
+        if hasattr(request.user, "student_profile") and request.user.student_profile:
+            is_student = True
+            student_profile = request.user.student_profile
+
+            # هل قدّم من قبل؟
+            try:
+                application = Application.objects.get(
+                    opportunity=opportunity,
+                    student=student_profile
+                )
+                already_applied = True
+
+                # هل يحقّ له سحب الطلب؟
+                if application.status in (
+                    Application.ApplicationStatus.PENDING,
+                    Application.ApplicationStatus.ACCEPTED,
+                ):
+                    can_withdraw = True
+
+                # يمكنه إعادة التقديم إذا سحب الطلب سابقاً + الموعد مفتوح + اشتراك فعّال
+                if (
+                    application.status == Application.ApplicationStatus.WITHDRAWN
+                    and not application_closed
+                    and has_active_subscription(request.user)
+                ):
+                    show_reapply_form = True
+
+            except Application.DoesNotExist:
+                # لم يقدِّم بعد
+                if not application_closed:
+                    if has_active_subscription(request.user):
+                        show_apply_form = True
+                    else:
+                        needs_subscription = True
+
+    # 2) تحضير الـ context للقالب
+    context = {
+        "opportunity":            opportunity,
+        "application_closed":     application_closed,
+
+        "is_student":             is_student,
+        "is_opportunity_owner":   is_opportunity_owner,
+
+        "application":            application,
+        "already_applied":        already_applied,
+
+        "can_withdraw":           can_withdraw,
+        "show_apply_form":        show_apply_form,
+        "show_reapply_form":      show_reapply_form,
+        "needs_subscription":     needs_subscription,
+    }
+
+    return render(request, "posts/opportunity_detail.html", context)
 
 @login_required
 @student_required
