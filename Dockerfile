@@ -17,7 +17,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # 4. Set working directory
-WORKDIR /app
+WORKDIR /WasslPoint
 
 # 5. Copy and install Python dependencies
 COPY requirements.txt .
