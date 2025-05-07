@@ -100,7 +100,7 @@
                 </div>
                 <div class="col">
                     <p> <select name="nationality" class="form-select " id="nationality" required>
-                        <option disabled selected>اختر الجنسية</option>
+                        <option value="" disabled selected>اختر الجنسية</option>
                         {% for country in countries %}
                           <option value="{{ country.id }}" {% if profile.personal_info.nationality.id == country.id %}selected{% endif %}>
                             {{ country.arabic_name }}
