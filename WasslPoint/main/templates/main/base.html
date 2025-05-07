@@ -105,7 +105,7 @@
                 <ul class="navbar-nav align-items-center me-lg-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown me-2"> {# User Dropdown #}
-                            <a class="nav-link dropdown-toggle text-white mx-3" href="#" id="navbarDropdownUserWassl" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle text-white mx-5" href="#" id="navbarDropdownUserWassl" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {# Display Name based on User Type #}
                                 {% if user.student_profile and user.student_profile.personal_info.full_name %}
                                     {{ user.student_profile.personal_info.full_name }}
