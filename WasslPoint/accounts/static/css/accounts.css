@@ -254,3 +254,28 @@
   transform:    translateY(0);
   box-shadow:   none;
 }
+.page-title{
+  /* وسط العنوان دائماً */
+  display:flex;
+  flex-wrap:wrap;            /* يسمح للعنصر بالانتقال لسطر ثانٍ إن لزم */
+  justify-content:center;
+  align-items:center;
+  gap:.5rem;
+
+  /* حجم خط متجاوب */
+  font-size:clamp(1.25rem,4.5vw,1.75rem);
+  line-height:1.4;
+  margin:2rem 0;
+  text-align:center;
+}
+
+.side-arrows{
+  color:#FF7C34;
+  font-size:.85em;           /* أصغر قليلاً من النص الأساسي */
+  white-space:nowrap;        /* إبقِ الأسهم نفسها في سطر واحد */
+}
+
+/* أخفِ الأسهم كلياً في الشاشات الضيقة جداً */
+@media (max-width:375px){
+  .side-arrows{display:none;}
+}
