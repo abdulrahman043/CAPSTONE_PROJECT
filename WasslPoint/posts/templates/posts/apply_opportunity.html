@@ -9,20 +9,7 @@
     {% if error %}
         <div class="alert alert-danger">{{ error }}</div>
     {% endif %}
-    <form method="post" action="{% url 'posts:apply_opportunity' opportunity.id %}">
-          ملف خطاب التدريب
-        </label>
-            <div>
-            <input
-              type="file"
-              id="training_letter"
-              name="training_letter"
-              accept="training_letter/pdf"
-              style="display: none;"
-              onchange="updateFileLabel(this)"
-              required
-            />
-          </div>
+
         {% csrf_token %}
         <div class="mb-3">
             <label for="message" class="form-label">مراسلة الشركة (إختياري)</label>

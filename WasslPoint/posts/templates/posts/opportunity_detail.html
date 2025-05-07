@@ -146,10 +146,7 @@
                                         <label for="reapply_message" class="form-label small">رسالة جديدة (اختياري):</label>
                                         <textarea name="message" id="reapply_message" rows="2" class="form-control form-control-sm" placeholder="يمكنك إضافة رسالة جديدة أو تحديث هنا..."></textarea>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="reapply_training_letter" class="form-label required small">خطاب التدريب (PDF):</label>
-                                        <input type="file" name="training_letter" class="form-control form-control-sm" id="reapply_training_letter" accept=".pdf" required>
-                                    </div>
+
                                     <button type="submit" class="btn btn-primary btn-sm">إعادة التقديم</button>
                                 </form>
                             {% elif needs_subscription %}
@@ -167,10 +164,6 @@
                             <div class="mb-3">
                                 <label for="message" class="form-label">رسالة للشركة (إختياري):</label>
                                 <textarea name="message" id="message" rows="3" class="form-control" placeholder="اكتب رسالة موجزة للشركة..."></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="training_letter" class="form-label required">خطاب التدريب (PDF):</label>
-                                <input type="file" name="training_letter" class="form-control" id="training_letter" accept=".pdf" required>
                             </div>
                             <button type="submit" class="btn btn-success">
                                 <span class="material-symbols-outlined" style="font-size: 1.2em; vertical-align: middle;">send</span>
