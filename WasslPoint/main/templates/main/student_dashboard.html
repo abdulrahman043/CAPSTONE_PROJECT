@@ -41,6 +41,28 @@
         font-size: 12px;
         margin-right: 5px;
     }
+    /* Desktop Styles */
+    .banner-title {
+      font-size: 6rem;
+    }
+    .banner-subtitle {
+      font-size: 2.5rem;
+      max-width: 800px;
+    }
+
+    /* Mobile Styles */
+    @media (max-width: 768px) {
+    .banner-title {
+      font-size: 3rem;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+    .banner-subtitle {
+      font-size: 1.5rem;
+      line-height: 1.4;
+      max-width: 90%;
+    }
+  }
 </style>
 <div class="container py-4">
     <div class="row">
@@ -99,14 +121,14 @@
                 </p>
                 <p class="text-secondary fw-bold">Tuwaiq Academy</p>
                 <div class="d-flex justify-content-around mt-3">
-                  <a href="{% url 'posts:my_applications' %}" style="color: #13A7B1;">
-                      <i class="fi fi-rr-bell"></i><br>الطلبات
+                  <a href="{% url 'posts:my_applications' %}" style="color: #13A7B1; text-decoration: none;">
+                    <i class="fi fi-rr-bell"></i><br>الطلبات
                   </a>
-                  <a href="{%url 'notifications:notifications_page' %}" style="color: #FF7C34;">
-                      <i class="fi fi-rr-envelope"></i><br>الرسائل
+                  <a href="{% url 'notifications:notifications_page' %}" style="color: #FF7C34; text-decoration: none;">
+                    <i class="fi fi-rr-envelope"></i><br>الرسائل
                   </a>
-                  <a href="{% url 'profiles:profile_view' %}" class="text-dark">
-                      <i class="fi fi-rr-user"></i><br>الملف
+                  <a href="{% url 'profiles:profile_view' %}" style="color: #000000; text-decoration: none;">
+                    <i class="fi fi-rr-user"></i><br>الملف
                   </a>
               </div>
               
@@ -241,22 +263,17 @@
     </div>
   </section>
   
-<section class="collab-banner" style="background-image: url('{% static "images/DashBanner.jpg" %}'); margin-top: 0;">
+  <section class="collab-banner" style="background-image: url('{% static "images/DashBanner.jpg" %}'); margin-top: 0;">
     <div class="container h-100 d-flex flex-column justify-content-center align-items-center text-center text-white">
-      <h1 class="fw-bold mb-3" style="color: white; font-size: 6rem;">نقطه وصل تضمن لك</h1>
-      <h2 class="display-5 mb-4 text-white">
-        مواجهة واقع عملي يعزز مهاراتك العملية
-      </h2>
-      <a href="{% url 'accounts:signup_view' %}" class="btn btn-custom-orange text-white fw-bold px-4 py-2 rounded-pill">
-        <i class="fi fi-rr-angle-left ms-2"></i> سجّل الآن
-      </a>
+        <h1 class="fw-bold mb-3 banner-title">نقطه وصل تضمن لك</h1>
+        <h2 class="display-5 mb-4 banner-subtitle">
+            مواجهة واقع عملي يعزز مهاراتك العملية
+        </h2>
+        <a href="{% url 'accounts:signup_view' %}" class="btn btn-custom-orange text-white fw-bold px-4 py-2 rounded-pill">
+            <i class="fi fi-rr-angle-left ms-2"></i> سجّل الآن
+        </a>
     </div>
 </section>
-  
-
-  
-
-
 
   
   

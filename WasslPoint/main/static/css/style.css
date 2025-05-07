@@ -1258,3 +1258,92 @@ body {
 }
 
 
+.hero-banner-about {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  padding: 100px 20px;
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.hero-banner-about .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(6px);
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.hero-banner-about .content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+
+.hero-banner-about .hero-description {
+  font-size: 1.6rem;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.hero-banner-about .hero-logo-img {
+  max-width: 150px;
+  margin-bottom: 15px;
+}
+
+.hero-banner-about {
+  position: relative;
+  padding: 80px 20px;
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+}
+
+
+/* تصميم افتراضي للشاشات الكبيرة */
+.hero-banner-about .hero-logo-img {
+  width: 150px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease-in-out;
+}
+
+.hero-banner-about .hero-description {
+  font-size: 1.7rem;
+  line-height: 1.5;
+  color: #ffffff;
+  transition: all 0.3s ease-in-out;
+}
+
+/* تصغير الشعار والنص فقط على الشاشات الصغيرة */
+@media (max-width: 768px) {
+  .hero-banner-about .hero-logo-img {
+      width: 100px;
+      margin-bottom: 15px;
+  }
+
+  .hero-banner-about .hero-description {
+      font-size: 1.2rem;
+      line-height: 1.4;
+      padding: 0 15px;
+      color: #ffffff;
+  }
+}
+
+
