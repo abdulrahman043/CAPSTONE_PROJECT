@@ -10,7 +10,7 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       libcairo2 \
       libpango-1.0-0 \
-      libpangoft2-1.0-0 \        # <— this provides libpangoft2-1.0-0
+      libpangoft2-1.0-0 \
       libgdk-pixbuf2.0-0 \
       libffi-dev \
       shared-mime-info \
@@ -25,10 +25,10 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip \
  && pip install -r /app/requirements.txt
 
-# 6. Copy your code
+# 6. Copy your code (brings in WasslPoint/ with manage.py)
 COPY . /app
 
-# 7. Switch into the folder holding manage.py
+# 7. Switch into the directory holding manage.py
 WORKDIR /app/WasslPoint
 
 # 8. (Optional) Pre-collect static files
