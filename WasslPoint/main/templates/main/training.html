@@ -268,7 +268,7 @@
               <a href="{% url 'main:training_view' %}" class="btn btn-dark ms-2">إعادة تعيين</a>
           </div>
       </form>
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mt-4">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mt-4" dir="ltr">
       {% for op in opportunities %} {# Loop through page_obj.object_list from the view #}
       <div class="col d-flex align-items-stretch">
           <a class="text-decoration-none w-100" href="{% url 'posts:opportunity_detail' op.id %}">
