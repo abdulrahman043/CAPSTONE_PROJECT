@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'WasslPoint.wsgi.application'
 
 
 CSRF_TRUSTED_ORIGINS = [
-   'capstoneproject-production-1443.up.railway.app'
+   'https://capstoneproject-production-1443.up.railway.app'
 ]
 os.environ.setdefault("PGDATABASE", "liftoff_dev")
 os.environ.setdefault("PGUSER", "username")
