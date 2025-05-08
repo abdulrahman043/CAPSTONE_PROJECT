@@ -1,15 +1,16 @@
-# 1. Base image
+# 1. Base Python image
 FROM python:3.11-slim
 
-# 2. Keep Python output unbuffered and avoid .pyc files
+# 2. Unbuffered output & no pyc files
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
-# 3. Install OS libs required by WeasyPrint (including GObject)
+# 3. Install OS libs for WeasyPrint (incl. GObject & Pango FreeType)
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       libcairo2 \
       libpango-1.0-0 \
+      libpangoft2-1.0-0 \
       libgdk-pixbuf2.0-0 \
       libffi-dev \
       shared-mime-info \
@@ -17,22 +18,25 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # 4. Set working directory
-WORKDIR /WasslPoint
+WORKDIR /app
 
-# 5. Copy and install Python dependencies
-COPY requirements.txt .
+# 5. Copy & install Python deps
+COPY requirements.txt /app/
 RUN pip install --upgrade pip \
- && pip install -r requirements.txt
+ && pip install -r /app/requirements.txt
 
-# 6. Copy entire project
-COPY . .
+# 6. Copy your code (brings in WasslPoint/ with manage.py)
+COPY . /app
 
-# 7. (Optional) Pre-collect static files
+# 7. Switch into the directory holding manage.py
+WORKDIR /app/WasslPoint
+
+# 8. (Optional) Pre-collect static files
 RUN python manage.py collectstatic --noinput
 
-# 8. Expose the port
+# 9. Expose port
 EXPOSE 8000
 
-# 9. Migrate and run Gunicorn with your project name
+# 10. Migrate & start Gunicorn
 CMD python manage.py migrate --noinput \
  && exec gunicorn WasslPoint.wsgi:application --bind 0.0.0.0:8000 --workers 3
