@@ -92,7 +92,7 @@ os.environ.setdefault("PGPASSWORD", "")
 os.environ.setdefault("PGHOST", "localhost")
 os.environ.setdefault("PGPORT", "5432")
 CSRF_TRUSTED_ORIGINS = [
-   ' https://capstoneproject-production-3f94.up.railway.app'
+   'https://capstoneproject-production-3f94.up.railway.app'
 ]
 DATABASES = {
     'default': {
