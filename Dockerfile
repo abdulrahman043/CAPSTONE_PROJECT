@@ -1,11 +1,11 @@
-# 1. Use a slim Python base image
+# 1. Base image
 FROM python:3.11-slim
 
-# 2. Make sure Python output is unbuffered & no .pyc files
+# 2. Keep Python output unbuffered and avoid .pyc files
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
-# 3. Install OS libraries for WeasyPrint (Cairo, Pango, GObject, etc.)
+# 3. Install OS libs required by WeasyPrint (including GObject)
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       libcairo2 \
@@ -16,26 +16,23 @@ RUN apt-get update \
       libgirepository1.0-dev \
  && rm -rf /var/lib/apt/lists/*
 
-# 4. Set the working directory inside the container
-WORKDIR /app
+# 4. Set working directory
+WORKDIR /WasslPoint
 
-# 5. Copy and install Python dependencies first (for better layer caching)
-COPY requirements.txt /app/
+# 5. Copy and install Python dependencies
+COPY requirements.txt .
 RUN pip install --upgrade pip \
- && pip install -r /app/requirements.txt
+ && pip install -r requirements.txt
 
-# 6. Copy the rest of your project code into /app
-COPY . /app
+# 6. Copy entire project
+COPY . .
 
-# 7. Verify manage.py is present (optional debug step)
-#    RUN ls -l /app
-
-# 8. Pre-collect static files (optional; you can also do this at runtime)
+# 7. (Optional) Pre-collect static files
 RUN python manage.py collectstatic --noinput
 
-# 9. Expose the port your app will run on
+# 8. Expose the port
 EXPOSE 8000
 
-# 10. Final command: apply migrations & launch Gunicorn
+# 9. Migrate and run Gunicorn with your project name
 CMD python manage.py migrate --noinput \
  && exec gunicorn WasslPoint.wsgi:application --bind 0.0.0.0:8000 --workers 3
