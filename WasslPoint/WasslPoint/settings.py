@@ -90,6 +90,12 @@ WSGI_APPLICATION = 'WasslPoint.wsgi.application'
 CSRF_TRUSTED_ORIGINS = [
    'https://capstoneproject-production-3f94.up.railway.app'
 ]
+os.environ.setdefault("PGDATABASE", "liftoff_dev")
+os.environ.setdefault("PGUSER", "username")
+os.environ.setdefault("PGPASSWORD", "")
+os.environ.setdefault("PGHOST", "localhost")
+os.environ.setdefault("PGPORT", "5432")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
