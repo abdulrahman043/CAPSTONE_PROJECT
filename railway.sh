@@ -1,15 +1,18 @@
-#!/usr/bin/env bash
-set -e
+#!/bin/bash
+# railway.sh
 
-cd WasslPoint
+# Change to the project directory if needed
+cd WasselPoint
 
-echo "🗄️  Applying migrations…"
-python manage.py migrate --noinput
+# Run database migrations and collect static files before starting processes
+python manage.py migrate && python manage.py collectstatic --noinput
 
-echo "📦  Collecting static files…"
-python manage.py collectstatic --noinput
 
-echo "🚀  Starting Gunicorn…"
-exec gunicorn WasslPoint.wsgi:application \
-     --bind 0.0.0.0:"${PORT:-8000}" \
-     --workers 3
+
+# Start the web process (e.g., using Gunicorn) in the background
+echo "Starting web process..."
+gunicorn WasselPoint.wsgi &
+web_pid=$!
+
+# Optional: Wait for both background processes
+wait $worker_pid $web_pid
