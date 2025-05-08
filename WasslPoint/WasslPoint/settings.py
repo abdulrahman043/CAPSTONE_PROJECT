@@ -88,14 +88,13 @@ WSGI_APPLICATION = 'WasslPoint.wsgi.application'
 
 
 CSRF_TRUSTED_ORIGINS = [
-   'https://capstoneproject-production-3f94.up.railway.app'
+   'capstoneproject-production-1443.up.railway.app'
 ]
 os.environ.setdefault("PGDATABASE", "liftoff_dev")
 os.environ.setdefault("PGUSER", "username")
 os.environ.setdefault("PGPASSWORD", "")
 os.environ.setdefault("PGHOST", "localhost")
 os.environ.setdefault("PGPORT", "5432")
-
 
 DATABASES = {
     'default': {
@@ -107,7 +106,6 @@ DATABASES = {
         'PORT': os.environ["PGPORT"],
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
