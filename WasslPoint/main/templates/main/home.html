@@ -116,7 +116,6 @@
                 <img src="{% static 'images/Bifam.jpeg' %}" alt="SEC" class="img-fluid logo-img" style="max-height: 70px;">
                 <img src="{% static 'images/Gulf.jpeg' %}" alt="Aramco" class="img-fluid logo-img" style="max-height: 70px;">
                 <img src="{% static 'images/Schools.jpeg' %}" alt="SABIC" class="img-fluid logo-img" style="max-height: 70px;">
-              <img src="{% static 'images/Dates_Factory.jpeg' %}" alt="SAFE" class="img-fluid logo-img" style="max-height: 70px;">
             </div>
           </div>
         </div>
@@ -124,15 +123,17 @@
     </div>
   </section>
   
-<section class="collab-banner" style="background-image: url('{% static "images/DashBanner.jpg" %}'); margin-top: 0;">
+ <section class="collab-banner" style="background-image: url('{% static "images/DashBanner.jpg" %}'); margin-top: 0;">
     <div class="container h-100 d-flex flex-column justify-content-center align-items-center text-center text-white">
-      <h1 class="fw-bold mb-3" style="color: white; font-size: 6rem;">نقطه وصل تضمن لك</h1>
-      <h2 class="display-5 mb-4 text-white">
-        مواجهة واقع عملي يعزز مهاراتك العملية
-      </h2>
-      <a href="{% url 'accounts:signup_view' %}" class="btn btn-custom-orange text-white fw-bold px-4 py-2 rounded-pill">
-        <i class="fi fi-rr-angle-left ms-2"></i> سجّل الآن
-      </a>
+        <h1 class="fw-bold mb-3 banner-title">نقطه وصل تضمن لك</h1>
+        <h2 class="display-5 mb-4 banner-subtitle">
+            مواجهة واقع عملي يعزز مهاراتك العملية
+        </h2>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'accounts:signup_view' %}" class="btn btn-custom-orange text-white fw-bold px-4 py-2 rounded-pill">
+            <i class="fi fi-rr-angle-left ms-2"></i> سجّل الآن
+        </a>
+        {% endif %}
     </div>
 </section>
   

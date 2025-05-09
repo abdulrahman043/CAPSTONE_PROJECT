@@ -166,7 +166,7 @@
                         
                     {% else %}
                          {# --- Anonymous User Links --- #}
-                         <li class="nav-item">
+                         <li class="nav-item mb-3 mb-lg-0">
                              {# Login URL Name #}
                             <a href="{% url 'accounts:login_view' %}" class="btn" style="background-color: #FF7C34; color: white; border-radius: 8px; margin-left: 5px;">تسجيل دخول</a>
                         </li>
@@ -174,27 +174,27 @@
                  </ul>
                  {# --- END User/Notification Area --- #}
 
-                 <ul class="navbar-nav mx-auto navbar-nav-center"> {# Centered Main Nav Links #}
-                    <li class="nav-item mx-2">
+                 <ul class="navbar-nav mx-auto navbar-nav-center  "> {# Centered Main Nav Links #}
+                    <li class="nav-item mx-2 mb-3 mb-lg-0">
                       <a class="nav-link text-white {% if request.resolver_match.url_name == 'home_view' %}active{% endif %}" href="{% url 'main:home_view' %}">الرئيسية</a>
                     </li>
                     </li>
-                    <li class="nav-item mx-2">
+                    <li class="nav-item mx-2 mb-3 mb-lg-0">
                       <a class="nav-link text-white {% if request.resolver_match.url_name == 'training_view' %}active{% endif %}" href="{% url 'main:training_view' %}">التدريبات</a>
                     </li>
-                    <li class="nav-item mx-2">
+                    <li class="nav-item mx-2 mb-3 mb-lg-0">
                       <a class="nav-link text-white {% if request.resolver_match.url_name == 'company_view' %}active{% endif %}" href="{% url 'main:company_view' %}">الشركات</a>
                     </li>
                     {# Correct check for student profile link #}
                     {% if user.is_authenticated and user.student_profile %}
-                    <li class="nav-item mx-2">
+                    <li class="nav-item mx-2 mb-3 mb-lg-0">
                       <a class="nav-link text-white {% if request.resolver_match.app_name == 'subscriptions' %}active{% endif %}" href="{% url 'subscriptions:plans' %}">الاشتراكات</a>
                     </li>
                     {% endif %}
-                    <li class="nav-item mx-2">
+                    <li class="nav-item mx-2 mb-3 mb-lg-0">
                       <a class="nav-link text-white {% if request.resolver_match.url_name == 'about_view' %}active{% endif %}" href="{% url 'main:about_view' %}">من نحن</a>
                     </li>
-                    <li class="nav-item mx-2">
+                    <li class="nav-item mx-2 mb-3 mb-lg-0">
                       <a class="nav-link text-white {% if request.resolver_match.url_name == 'contact_view' %}active{% endif %}" href="{% url 'main:contact_view' %}">اتصل بنا</a>
                     </li>
                 </ul>
