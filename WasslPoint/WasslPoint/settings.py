@@ -95,15 +95,18 @@ os.environ.setdefault("PGUSER", "username")
 os.environ.setdefault("PGPASSWORD", "")
 os.environ.setdefault("PGHOST", "localhost")
 os.environ.setdefault("PGPORT", "5432")
-import dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=bool(os.getenv('PGSSLMODE')),
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ["PGDATABASE"],
+        'USER': os.environ["PGUSER"],
+        'PASSWORD': os.environ["PGPASSWORD"],
+        'HOST': os.environ["PGHOST"],
+        'PORT': os.environ["PGPORT"],
+    }
 }
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
