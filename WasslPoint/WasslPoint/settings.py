@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'posts',
     'accounts',
     'subscriptions',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -153,8 +154,16 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+# This is where your project-level static files (CSS, JS, images not tied to a specific app) are located.
+# It's okay for this to be BASE_DIR / "static" if that's where you want to keep them.
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "WasslPoint", "static") # Or adjust if your 'static' folder for source files is directly under BASE_DIR
+]
+
+# This is the single directory where Django will collect all static files
+# for deployment. It MUST be different from any path in STATICFILES_DIRS.
+# Let's name it 'staticfiles_collected' for clarity.
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_collected")
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

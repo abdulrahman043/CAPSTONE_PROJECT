@@ -2,77 +2,132 @@
 {% load static %}
 
 {% block title %}
-    {% if is_edit %}
-        تعديل
-    {% else %}
-        إنشاء
-    {% endif %}
-    الفرص
+    {% if is_edit %}تعديل فرصة تدريبية{% else %}إنشاء فرصة تدريبية جديدة{% endif %}
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
-    <h2>{% if is_edit %}تعديل{% else %}إنشاء{% endif %} فرص التدريب</h2>
-    <hr>
-   
-    <form method="POST" action="{% if is_edit %}{% url 'posts:edit_opportunity' opportunity.id %}{% else %}{% url 'posts:create_opportunity' %}{% endif %}">
+<div class="container mt-4">
+    <h2>
+        {% if is_edit %}
+            تعديل فرصة: {{ opportunity.title }}
+        {% else %}
+            إنشاء فرصة تدريبية جديدة
+        {% endif %}
+    </h2>
+
+    <form method="post">
         {% csrf_token %}
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label for="majors_needed" class="form-label required">التخصصات المطلوبة</label>
-                <select multiple class="form-select" id="majors_needed" name="majors_needed" required size="5">
-                    {% for major in majors %}
-                        <option value="{{ major.id }}" {% if major.id in form_data.majors_needed %}التخصصات المختارة{% endif %}>
-                            {{ major.ar_name }}
-                        </option>
-                    {% endfor %}
-                </select>Hold Ctrl/Cmd to select multiple.
-                <small class="form-text text-muted"></small>
-            </div>
-            <div class="col-md-6">
-                <label for="city" class="form-label required">City</label>
-                <select class="form-select" id="city" name="city" required>
-                    <option value="">Select City...</option>
-                    {% for city in cities %}
-                        <option value="{{ city.id }}" {% if form_data.city|add:"0" == city.id %}تم التحديد{% endif %}>
-                            {{ city.arabic_name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label for="start_date" class="form-label required">بداية التدريب</label>
-                <input type="date" class="form-control" id="start_date" name="start_date" value="{{ form_data.start_date }}" required>
-            </div>
-            <div class="col-md-4">
-                <label for="duration" class="form-label required">مدة التدريب</label>
-                <input type="text" class="form-control" id="duration" name="duration" value="{{ form_data.duration }}" placeholder="e.g., 3 months, 1 semester" required>
-            </div>
-            <div class="col-md-4">
-                <label for="application_deadline" class="form-label required">موعد اتنهاء التقديم</label>
-                <input type="date" class="form-control" id="application_deadline" name="application_deadline" value="{{ form_data.application_deadline }}" required>
-            </div>
-             <div class="col-12">
-                <label for="requirements" class="form-label required">المتطلبات</label>
-                <textarea class="form-control" id="requirements" name="requirements" rows="5" required>{{ form_data.requirements }}</textarea>
-            </div>
-             <div class="col-12">
-                <label for="benefits" class="form-label">المميزات (إختياري)</label>
-                <textarea class="form-control" id="benefits" name="benefits" rows="3">{{ form_data.benefits }}</textarea>
-            </div>
-             <div class="col-md-6">
-                <label for="status" class="form-label">الحالة</label>
-                 <select class="form-select" id="status" name="status">
-                     {% for value, label in statuses %}
-                        <option value="{{ value }}" {% if form_data.status == value %}selected{% endif %}>{{ label }}</option>
-                     {% endfor %}
-                 </select>
-            </div>
-             <div class="col-12 mt-4">
-                <button type="submit" class="btn btn-primary">{% if is_edit %}تحديث{% else %}إنشاء{% endif %} الفرصة</button>
-                <a href="{% if is_edit %}{% url 'posts:opportunity_detail' opportunity.id %}{% else %}{% url 'posts:company_dashboard' %}{% endif %}" class="btn btn-secondary">إلغاء</a>
-            </div>
+
+        <!-- Title -->
+        <div class="mb-3">
+            <label for="title" class="form-label">عنوان الفرصة<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ form_data.title }}" required>
+            {% if form_errors.title %}<div class="invalid-feedback d-block">{{ form_errors.title }}</div>{% endif %}
         </div>
+
+        <!-- City -->
+        <div class="mb-3">
+            <label for="city" class="form-label">المدينة<span class="text-danger">*</span></label>
+            <select name="city" id="city" class="form-select" required>
+                <option value="" disabled {% if not form_data.city %}selected{% endif %}>اختر مدينة</option>
+                {% for city_obj in cities %}
+                    <option value="{{ city_obj.id }}" {% if city_obj.id|stringformat:"s" == form_data.city %}selected{% endif %}>
+                        {{ city_obj.arabic_name }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form_errors.city %}<div class="invalid-feedback d-block">{{ form_errors.city }}</div>{% endif %}
+        </div>
+
+        <!-- Majors Needed -->
+        <div class="mb-3">
+            <label for="majors_needed" class="form-label">التخصصات المطلوبة<span class="text-danger">*</span></label>
+            <select name="majors_needed" id="majors_needed" class="form-select select-major" multiple required>
+                {% for major in majors %}
+                    <option value="{{ major.id }}" {% if major.id|stringformat:"s" in form_data.majors_needed %}selected{% endif %}>
+                        {{ major.arabic_name }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form_errors.majors_needed %}<div class="invalid-feedback d-block">{{ form_errors.majors_needed }}</div>{% endif %}
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">الوصف</label>
+            <textarea class="form-control" id="description" name="description" rows="3">{{ form_data.description }}</textarea>
+            {% if form_errors.description %}<div class="invalid-feedback d-block">{{ form_errors.description }}</div>{% endif %}
+        </div>
+
+        <!-- Requirements -->
+        <div class="mb-3">
+            <label for="requirements" class="form-label">المتطلبات<span class="text-danger">*</span></label>
+            <textarea class="form-control" id="requirements" name="requirements" rows="3" required>{{ form_data.requirements }}</textarea>
+            {% if form_errors.requirements %}<div class="invalid-feedback d-block">{{ form_errors.requirements }}</div>{% endif %}
+        </div>
+
+        <!-- Benefits -->
+        <div class="mb-3">
+            <label for="benefits" class="form-label">المزايا</label>
+            <textarea class="form-control" id="benefits" name="benefits" rows="3">{{ form_data.benefits }}</textarea>
+            {% if form_errors.benefits %}<div class="invalid-feedback d-block">{{ form_errors.benefits }}</div>{% endif %}
+        </div>
+
+        <!-- Start Date -->
+        <div class="mb-3">
+            <label for="start_date" class="form-label">تاريخ البدء<span class="text-danger">*</span></label>
+            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ form_data.start_date|date:'Y-m-d' }}" required>
+            {% if form_errors.start_date %}<div class="invalid-feedback d-block">{{ form_errors.start_date }}</div>{% endif %}
+        </div>
+
+        <!-- Duration -->
+        <div class="mb-3">
+            <label for="duration" class="form-label">المدة<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="duration" name="duration" value="{{ form_data.duration }}" required>
+            {% if form_errors.duration %}<div class="invalid-feedback d-block">{{ form_errors.duration }}</div>{% endif %}
+        </div>
+
+        <!-- Application Deadline -->
+        <div class="mb-3">
+            <label for="application_deadline" class="form-label">آخر موعد للتقديم<span class="text-danger">*</span></label>
+            <input type="date" class="form-control" id="application_deadline" name="application_deadline" value="{{ form_data.application_deadline|date:'Y-m-d' }}" required>
+            {% if form_errors.application_deadline %}<div class="invalid-feedback d-block">{{ form_errors.application_deadline }}</div>{% endif %}
+        </div>
+
+        <!-- Status -->
+        <div class="mb-3">
+            <label for="status" class="form-label">الحالة<span class="text-danger">*</span></label>
+            <select name="status" id="status" class="form-select" required>
+                {% for value, display_name in statuses %}
+                    <option value="{{ value }}" {% if form_data.status == value %}selected{% endif %}>{{ display_name }}</option>
+                {% endfor %}
+            </select>
+            {% if form_errors.status %}<div class="invalid-feedback d-block">{{ form_errors.status }}</div>{% endif %}
+        </div>
+
+        <!-- Buttons -->
+        <button type="submit" class="btn btn-primary">{% if is_edit %}تحديث الفرصة{% else %}إنشاء الفرصة{% endif %}</button>
+        <a href="{% if is_edit %}{% url 'posts:opportunity_detail' opportunity.id %}{% else %}{% url 'posts:company_dashboard' %}{% endif %}" class="btn btn-secondary">إلغاء</a>
     </form>
 </div>
+
+<!-- ✅ Choices.js Integration -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const majorSelect = document.querySelector('.select-major');
+        if (majorSelect) {
+            new Choices(majorSelect, {
+                removeItemButton: true,
+                searchEnabled: true,
+                shouldSort: false,
+                placeholder: true,
+                noResultsText: 'لا توجد نتائج',
+                noChoicesText: 'لا توجد خيارات',
+                itemSelectText: '',
+            });
+        }
+    });
+</script>
 {% endblock %}

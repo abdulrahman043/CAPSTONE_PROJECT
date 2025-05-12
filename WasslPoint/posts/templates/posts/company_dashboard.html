@@ -10,13 +10,12 @@
     لوحة تحكم شركة: {{ company_profile.company_name }}
   </h2>
 
-  <a href="{% url 'posts:create_opportunity' %}"
-     class="btn btn-dark ms-2">
-     إنشاء فرصة تدريبية جديدة
+  <a href="{% url 'posts:create_opportunity' %}" class="btn btn-dark ms-2">
+    إنشاء فرصة تدريبية جديدة
   </a>
 
-  <!-- ======== 1) نسخة سطح المكتب (جدول) ======== -->
-  <div class="d-none d-md-block">
+  <!-- ======== Desktop View ======== -->
+  <div class="d-none d-md-block mt-4">
     <div class="table-responsive">
       <table class="table align-middle table-striped">
         <thead class="table-light">
@@ -30,43 +29,40 @@
           </tr>
         </thead>
         <tbody>
-        {% for opp in opportunities %}
-          <tr>
-            <td>{{ opp.city.arabic_name }}</td>
-            <td>{{ opp.start_date|date:"Y‑m‑d" }}</td>
-            <td>{{ opp.application_deadline|date:"Y‑m‑d" }}</td>
-            <td>
-              <span class="badge bg-{% if opp.status == 'ACTIVE' %}success
-                                 {% elif opp.status == 'CLOSED' %}warning
-                                 {% else %}danger{% endif %}">
-                {{ opp.get_status_display }}
-              </span>
-            </td>
-            <td>
-              <a href="{% url 'posts:opportunity_applications' opp.id %}"
-                 class="btn btn-sm btn-info">
-                عرض ({{ opp.applications.count }})
-              </a>
-            </td>
-            <td class="text-nowrap">
-              <a href="{% url 'posts:edit_opportunity' opp.id %}"
-                 class="btn btn-sm btn-primary me-1">تعديل</a>
-
-              <form action="{% url 'posts:delete_opportunity' opp.id %}"
-                    method="post" class="d-inline">
-                {% csrf_token %}
-                <button class="btn btn-sm btn-danger">حذف</button>
-              </form>
-            </td>
-          </tr>
-        {% endfor %}
+          {% for opp in opportunities %}
+            <tr>
+              <td>{{ opp.city.arabic_name }}</td>
+              <td>{{ opp.start_date|date:"Y-m-d" }}</td>
+              <td>{{ opp.application_deadline|date:"Y-m-d" }}</td>
+              <td>
+                <span class="badge bg-{% if opp.status == 'ACTIVE' %}success
+                                       {% elif opp.status == 'DRAFT' %}secondary
+                                       {% elif opp.status == 'CLOSED' %}warning
+                                       {% else %}danger{% endif %}">
+                  {{ opp.get_status_display }}
+                </span>
+              </td>
+              <td>
+                <a href="{% url 'posts:opportunity_applications' opp.id %}" class="btn btn-sm btn-info">
+                  عرض ({{ opp.applications.count }})
+                </a>
+              </td>
+              <td class="text-nowrap">
+                <a href="{% url 'posts:edit_opportunity' opp.id %}" class="btn btn-sm btn-primary me-1">تعديل</a>
+                <form action="{% url 'posts:delete_opportunity' opp.id %}" method="post" class="d-inline">
+                  {% csrf_token %}
+                  <button class="btn btn-sm btn-danger">حذف</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- ======== 2) نسخة الجوّال (بطاقات) ======== -->
-  <div class="d-md-none">
+  <!-- ======== Mobile View ======== -->
+  <div class="d-md-none mt-3">
     {% if opportunities %}
       {% for opp in opportunities %}
         <div class="card mb-3 shadow-sm">
@@ -74,6 +70,7 @@
             <div class="d-flex justify-content-between align-items-start">
               <h6 class="mb-1">{{ opp.city.arabic_name }}</h6>
               <span class="badge bg-{% if opp.status == 'ACTIVE' %}success
+                                     {% elif opp.status == 'DRAFT' %}secondary
                                      {% elif opp.status == 'CLOSED' %}warning
                                      {% else %}danger{% endif %}">
                 {{ opp.get_status_display }}
@@ -81,21 +78,15 @@
             </div>
 
             <p class="mb-2 small text-muted">
-              من {{ opp.start_date|date:"Y‑m‑d" }}
-              حتى {{ opp.application_deadline|date:"Y‑m‑d" }}
+              من {{ opp.start_date|date:"Y-m-d" }} حتى {{ opp.application_deadline|date:"Y-m-d" }}
             </p>
 
             <div class="d-grid gap-2">
-              <a href="{% url 'posts:opportunity_applications' opp.id %}"
-                 class="btn btn-sm btn-outline-info">
-                 المتقدمون
-                 <span class="badge text-bg-secondary">{{ opp.applications.count }}</span>
+              <a href="{% url 'posts:opportunity_applications' opp.id %}" class="btn btn-sm btn-outline-info">
+                المتقدمون <span class="badge text-bg-secondary">{{ opp.applications.count }}</span>
               </a>
-              <a href="{% url 'posts:edit_opportunity' opp.id %}"
-                 class="btn btn-sm btn-outline-primary">تعديل</a>
-
-              <form action="{% url 'posts:delete_opportunity' opp.id %}"
-                    method="post">
+              <a href="{% url 'posts:edit_opportunity' opp.id %}" class="btn btn-sm btn-outline-primary">تعديل</a>
+              <form action="{% url 'posts:delete_opportunity' opp.id %}" method="post">
                 {% csrf_token %}
                 <button class="btn btn-sm btn-outline-danger w-100">حذف</button>
               </form>
