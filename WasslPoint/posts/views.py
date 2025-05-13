@@ -1,7 +1,9 @@
+import json
 from sqlite3 import IntegrityError
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from .models import TrainingOpportunity, Application, Message
 from profiles.models import CompanyProfile, StudentProfile, Major, City
@@ -298,85 +300,33 @@ def create_opportunity(request):
 
     return render(request, 'posts/create_opportunity.html', {'form': form})
 
-@require_http_methods(["GET", "POST"])
+
 @login_required
+@company_required # Ensures only logged-in companies can access
 def edit_opportunity(request, opportunity_id):
     opportunity = get_object_or_404(TrainingOpportunity, id=opportunity_id)
+    company_profile = request.user.company_profile
 
-    cities = City.objects.all()
-    majors = Major.objects.all()
-    statuses = TrainingOpportunity._meta.get_field('status').choices
-
-    form_data = {}
-    form_errors = {}
+    # Authorization: Check if the logged-in company is the owner of the opportunity
+    if opportunity.company != company_profile:
+        messages.error(request, "لا تملك الصلاحية لتعديل هذه الفرصة.")
+        return redirect('posts:company_dashboard') # Or another appropriate redirect
 
     if request.method == 'POST':
-        form_data['title'] = request.POST.get('title', '').strip()
-        form_data['city'] = request.POST.get('city', '')
-        form_data['majors_needed'] = request.POST.getlist('majors_needed')  # list of strings
-        form_data['description'] = request.POST.get('description', '').strip()
-        form_data['requirements'] = request.POST.get('requirements', '').strip()
-        form_data['benefits'] = request.POST.get('benefits', '').strip()
-        form_data['start_date'] = request.POST.get('start_date', '')
-        form_data['duration'] = request.POST.get('duration', '').strip()
-        form_data['application_deadline'] = request.POST.get('application_deadline', '')
-        form_data['status'] = request.POST.get('status', '')
-
-        # Validate required fields
-        if not form_data['title']:
-            form_errors['title'] = 'هذا الحقل مطلوب.'
-        if not form_data['city']:
-            form_errors['city'] = 'هذا الحقل مطلوب.'
-        if not form_data['majors_needed']:
-            form_errors['majors_needed'] = 'يرجى اختيار تخصص واحد على الأقل.'
-        if not form_data['requirements']:
-            form_errors['requirements'] = 'هذا الحقل مطلوب.'
-        if not form_data['start_date']:
-            form_errors['start_date'] = 'هذا الحقل مطلوب.'
-        if not form_data['duration']:
-            form_errors['duration'] = 'هذا الحقل مطلوب.'
-        if not form_data['application_deadline']:
-            form_errors['application_deadline'] = 'هذا الحقل مطلوب.'
-        if not form_data['status']:
-            form_errors['status'] = 'هذا الحقل مطلوب.'
-
-        if not form_errors:
-            opportunity.title = form_data['title']
-            opportunity.city_id = form_data['city']
-            opportunity.description = form_data['description']
-            opportunity.requirements = form_data['requirements']
-            opportunity.benefits = form_data['benefits']
-            opportunity.start_date = form_data['start_date']
-            opportunity.duration = form_data['duration']
-            opportunity.application_deadline = form_data['application_deadline']
-            opportunity.status = form_data['status']
-            opportunity.save()
-            opportunity.majors_needed.set(form_data['majors_needed'])
-
+        form = TrainingOpportunityForm(request.POST, instance=opportunity)
+        if form.is_valid():
+            form.save()
             messages.success(request, 'تم تحديث الفرصة بنجاح.')
             return redirect('posts:opportunity_detail', opportunity_id=opportunity.id)
+        else:
+            messages.error(request, 'يرجى تصحيح الأخطاء الموجودة في النموذج.')
+    else: # GET request
+        form = TrainingOpportunityForm(instance=opportunity)
 
-    else:
-        form_data = {
-            'title': opportunity.title,
-            'city': str(opportunity.city_id) if opportunity.city_id else '',
-            'majors_needed': [str(m.id) for m in opportunity.majors_needed.all()],
-            'description': opportunity.description,
-            'requirements': opportunity.requirements,
-            'benefits': opportunity.benefits,
-            'start_date': opportunity.start_date,
-            'duration': opportunity.duration,
-            'application_deadline': opportunity.application_deadline,
-            'status': opportunity.status,
-        }
-    return render(request, 'posts/opportunity_form.html', {
-        'form_data': form_data,
-        'form_errors': form_errors,
-        'opportunity': opportunity,
-        'cities': cities,
-        'majors': majors,
-        'statuses': statuses,
-        'is_edit': True,
+    return render(request, 'posts/edit_opportunity.html', {
+        'form': form,
+        'opportunity': opportunity, # Pass opportunity for the cancel button or other context
+        'is_edit': True # You can use this in the template if needed for conditional logic
     })
 
 
