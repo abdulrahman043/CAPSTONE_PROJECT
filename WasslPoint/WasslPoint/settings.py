@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'posts',
     'accounts',
     'subscriptions',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -90,20 +91,32 @@ WSGI_APPLICATION = 'WasslPoint.wsgi.application'
 CSRF_TRUSTED_ORIGINS = [
    'https://capstoneproject-production-1443.up.railway.app'
 ]
-os.environ.setdefault("PGDATABASE", "liftoff_dev")
-os.environ.setdefault("PGUSER", "username")
-os.environ.setdefault("PGPASSWORD", "")
-os.environ.setdefault("PGHOST", "localhost")
-os.environ.setdefault("PGPORT", "5432")
-import dj_database_url
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=bool(os.getenv('PGSSLMODE')),
-    )
-}
+if DEBUG:
+    # local/dev → SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    os.environ.setdefault("PGDATABASE", "liftoff_dev")
+    os.environ.setdefault("PGUSER", "username")
+    os.environ.setdefault("PGPASSWORD", "")
+    os.environ.setdefault("PGHOST", "localhost")
+    os.environ.setdefault("PGPORT", "5432")
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ["PGDATABASE"],
+            'USER': os.environ["PGUSER"],
+            'PASSWORD': os.environ["PGPASSWORD"],
+            'HOST': os.environ["PGHOST"],
+            'PORT': os.environ["PGPORT"],
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -141,8 +154,16 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+# This is where your project-level static files (CSS, JS, images not tied to a specific app) are located.
+# It's okay for this to be BASE_DIR / "static" if that's where you want to keep them.
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "WasslPoint", "static") # Or adjust if your 'static' folder for source files is directly under BASE_DIR
+]
+
+# This is the single directory where Django will collect all static files
+# for deployment. It MUST be different from any path in STATICFILES_DIRS.
+# Let's name it 'staticfiles_collected' for clarity.
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_collected")
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

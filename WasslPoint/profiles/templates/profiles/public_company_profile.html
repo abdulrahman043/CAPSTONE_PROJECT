@@ -5,155 +5,382 @@
 
 {% block style %}
 <style>
+    /* --- Profile Header --- */
     .profile-header {
-        background-color: #f8f9fa; /* Light background */
+        background-color: #f8f9fa;
         padding: 2rem 1rem;
         margin-bottom: 2rem;
         border-radius: 0.5rem;
         border: 1px solid #dee2e6;
-    }
-    .profile-logo {
-        max-width: 150px;
-        max-height: 150px;
-        object-fit: contain;
-        border: 1px solid #eee;
-        padding: 5px;
-        background-color: #fff;
-        border-radius: 0.25rem;
-    }
-    .detail-label {
-        font-weight: 600;
-        color: #555;
-        margin-bottom: 0.2rem; /* Space below label */
-    }
-    .detail-value {
-        margin-bottom: 1rem; /* Space below value */
-        color: #333;
-        word-wrap: break-word; /* Prevent long text overflowing */
-    }
-    .detail-value a {
-        word-break: break-all; /* Help long URLs break nicely */
-    }
-    .detail-value .not-available {
-        color: #888;
-        font-style: italic;
-    }
-    .info-card {
-        border: 1px solid #dee2e6;
-        border-radius: 0.375rem;
-        background-color: #fff;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
         box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
     }
-    .info-card h4 {
-        color: #13A7B1; /* Theme color */
-        border-bottom: 2px solid #eee;
-        padding-bottom: 0.5rem;
-        margin-bottom: 1.5rem;
+    .profile-header .profile-logo {
+        max-width: 140px;
+        max-height: 140px;
+        object-fit: contain;
+        border: 3px solid #fff;
+        padding: 3px;
+        background-color: #fff;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,.1);
     }
+    .profile-header h1 {
+        font-weight: 600;
+        color: #343a40;
+    }
+
+    /* --- Company Information Card --- */
+    .company-info-card {
+        background-color: #ffffff !important; /* White background */
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+        margin-bottom: 2rem;
+    }
+    .company-info-card .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.75rem 1.25rem;
+    }
+    .company-info-card .card-header h4 {
+        color: #13A7B1; /* Theme color for title */
+        margin-bottom: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    .company-info-card .card-body {
+        padding: 1.5rem;
+    }
+    .company-info-card .detail-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.3rem;
+        font-size: 0.9rem;
+    }
+    .company-info-card .detail-value {
+        margin-bottom: 1rem;
+        color: #212529;
+        font-size: 0.95rem;
+        word-wrap: break-word;
+    }
+    .company-info-card .detail-value a {
+        color: #13A7B1;
+        text-decoration: none;
+    }
+    .company-info-card .detail-value a:hover {
+        text-decoration: underline;
+    }
+    .company-info-card .detail-value .not-available {
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    /* --- General Material Symbols --- */
     .material-symbols-outlined {
-        vertical-align: text-bottom;
-        font-size: 1.1em;
-        margin-inline-end: 5px;
+        vertical-align: text-bottom; /* Aligns icon better with text */
+        font-size: 1.1em; /* Default size */
+        margin-inline-end: 5px; /* Space after icon (for RTL) */
+        color: #13A7B1; /* Default theme color */
+    }
+    /* Specific icon colors if needed */
+    .card-subtitle .material-symbols-outlined {
+        color: #6c757d; /* Muted color for icons in subtitles */
+        font-size: 1em; /* Match text size better */
+    }
+    .opportunity-card-footer .material-symbols-outlined {
+        color: #495057; /* Match footer text color */
+        font-size: 1em;
+    }
+
+
+    /* --- Opportunities Slider Section --- */
+    .opportunities-slider-section {
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+    }
+    .opportunities-slider-section .section-title-slider {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #13A7B1;
+        display: inline-block;
+    }
+    .opportunity-count-badge {
+        font-size: 0.9rem;
+        font-weight: 500;
+        background-color: #e9ecef;
+        color: #495057;
+        padding: 0.3em 0.6em;
+    }
+
+    /* --- CRITICAL: Carousel Height Override for this specific slider --- */
+    #companyOpportunitiesCarousel .carousel-inner,
+    #companyOpportunitiesCarousel .carousel-item {
+        height: auto !important; /* Override the global 100vh from style.css */
+        min-height: 1px; /* Prevent collapsing if item is empty */
+        position: relative; /* Keep default for controls/indicators */
+    }
+    /* Optional: To see carousel item bounds during debugging */
+    /* #companyOpportunitiesCarousel .carousel-item { background-color: rgba(255, 255, 0, 0.1); } */
+
+
+    #companyOpportunitiesCarousel .clickable-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: flex; /* Make link a flex container */
+        flex-direction: column; /* Stack card vertically */
+        width: 100%; /* Fill the column space */
+        height: 100%; /* Fill the column space if column itself uses flex */
+    }
+    #companyOpportunitiesCarousel .clickable-card-link:hover .card {
+        border-color: #13A7B1;
+        box-shadow: 0 .25rem .5rem rgba(0,0,0,.1);
+    }
+
+    #companyOpportunitiesCarousel .card {
+        border: 1px solid #dee2e6;
+        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        width: 100%; /* Card takes full width of link */
+        flex-grow: 1; /* Card grows to fill link if link is d-flex and has space */
+        background-color: #fff;
+        border-radius: 0.375rem;
+        text-align: center; /* Center content within the card */
+    }
+
+    #companyOpportunitiesCarousel .card-body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1; /* Body takes available space in the card */
+        padding: 1rem;
+        text-align: start; /* For RTL text alignment within body */
+    }
+
+    #companyOpportunitiesCarousel .card-body .content-wrapper { /* Holds title, city, majors */
+        flex-grow: 1; /* This section takes up available vertical space */
+        /* background-color: rgba(255, 0, 0, 0.05); /* DEBUG */
+    }
+
+    #companyOpportunitiesCarousel .card-title {
+        color: #13A7B1;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    #companyOpportunitiesCarousel .card-subtitle { /* For City */
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+        color: #FF7C34;
+    }
+
+    #companyOpportunitiesCarousel .majors-list {
+        display: flex;
+        flex-direction: column; /* Stack major groups vertically */
+        gap: 0.1rem; /* Small gap between lines of majors */
+        margin-bottom: 0.75rem;
+        align-items: flex-start; /* Align groups to the start (for RTL) */
+        /* background-color: rgba(0, 255, 0, 0.05); /* DEBUG */
+    }
+    #companyOpportunitiesCarousel .majors-list .major-group {
+        display: flex; /* Badges within a group are inline */
+        flex-wrap: nowrap; /* Prevent badges themselves from wrapping within a group of 3 */
+        gap: 0.3rem; /* Space between badges in a group */
+        width: 100%; /* Makes each group effectively a new line in the flex column */
+    }
+
+    #companyOpportunitiesCarousel .badge {
+        font-size: 0.75em;
+        padding: 0.4em 0.6em;
+        background-color: #6c757d; /* Default: Bootstrap secondary grey */
+        color: white;
+    }
+    #companyOpportunitiesCarousel .majors-list .badge.bg-light { /* For "empty" or "..." badge */
+        color: #212529 !important; /* Ensure text is visible on light background */
+        background-color: #f8f9fa !important;
+    }
+
+
+    #companyOpportunitiesCarousel .btn-details-placeholder {
+        text-align: center;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.9rem;
+        color: #13A7B1;
+        font-weight: 500;
+        border-top: 1px solid #f0f0f0; /* Lighter separator */
+        margin-top: auto; /* Pushes this to the bottom of .card-body */
+    }
+
+    #companyOpportunitiesCarousel .opportunity-card-footer {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #495057;
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        padding: 0.6rem 1rem;
+        text-align: start; /* For RTL */
+        /* margin-top: auto; /* Card itself is flex-column, footer is direct child */
+    }
+
+    /* Controls and Indicators */
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(19, 167, 177, 0.7);
+        border-radius: 50%;
+        padding: 12px;
+    }
+    .carousel-indicators [data-bs-target] {
+        background-color: #13A7B1;
     }
 
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container my-4 my-md-5">
-
-    {# Header with Logo and Name #}
-    <div class="profile-header text-center">
-        {# Ensure profile.logo exists before accessing url #}
-        <img src="{% if profile.logo %}{{ profile.logo.url }}{% else %}{% static 'images/default_company_logo.png' %}{% endif %}" alt="شعار {{ profile.company_name }}" class="profile-logo mb-3">
-        <h1 class="mb-1">{{ profile.company_name|default:"اسم الشركة غير متوفر" }}</h1>
-        {% if profile.industry %}
-        <p class="text-muted lead fs-6 mb-0">
-             <span class="material-symbols-outlined">business_center</span>
-             {# Ensure industry object exists before accessing name #}
-             {{ profile.industry.arabic_name|default:"المجال غير محدد" }} {# Adjusted based on your previous fix #}
-        </p>
-        {% endif %}
-    </div>
-
+<div class="container my-4 my-md-5" dir="rtl">
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-9">
 
+            {# Profile Header (Company Name, Logo etc.) #}
+            <div class="profile-header text-center">
+                <img src="{% if profile.logo %}{{ profile.logo.url }}{% else %}{% static 'images/default_company_logo.png' %}{% endif %}" alt="شعار {{ profile.company_name }}" class="profile-logo mb-3">
+                <h1 class="mb-1 fw-bold">{{ profile.company_name|default:"اسم الشركة غير متوفر" }}</h1>
+                {% if profile.industry %}
+                <p class="text-muted lead fs-6 mb-0">
+                     <span class="material-symbols-outlined">business_center</span>
+                     {{ profile.industry.arabic_name|default:"المجال غير محدد" }}
+                </p>
+                {% endif %}
+                {% if profile.city %}
+                <p class="text-muted fs-6 mt-1">
+                    <span class="material-symbols-outlined">location_city</span>
+                    {{ profile.city.arabic_name|default:"غير محددة" }}
+                </p>
+                {% endif %}
+            </div>
+
             {# Company Information Card #}
-            <div class="info-card">
-                <h4><span class="material-symbols-outlined">info</span> معلومات الشركة</h4>
-                <dl class="row">
+            <div class="company-info-card">
+                <div class="card-header">
+                    <h4><span class="material-symbols-outlined">info</span> معلومات الشركة</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4 detail-label">وصف الشركة:</dt>
+                        <dd class="col-sm-8 detail-value">
+                            {% if profile.company_description %}{{ profile.company_description|linebreaksbr }}{% else %}<span class="not-available">لا يتوفر حاليا</span>{% endif %}
+                        </dd>
+                        <dt class="col-sm-4 detail-label">موقع الشركة الإلكتروني:</dt>
+                        <dd class="col-sm-8 detail-value">
+                            {% if profile.company_url %}<a href="{{ profile.company_url }}" target="_blank" rel="noopener noreferrer">{{ profile.company_url }}</a>{% else %}<span class="not-available">لا يتوفر حاليا</span>{% endif %}
+                        </dd>
+                        <dt class="col-sm-4 detail-label">الموقع على الخريطة:</dt>
+                        <dd class="col-sm-8 detail-value">
+                            {% if profile.company_location %}<a href="{{ profile.company_location }}" target="_blank" rel="noopener noreferrer">عرض الموقع على الخريطة</a>{% else %}<span class="not-available">لا يتوفر حاليا</span>{% endif %}
+                        </dd>
+                        <dt class="col-sm-4 detail-label">المجال:</dt>
+                        <dd class="col-sm-8 detail-value">
+                            {% if profile.industry %}{{ profile.industry.arabic_name|default:"غير محدد" }}{% else %}<span class="not-available">لا يتوفر حاليا</span>{% endif %}
+                        </dd>
+                         <dt class="col-sm-4 detail-label">المدينة:</dt>
+                         <dd class="col-sm-8 detail-value">
+                            {% if profile.city %}{{ profile.city.arabic_name|default:"غير محددة" }}{% else %}<span class="not-available">لا يتوفر حاليا</span>{% endif %}
+                        </dd>
+                        <dt class="col-sm-4 detail-label">العنوان:</dt>
+                        <dd class="col-sm-8 detail-value">
+                            {% if profile.address_line %}{{ profile.address_line }}{% else %}<span class="not-available">لا يتوفر حاليا</span>{% endif %}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
 
-                    <dt class="col-sm-4 detail-label">وصف الشركة:</dt>
-                    <dd class="col-sm-8 detail-value">
-                        {% if profile.company_description %}
-                            {{ profile.company_description|linebreaksbr }}
-                        {% else %}
-                            <span class="not-available">لا يتوفر حاليا</span>
-                        {% endif %}
-                    </dd>
-
-                    <dt class="col-sm-4 detail-label">موقع الشركة الإلكتروني:</dt>
-                    <dd class="col-sm-8 detail-value">
-                        {% if profile.company_url %}
-                            <a href="{{ profile.company_url }}" target="_blank" rel="noopener noreferrer">{{ profile.company_url }}</a>
-                        {% else %}
-                            <span class="not-available">لا يتوفر حاليا</span>
-                        {% endif %}
-                    </dd>
-
-                    <dt class="col-sm-4 detail-label">الموقع على الخريطة:</dt>
-                    <dd class="col-sm-8 detail-value">
-                        {% if profile.company_location %}
-                            <a href="{{ profile.company_location }}" target="_blank" rel="noopener noreferrer">عرض الموقع على الخريطة</a>
-                        {% else %}
-                            <span class="not-available">لا يتوفر حاليا</span>
-                        {% endif %}
-                    </dd>
-
-                    <dt class="col-sm-4 detail-label">المجال:</dt>
-                    <dd class="col-sm-8 detail-value">
-                        {% if profile.industry %}
-                            {# Adjusted based on your previous fix #}
-                            {{ profile.industry.arabic_name|default:"غير محدد" }}
-                        {% else %}
-                            <span class="not-available">لا يتوفر حاليا</span>
-                        {% endif %}
-                    </dd>
-
-                     <dt class="col-sm-4 detail-label">المدينة:</dt>
-                     <dd class="col-sm-8 detail-value">
-                        {% if profile.city %}
-                            {{ profile.city.arabic_name|default:"غير محددة" }} {# Assuming City model has arabic_name #}
-                        {% else %}
-                            <span class="not-available">لا يتوفر حاليا</span>
-                        {% endif %}
-                    </dd>
-
-                    <dt class="col-sm-4 detail-label">العنوان:</dt>
-                    <dd class="col-sm-8 detail-value">
-                        {% if profile.address_line %}
-                            {{ profile.address_line }}
-                        {% else %}
-                            <span class="not-available">لا يتوفر حاليا</span>
-                        {% endif %}
-                    </dd>
-
-                </dl>
-            </div>{# End Info Card #}
-
-
-
-            <div class="text-center mt-4">
+            <div class="text-center mt-4 mb-5">
                 <a href="{% url 'main:company_view' %}" class="btn btn-outline-secondary">
                    <span class="material-symbols-outlined">arrow_back</span> العودة إلى قائمة الشركات
                 </a>
             </div>
 
-        </div> {# End Column #}
-    </div> {# End Row #}
+            {# ----- Opportunities Slider Section ----- #}
+            <section class="opportunities-slider-section text-center">
+                <h3 class="section-title-slider">الفرص التدريبية المتاحة
+                    {% if active_opportunities %}
+                        <span class="badge rounded-pill opportunity-count-badge ms-2">{{ active_opportunities|length }}</span>
+                    {% endif %}
+                </h3>
 
-</div> {# End Container #}
+                {% if active_opportunities %}
+                    <div id="companyOpportunitiesCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="7000">
+                        {% if active_opportunities|length > 1 %}
+                        <div class="carousel-indicators">
+                            {% for opp_loop in active_opportunities %}
+                                <button type="button" data-bs-target="#companyOpportunitiesCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="carousel-inner py-3">
+                            {% for opp in active_opportunities %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <div class="col-md-9 col-lg-7 mx-auto d-flex"> {# Column is flex, for link to grow if needed #}
+                                    <a href="{% url 'posts:opportunity_detail' opp.id %}" class="clickable-card-link">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="content-wrapper">
+                                                    <h5 class="card-title">{{ opp.title }}</h5>
+                                                    <h6 class="card-subtitle">
+                                                        <span class="material-symbols-outlined">location_on</span>
+                                                        {{ opp.city.arabic_name|default:"مدينة غير محددة" }}
+                                                    </h6>
+                                                    <div class="majors-list">
+                                                        {# Regroup majors to display 4 per line effectively #}
+                                                        {% for major in opp.majors_needed.all %}
+                                                            {% if forloop.counter0|divisibleby:"4" and not forloop.first %}</div><div class="major-group w-100">{% endif %}
+                                                            {% if forloop.first %}<div class="major-group w-100">{% endif %}
+                                                                <span class="badge">{{ major.ar_name }}</span>
+                                                            {% if forloop.last %}</div>{% endif %}
+                                                        {% empty %}
+                                                            <div class="major-group w-100">
+                                                                <span class="badge bg-light text-dark">التخصصات غير محددة</span>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                <div class="btn-details-placeholder">
+                                                    عرض التفاصيل
+                                                </div>
+                                            </div>
+                                            <div class="opportunity-card-footer">
+                                                <span class="material-symbols-outlined">event_busy</span>
+                                                آخر موعد للتقديم: {{ opp.application_deadline|date:"Y-m-d" }}
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        {% if active_opportunities|length > 1 %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#companyOpportunitiesCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">السابق</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#companyOpportunitiesCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">التالي</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-muted mt-4 lead">لا توجد فرص تدريبية متاحة حاليًا من هذه الشركة.</p>
+                {% endif %}
+            </section>
+            {# ----- END: Opportunities Slider Section ----- #}
+        </div>
+    </div>
+</div>
 {% endblock %}

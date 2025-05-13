@@ -2,7 +2,6 @@ from django import forms
 from .models import TrainingOpportunity, City, Major
 
 
-
 class TrainingOpportunityForm(forms.ModelForm):
     city = forms.ModelChoiceField(
         queryset=City.objects.filter(status=True),
@@ -41,11 +40,27 @@ class TrainingOpportunityForm(forms.ModelForm):
     )
     status = forms.ChoiceField(
         label="Status",
-        choices=TrainingOpportunity.Status.choices,  # Corrected line
+        choices=TrainingOpportunity.Status.choices,
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
+    def __init__(self, *args, skip_required=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.skip_required = skip_required
+        if skip_required:
+            for field in self.fields.values():
+                field.required = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if not self.skip_required:
+            # Additional validation logic if necessary
+            pass
+        return cleaned_data
+
     class Meta:
         model = TrainingOpportunity
-        fields = ['title', 'city', 'majors_needed', 'description', 'requirements', 'benefits', 'start_date', 'duration', 'application_deadline', 'status']
-        # You don't need to include 'company' here, as it's set in the view.
+        fields = [
+            'title', 'city', 'majors_needed', 'description', 'requirements',
+            'benefits', 'start_date', 'duration', 'application_deadline', 'status'
+        ]
