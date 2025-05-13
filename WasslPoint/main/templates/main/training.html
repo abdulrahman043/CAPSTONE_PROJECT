@@ -291,11 +291,15 @@
             </div>
           </a>
       </div>
-      {% empty %}
-         <div class="col-12">
-             <p class="text-center lead mt-4">لا توجد تدريبات تطابق معايير البحث أو الفلترة الحالية.</p>
-         </div>
+    
       {% endfor %}
+      {% if opportunities|length == 0 %}
+  <div class="d-flex flex-column align-items-center justify-content-center py-5 text-center w-100">
+    <span class="material-symbols-outlined fs-1 text-muted">search_off</span>
+    <p class="lead mt-3 mb-0">لا توجد تدريبات تطابق معايير البحث الحالية.</p>
+  </div>
+{% endif %}
+
     </div>
     {% if page_obj and page_obj.has_other_pages %}
        <nav aria-label="Page navigation" class="mt-5 d-flex justify-content-center">
