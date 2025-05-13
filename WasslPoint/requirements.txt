@@ -35,6 +35,7 @@ django-modeltranslation==0.18.11
 django-paypal==1.0.0
 django-url-filter==0.3.15
 django-weasyprint==2.4.0
+django-widget-tweaks==1.5.0
 djangorestframework==3.14.0
 dotenv==0.9.9
 dotenv-python==0.0.1

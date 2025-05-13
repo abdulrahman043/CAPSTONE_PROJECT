@@ -7,23 +7,104 @@
   <style>
     .card-header h4 {
       margin-bottom: 0;
+      color: #13A7B1; /* Theme color for the main title */
     }
     .badge {
       font-size: 0.9em;
     }
+    .section-title { /* For h6 elements acting as section titles */
+        font-weight: 600;
+        color: #333;
+        margin-top: 1.5rem; /* Add space above section titles */
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee; /* Subtle separator */
+        font-size: 0.9rem; /* This was changed from 1.5rem in the previous step */
+    }
+    .info-item p { /* For paragraphs containing details like location, dates */
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+    .info-item strong {
+        color: #555;
+    }
+    .info-item .material-symbols-outlined,
+    .info-item .bi { /* For Bootstrap icons */
+        vertical-align: text-bottom;
+        margin-inline-end: 8px; /* Spacing after icon */
+        font-size: 1.1em;
+        color: #13A7B1; /* Theme color for icons */
+    }
+    .description-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #454545;
+    }
+
     .action-buttons .btn, .action-buttons .alert {
         margin-top: 0.5rem;
-        margin-bottom: 0.5rem; /* Added for spacing */
+        margin-bottom: 0.5rem;
     }
     .form-label.required::after {
         content: " *";
         color: red;
     }
+
+    /* Primary action button (Apply Now) */
+    .btn-apply-now {
+        background-color: #13A7B1; /* Your theme's primary color (Teal) */
+        border-color: #13A7B1;
+        color: white;
+        font-weight: 500;
+    }
+    .btn-apply-now:hover {
+        background-color: #0f8a91; /* Darker shade of Teal */
+        border-color: #0e7f87;
+        color: white;
+    }
+
+    .btn-withdraw {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #212529;
+    }
+    .btn-withdraw:hover {
+        background-color: #e0a800;
+        border-color: #d39e00;
+    }
+    .btn-reapply {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color:white;
+    }
+    .btn-reapply:hover {
+        background-color: #0b5ed7;
+        border-color: #0a58ca;
+    }
+    .alert-link {
+        font-weight: bold;
+    }
+    .company-logo-img {
+        max-height: 100px;
+        border: 1px solid #e9ecef;
+        padding: 3px;
+        background-color: #fff;
+    }
+    .company-profile-link-text { /* Style for the new link under the logo */
+        font-size: 0.85rem;
+        display: block; /* Make it take its own line */
+        margin-top: 0.5rem; /* Space above the link */
+        color: #13A7B1; /* Theme color for the link */
+        text-decoration: none;
+    }
+    .company-profile-link-text:hover {
+        text-decoration: underline;
+    }
   </style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
+<div class="container mt-4 mb-5" dir="rtl">
 
     {% if messages %}
         {% for message in messages %}
@@ -35,8 +116,8 @@
     {% endif %}
 
     <div class="card shadow-sm">
-        <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center">
-             <h4 class="text-primary">{{ opportunity.company.company_name }} - {{ opportunity.title }}</h4>
+        <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center py-3">
+             <h4 class="text-primary mb-0">{{ opportunity.company.company_name }} - {{ opportunity.title }}</h4>
              <div class="mt-2 mt-md-0">
                 {% if request.user.is_staff or is_opportunity_owner %}
                     <a href="{% url 'posts:edit_opportunity' opportunity.id %}" class="btn btn-sm btn-outline-primary me-2">
@@ -46,7 +127,7 @@
                         </svg>
                         تعديل
                     </a>
-                    <form action="{% url 'posts:delete_opportunity' opportunity.id %}" method="post" class="d-inline">
+                    <form action="{% url 'posts:delete_opportunity' opportunity.id %}" method="post" class="d-inline" onsubmit="return confirm('هل أنت متأكد أنك تريد حذف هذه الفرصة؟');">
                          {% csrf_token %}
                          <button type="submit" class="btn btn-sm btn-outline-danger">
                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3 me-1" viewBox="0 0 16 16">
@@ -58,15 +139,15 @@
                 {% endif %}
              </div>
         </div>
-        <div class="card-body">
-            <div class="row mb-3">
+        <div class="card-body p-4">
+            <div class="row mb-3 info-item">
                 <div class="col-md-8">
                     <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill me-1" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg>
                         <strong>الموقع:</strong> {{ opportunity.city.arabic_name|default:"غير محدد" }}</p>
                     <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-mortarboard-fill me-1" viewBox="0 0 16 16"> <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L16 6.464a.5.5 0 0 0 .025-.917z"/><path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466zM8 12.46l-3.891 1.556L8 15.11l3.891-1.556z"/></svg>
                         <strong>التخصصات المطلوبة:</strong>
                         {% for major in opportunity.majors_needed.all %}
-                            <span class="badge bg-secondary me-1">{{ major.ar_name }}</span>
+                            <span class="badge bg-secondary me-1 mb-1">{{ major.ar_name }}</span>
                         {% empty %}
                             <span class="text-muted">غير محدد</span>
                         {% endfor %}
@@ -80,24 +161,37 @@
                     <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-activity me-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2"/></svg>
                         <strong>حالة الفرصة:</strong> <span class="badge {% if opportunity.status == 'ACTIVE' %}bg-success{% elif opportunity.status == 'CLOSED' %}bg-warning text-dark{% else %}bg-danger{% endif %}">{{ opportunity.get_status_display }}</span></p>
                 </div>
-                {% if opportunity.company.logo %}
-                <div class="col-md-4 text-center text-md-end mt-3 mt-md-0">
-                    <img src="{{ opportunity.company.logo.url }}" alt="{{ opportunity.company.company_name }} Logo" class="img-fluid rounded shadow-sm" style="max-height: 120px; border: 1px solid #eee;">
+                <div class="col-md-4 text-center text-md-start mt-3 mt-md-0">
+                    {% if opportunity.company.logo %}
+                         <a href="{% url 'profiles:public_company_profile' opportunity.company.id %}" class="company-profile-link-text">
+                        <img src="{{ opportunity.company.logo.url }}" alt="{{ opportunity.company.company_name }} Logo" class="img-fluid rounded shadow-sm company-logo-img">
+                         </a>
+                    {% else %}
+                         <a href="{% url 'profiles:public_company_profile' opportunity.company.id %}" class="company-profile-link-text">
+                         <span class="material-symbols-outlined fs-1 p-3 bg-secondary text-white rounded-circle" style="font-size: 3rem !important; width:80px; height:80px; display:inline-flex; align-items:center; justify-content:center;">
+                            business
+                        </span>
+                         </a>
+                    {% endif %}
+                    {# ***** MODIFIED BLOCK START: Link to company profile ***** #}
+                    {% if opportunity.company %}
+                        <a href="{% url 'profiles:public_company_profile' opportunity.company.id %}" class="company-profile-link-text">
+                            للمزيد من المعلومات عن الشركة اضغط هنا
+                        </a>
+                    {% endif %}
+                    {# ***** MODIFIED BLOCK END ***** #}
                 </div>
-                {% endif %}
             </div>
 
-            <hr>
-            <h6><strong>وصف الفرصة:</strong></h6>
-            <p>{{ opportunity.description|linebreaksbr|default:"لا يوجد وصف." }}</p>
+            <h6 class="section-title">وصف الفرصة</h6>
+            <p class="description-text">{{ opportunity.description|linebreaksbr|default:"لا يوجد وصف." }}</p>
 
-            <h6><strong>المتطلبات:</strong></h6>
-            <p>{{ opportunity.requirements|linebreaksbr|default:"غير محددة." }}</p>
+            <h6 class="section-title">المتطلبات</h6>
+            <p class="description-text">{{ opportunity.requirements|linebreaksbr|default:"غير محددة." }}</p>
 
             {% if opportunity.benefits %}
-            <hr>
-            <h6><strong>المميزات:</strong></h6>
-            <p>{{ opportunity.benefits|linebreaksbr }}</p>
+            <h6 class="section-title">المميزات</h6>
+            <p class="description-text">{{ opportunity.benefits|linebreaksbr }}</p>
             {% endif %}
 
             <hr class="my-4">
@@ -105,7 +199,6 @@
             {# --- Action Buttons/Messages Section --- #}
             <div class="action-buttons">
                 {% if application_closed %}
-                    {# 1. Deadline has passed / Opportunity inactive #}
                     <div class="alert alert-warning" role="alert">
                         تم إغلاق التقديم على هذه الفرصة.
                     </div>
@@ -117,9 +210,7 @@
                     {% endif %}
 
                 {% elif request.user.is_authenticated and is_student %}
-                    {# 2. User is a logged-in student AND application is open #}
                     {% if already_applied %}
-                        {# 2a. Student has already applied #}
                         <div class="alert alert-info" role="alert">
                             <p class="mb-1"><strong>حالة طلبك:</strong> {{ application.get_status_display }}</p>
                             <p class="mb-2">لقد قمت بالتقديم مسبقاً على هذه الفرصة.</p>
@@ -128,26 +219,25 @@
                                     <span class="material-symbols-outlined" style="font-size: 1em; vertical-align: text-bottom;">chat</span> المراسلة
                                 </a>
                             {% endif %}
-                            <a href="{% url 'posts:my_applications' %}" class="btn btn-sm btn-outline-secondary">عرض كل طلباتي</a>.
+                            <a href="{% url 'posts:my_applications' %}" class="btn btn-sm btn-outline-secondary">عرض كل طلباتي</a>
                         </div>
 
                         {% if can_withdraw %}
                             <form action="{% url 'posts:withdraw_application' application.id %}" method="post" class="mt-2">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-warning btn-sm">سحب الطلب</button>
+                                <button type="submit" class="btn btn-warning btn-sm btn-withdraw">سحب الطلب</button>
                             </form>
                         {% elif application.status == 'WITHDRAWN' %}
                              <p class="text-muted my-2">لقد قمت بسحب هذا الطلب.</p>
                             {% if show_reapply_form %}
-                                <h6 class="mt-3">إعادة التقديم:</h6>
+                                <h6 class="section-title mt-3">إعادة التقديم:</h6>
                                 <form action="{% url 'posts:apply_opportunity' opportunity.id %}" method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="mb-2">
                                         <label for="reapply_message" class="form-label small">رسالة جديدة (اختياري):</label>
                                         <textarea name="message" id="reapply_message" rows="2" class="form-control form-control-sm" placeholder="يمكنك إضافة رسالة جديدة أو تحديث هنا..."></textarea>
                                     </div>
-
-                                    <button type="submit" class="btn btn-primary btn-sm">إعادة التقديم</button>
+                                    <button type="submit" class="btn btn-primary btn-sm btn-reapply">إعادة التقديم</button>
                                 </form>
                             {% elif needs_subscription %}
                                  <div class="alert alert-warning mt-2" role="alert">
@@ -157,48 +247,40 @@
                         {% endif %}
 
                     {% elif show_apply_form %}
-                        {# 2b. Student has NOT applied, IS subscribed, and CAN apply #}
-                        <h6 class="mt-3">التقديم على الفرصة:</h6>
+                        <h6 class="section-title mt-3">التقديم على الفرصة:</h6>
                         <form action="{% url 'posts:apply_opportunity' opportunity.id %}" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label for="message" class="form-label">رسالة للشركة (إختياري):</label>
                                 <textarea name="message" id="message" rows="3" class="form-control" placeholder="اكتب رسالة موجزة للشركة..."></textarea>
                             </div>
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-apply-now">
                                 <span class="material-symbols-outlined" style="font-size: 1.2em; vertical-align: middle;">send</span>
                                 قدم الآن
                             </button>
                         </form>
 
                     {% elif needs_subscription %}
-                        {# 2c. Student is logged in, application is open, but not subscribed #}
                         <div class="alert alert-warning" role="alert">
                             يجب أن يكون لديك <a href="{% url 'subscriptions:plans' %}" class="alert-link">اشتراك نشط</a> للتقديم على هذه الفرصة.
                         </div>
                     {% else %}
-                         {# Fallback for student, ideally covered by above conditions #}
                          <p class="text-muted fst-italic">لا يمكنك التقديم على هذه الفرصة حاليًا.</p>
                     {% endif %}
 
                 {% elif request.user.is_authenticated and is_opportunity_owner %}
-                    {# 3. User is the company that owns the opportunity #}
                     <a href="{% url 'posts:opportunity_applications' opportunity.id %}" class="btn btn-info">
                         <span class="material-symbols-outlined" style="font-size: 1.2em; vertical-align: middle;">group</span>
                         عرض طلبات التقديم ({{ opportunity.applications.count }})
                     </a>
 
                 {% elif request.user.is_authenticated %}
-                    {# 4. User is logged in but not a student and not the owner #}
-                    {# --- MODIFIED BLOCK --- #}
                     <p class="text-muted fst-italic">
                         التقديم متاح للطلاب المسجلين فقط.
                         <a href="{% url 'subscriptions:plans' %}" class="alert-link">اطلع على خطط الاشتراك للطلاب</a>.
                     </p>
-                    {# --- END MODIFIED BLOCK --- #}
 
                 {% else %}
-                    {# 5. User is not logged in (visitor) #}
                     <div class="alert alert-secondary">
                          يرجى <a href="{% url 'accounts:login_view' %}?next={{ request.path }}" class="alert-link">تسجيل الدخول</a>
                          أو <a href="{% url 'accounts:signup_view' %}" class="alert-link">التسجيل كطالب</a> للتقديم على الفرص.
@@ -208,10 +290,10 @@
             {# --- End Action Buttons/Messages Section --- #}
 
         </div>
-        <div class="card-footer text-muted">
-             <small>تاريخ النشر: {{ opportunity.created_at|date:"Y-m-d H:i" }}</small>
+        <div class="card-footer text-muted small py-3">
+             <span>تاريخ النشر: {{ opportunity.created_at|date:"Y-m-d H:i" }}</span>
              {% if opportunity.updated_at and opportunity.updated_at != opportunity.created_at %}
-             <small class="ms-2">| آخر تحديث: {{ opportunity.updated_at|date:"Y-m-d H:i" }}</small>
+             <span class="ms-2">| آخر تحديث: {{ opportunity.updated_at|date:"Y-m-d H:i" }}</span>
              {% endif %}
         </div>
     </div>

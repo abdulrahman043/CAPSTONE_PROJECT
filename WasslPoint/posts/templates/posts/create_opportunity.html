@@ -2,171 +2,16 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block content %}
+{% block title %}إنشاء فرصة تدريبية{% endblock %} {# Added a more specific title #}
 
-<div class="container py-4">
-    <h2 class="mb-4 text-center">إنشاء فرصة تدريبية جديدة</h2>
-
-    <form method="post" class="needs-validation" novalidate>
-        {% csrf_token %}
-
-        <!-- Title -->
-        <div class="mb-3">
-            <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">عنوان الفرصة</label>
-            {{ form.title|add_class:"form-control" }}
-            {% if form.title.errors %}
-                <div class="invalid-feedback d-block">
-                    {{ form.title.errors.as_text }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- City -->
-        <div class="mb-3">
-            <label for="{{ form.city.id_for_label }}" class="form-label">المدينة</label>
-            {{ form.city|add_class:"form-select select-search" }}
-            {% if form.city.errors %}
-                <div class="invalid-feedback d-block">
-                    {{ form.city.errors.as_text }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Majors Needed -->
-        <div class="mb-3">
-            <label for="{{ form.majors_needed.id_for_label }}" class="form-label">التخصصات المطلوبة</label>
-            {{ form.majors_needed|add_class:"form-select select-major" }}
-            {% if form.majors_needed.errors %}
-                <div class="invalid-feedback d-block">
-                    {{ form.majors_needed.errors.as_text }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Description -->
-        <div class="mb-3">
-            <label for="{{ form.description.id_for_label }}" class="form-label">وصف الفرصة</label>
-            {{ form.description }}
-            {% if form.description.errors %}
-                <div class="invalid-feedback d-block">
-                    {{ form.description.errors.as_text }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Requirements -->
-        <div class="mb-3">
-            <label for="{{ form.requirements.id_for_label }}" class="form-label">متطلبات الفرصة</label>
-            {{ form.requirements }}
-            {% if form.requirements.errors %}
-                <div class="invalid-feedback d-block">
-                    {{ form.requirements.errors.as_text }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Benefits -->
-        <div class="mb-3">
-            <label for="{{ form.benefits.id_for_label }}" class="form-label">مميزات الفرصة (اختياري)</label>
-            {{ form.benefits }}
-            {% if form.benefits.errors %}
-                <div class="invalid-feedback d-block">
-                    {{ form.benefits.errors.as_text }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Start Date -->
-        <div class="mb-3">
-            <label for="{{ form.start_date.id_for_label }}" class="form-label">تاريخ البدء</label>
-            {{ form.start_date }}
-            {% if form.start_date.errors %}
-                <div class="invalid-feedback d-block">
-                    {{ form.start_date.errors.as_text }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Duration -->
-        <div class="mb-3">
-            <label for="{{ form.duration.id_for_label }}" class="form-label">المدة</label>
-            {{ form.duration|add_class:"form-control" }}
-            {% if form.duration.errors %}
-                <div class="invalid-feedback d-block">
-                    {{ form.duration.errors.as_text }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Application Deadline -->
-        <div class="mb-3">
-            <label for="{{ form.application_deadline.id_for_label }}" class="form-label">آخر موعد للتقديم</label>
-            {{ form.application_deadline }}
-            {% if form.application_deadline.errors %}
-                <div class="invalid-feedback d-block">
-                    {{ form.application_deadline.errors.as_text }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Status -->
-        <div class="mb-4">
-            <label for="{{ form.status.id_for_label }}" class="form-label">حالة الفرصة</label>
-            {{ form.status }}
-            {% if form.status.errors %}
-                <div class="invalid-feedback d-block">
-                    {{ form.status.errors.as_text }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Error Summary -->
-        {% if form.errors %}
-            <div class="alert alert-danger">
-                <strong>الحقول التالية تحتوي على أخطاء أو لم تُملأ بشكل صحيح:</strong>
-                <ul class="mb-0">
-                    {% for field in form %}
-                        {% if field.errors %}
-                            <li>{{ field.label }}</li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
-
-        <div class="d-grid gap-2">
-            <button type="submit" name="publish" id="publish-btn" class="btn btn-secondary btn-lg">نشر الفرصة</button>
-            <a href="{% url 'posts:company_dashboard' %}" class="btn btn-outline-secondary">إلغاء</a>
-        </div>
-    </form>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+{% block style %}
+{# Styles from your original file, plus any new specific styles if needed #}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const citySelect = document.querySelector('.select-search');
-        if (citySelect) {
-            new Choices(citySelect, { searchEnabled: true });
-        }
-
-        const majorSelect = document.querySelector('.select-major');
-        if (majorSelect) {
-            new Choices(majorSelect, {
-                removeItemButton: true,
-                searchEnabled: true,
-                placeholderValue: 'اختر التخصصات المطلوبة',
-                searchPlaceholderValue: 'بحث...',
-                shouldSort: false
-            });
-        }
-    });
-</script>
-
 <style>
     .form-control, .form-select, textarea.form-control {
         height: auto;
         padding: 0.5rem 0.75rem;
+        font-size: 0.95rem; /* Slightly adjusted font size for readability */
     }
     .form-select[multiple] option {
         padding: 0.5rem 1rem;
@@ -176,16 +21,67 @@
         background-color: #f8f9fa;
     }
     .form-select[multiple] option:checked {
-        background-color: #0d6efd;
+        background-color: #13A7B1; /* Standard Bootstrap primary for checked items */
         color: white;
     }
     .badge {
         font-size: 0.9em;
     }
     .form-label {
-        font-weight: bold;
+        font-weight: 600; /* Slightly bolder labels */
+        margin-bottom: 0.3rem; /* Reduced margin for tighter layout */
     }
-    .btn-close {
+
+    /* Styling for Choices.js to better match Bootstrap */
+    .choices {
+        margin-bottom: 0; /* Remove default bottom margin from Choices.js */
+    }
+    .choices__inner {
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        padding: 0.375rem 0.75rem; /* Match Bootstrap padding */
+        font-size: 0.95rem;
+        min-height: calc(1.5em + 0.75rem + 2px); /* Match Bootstrap input height */
+    }
+    .choices__list--multiple .choices__item {
+        background-color: #13A7B1; /* Bootstrap primary blue for selected items */
+        border: 1px solid #13A7B1;
+        border-radius: 0.2rem;
+        font-size: 0.85rem;
+    }
+    .choices[data-type*="select-multiple"] .choices__button,
+    .choices[data-type*="text"] .choices__button {
+        border-left: 1px solid #13A7B1; /* Match item border */
+        margin-left: 5px; /* Spacing for remove button */
+    }
+    .choices__input {
+         font-size: 0.95rem; /* Match Bootstrap input font size */
+         margin-bottom: 0; /* Align input better */
+    }
+
+
+    /* Custom button styles if needed, or rely on Bootstrap classes directly */
+    .btn-publish {
+        background-color: #13A7B1; /* Your theme's primary color (Teal) */
+        border-color: #13A7B1;
+        color: white;
+    }
+    .btn-publish:hover {
+        background-color: #0f8a91; /* Darker shade of Teal */
+        border-color: #0e7f87;
+        color: white;
+    }
+
+    .btn-cancel-custom { /* Custom class if btn-outline-secondary is not enough */
+        /* Example: border-color: #6c757d; color: #6c757d; */
+    }
+    .btn-cancel-custom:hover {
+        /* Example: background-color: #6c757d; color: white; */
+    }
+
+    /* Styles for btn-close if they were in the original style block and meant to be here */
+    .btn-close { /* This style seems out of place for this form, but included if it was intentional */
         position: absolute;
         top: -8px;
         right: -8px;
@@ -212,6 +108,187 @@
         position: relative;
         top: -1px;
     }
-</style>
 
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h2 class="h4 mb-0 text-center">إنشاء فرصة تدريبية جديدة</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">عنوان الفرصة<span class="text-danger">*</span></label>
+                            {{ form.title|add_class:"form-control"|attr:"required" }}
+                            {% if form.title.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.title.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.city.id_for_label }}" class="form-label">المدينة<span class="text-danger">*</span></label>
+                            {{ form.city|add_class:"form-select select-search"|attr:"required" }}
+                            {% if form.city.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.city.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.majors_needed.id_for_label }}" class="form-label">التخصصات المطلوبة<span class="text-danger">*</span></label>
+                            {{ form.majors_needed|add_class:"form-select select-major"|attr:"required" }}
+                            {% if form.majors_needed.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.majors_needed.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label" >وصف الفرصة<span class="text-danger">*</span></label>
+                            {{ form.description|attr:"rows:4"|attr:"required" }} {# Assuming description is a textarea handled by widget_tweaks or form definition #}
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback d-block" placeholder="اكتب رسالة موجزة للشركة...">
+                                    {{ form.description.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.requirements.id_for_label }}" class="form-label">متطلبات الفرصة<span class="text-danger">*</span></label>
+                            {{ form.requirements|attr:"rows:4"|attr:"required" }} {# Assuming requirements is a textarea #}
+                            {% if form.requirements.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.requirements.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.benefits.id_for_label }}" class="form-label">مميزات الفرصة (اختياري)</label>
+                            {{ form.benefits|attr:"rows:3" }} {# Assuming benefits is a textarea #}
+                            {% if form.benefits.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.benefits.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.start_date.id_for_label }}" class="form-label">تاريخ البدء<span class="text-danger">*</span></label>
+                                {{ form.start_date|attr:"required" }} {# Assuming DateInput widget is used #}
+                                {% if form.start_date.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.start_date.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.application_deadline.id_for_label }}" class="form-label">آخر موعد للتقديم<span class="text-danger">*</span></label>
+                                {{ form.application_deadline|attr:"required" }} {# Assuming DateInput widget is used #}
+                                {% if form.application_deadline.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.application_deadline.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.duration.id_for_label }}" class="form-label">المدة<span class="text-danger">*</span></label>
+                            {{ form.duration|add_class:"form-control"|attr:"required" }}
+                            {% if form.duration.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.duration.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.status.id_for_label }}" class="form-label">حالة الفرصة<span class="text-danger">*</span></label>
+                            {{ form.status|add_class:"form-select"|attr:"required" }}
+                            {% if form.status.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.status.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors|striptags }}
+                            </div>
+                        {% endif %}
+                        {% if form.errors and not form.non_field_errors %}
+                             <div class="alert alert-danger small">
+                                <strong>يرجى مراجعة الحقول أعلاه، بعضها يحتوي على أخطاء أو لم تُملأ بشكل صحيح.</strong>
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 mt-4">
+                            {# ***** BUTTON COLOR CHANGED HERE ***** #}
+                            <button type="submit" name="publish" id="publish-btn" class="btn btn-publish btn-lg">
+                                <span class="material-symbols-outlined" style="font-size: 1.1em; vertical-align: text-bottom; margin-inline-end: 5px;">publish</span>
+                                نشر الفرصة
+                            </button>
+                            <a href="{% url 'posts:company_dashboard' %}" class="btn btn-outline-secondary btn-cancel-custom">إلغاء</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize Choices.js for City select
+    const citySelectElement = document.querySelector('.select-search');
+    if (citySelectElement) {
+        new Choices(citySelectElement, {
+            searchEnabled: true,
+            itemSelectText: 'اضغط للاختيار', // Customize text
+            // placeholderValue: 'اختر مدينة', // Uncomment if you want a placeholder
+        });
+    }
+
+    // Initialize Choices.js for Majors Needed select
+    const majorSelectElement = document.querySelector('.select-major');
+    if (majorSelectElement) {
+        new Choices(majorSelectElement, {
+            removeItemButton: true,
+            searchEnabled: true,
+            placeholderValue: 'اختر التخصصات المطلوبة',
+            searchPlaceholderValue: 'بحث...',
+            shouldSort: false, // Keep the order from the backend if specific
+            itemSelectText: 'اضغط للاختيار',
+        });
+    }
+
+    // Bootstrap custom validation for .needs-validation forms
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+});
+</script>
 {% endblock %}
