@@ -23,4 +23,5 @@ urlpatterns = [
     path('opportunity/<int:opportunity_id>/applications/', views.opportunity_applications, name='opportunity_applications'),
     path('opportunity/<int:opportunity_id>/applications/export/excel/', views.export_opportunity_applications_excel, name='export_applications_excel'),
     path('application/<int:application_id>/status/<str:status>/', views.update_application_status, name='update_application_status'),
+    path('opportunity/<int:opportunity_id>/edit/', views.edit_opportunity, name='edit_opportunity'),
 ]
