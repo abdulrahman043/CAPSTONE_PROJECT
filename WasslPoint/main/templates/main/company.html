@@ -147,8 +147,7 @@
       <h1 class="hero-title mb-4">اكتشف الفرص الآن</h1>
       <form action="{% url 'main:company_view' %}" method="GET" class="search-form">
         <input type="text" name="company_name_search" value="{{ company_name_search|default:'' }}" placeholder="ابحث بالاسم، الشركة..." class="search-input">
-        <!-- تم حذف زر البحث -->
-      </form>
+        </form>
     </div>
 </section>
 
@@ -169,17 +168,7 @@
         <div class="row justify-content-center mb-4">
             <div class="col-md-10 col-lg-9">
                 <form method="get" action="{% url 'main:company_view' %}" class="d-flex flex-wrap align-items-end gap-2 bg-light p-3 rounded border shadow-sm filter-form">
-                     <div class="flex-grow-1">
-    <label for="companyNameSearch" class="form-label mb-1 small">البحث</label>
-    <input
-      type="text"
-      id="companyNameSearch"
-      name="company_name_search"
-      class="form-control form-control-sm"
-      placeholder="ابحث عن اسم الشركة…"
-      value="{{ company_name_search }}"
-    >
-  </div>
+
                     {# Industry Filter #}
                     <div class="flex-grow-1">
                         <label for="industryFilter" class="form-label mb-1 small">تصفية حسب المجال:</label>

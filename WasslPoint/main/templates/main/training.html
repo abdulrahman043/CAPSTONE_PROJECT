@@ -20,16 +20,11 @@
       margin-bottom: 0.5rem;
   }
 
-  /* Style for the dropdown menu containing checkboxes */
-  .majors-dropdown-menu {
-      max-height: 250px;
-      overflow-y: auto;
-      padding: 0.5rem;
+  /* Style for the multi-select dropdown */
+  .majors-select-container {
+      position: relative;
   }
-  .majors-dropdown-menu .form-check {
-      padding: 0.25rem 0.75rem;
-  }
-  #majorsDropdownBtn {
+  #majorsSelectBtn {
       text-align: right;
       width: 100%;
       display: flex;
@@ -38,9 +33,63 @@
       background-color: #fff;
       border: 1px solid #ced4da;
       color: #212529;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
   }
-  #majorsDropdownBtn.placeholder {
+  #majorsSelectBtn.placeholder {
       color: #6c757d;
+  }
+  .majors-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      border: 1px solid rgba(0,0,0,.15);
+      border-top: none;
+      border-bottom-left-radius: 0.25rem;
+      border-bottom-right-radius: 0.25rem;
+      z-index: 1000;
+      display: none;
+      max-height: 250px;
+      overflow-y: auto;
+      padding: 0.5rem 0;
+      box-shadow: 0 0.5rem 1rem rgba(0,0,0,.175);
+  }
+  .majors-dropdown-menu.show {
+      display: block;
+  }
+  .majors-dropdown-menu .dropdown-item {
+      display: block;
+      width: 100%;
+      padding: 0.25rem 1.5rem;
+      clear: both;
+      font-weight: 400;
+      color: #212529;
+      text-align: inherit;
+      white-space: nowrap;
+      background-color: transparent;
+      border: 0;
+      cursor: pointer;
+  }
+  .majors-dropdown-menu .dropdown-item:hover,
+  .majors-dropdown-menu .dropdown-item.selected {
+      background-color: #f8f9fa;
+      color: #000;
+  }
+  .selected-majors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+  }
+  .selected-major-tag {
+      background-color: #e9ecef;
+      color: #495057;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.2rem;
+      font-size: 0.8rem;
   }
 
   .search-container {
@@ -183,8 +232,7 @@
     <h1 class="hero-title mb-4">اكتشف الفرص الآن</h1>
     <form action="{% url 'main:training_view' %}" method="GET" class="search-form">
       <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="ابحث بالاسم، الشركة..." class="search-input">
-      <!-- تم حذف زر البحث -->
-    </form>
+      </form>
   </div>
 </section>
 
@@ -231,33 +279,31 @@
               </select>
           </div>
 
-          {# --- Major Filter (Dropdown with Checkboxes) --- #}
+          {# --- Major Filter (Custom Multi-Select Dropdown) --- #}
           <div class="col-lg-4">
               <label class="form-label d-block">التخصصات المطلوبة:</label>
-              <div class="dropdown">
-                  {# Button to toggle the dropdown #}
-                  <button class="btn btn-sm dropdown-toggle" type="button" id="majorsDropdownBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                      <span id="majorsDropdownBtnText">اختر التخصصات...</span> {# Text updated by JS #}
+              <div class="majors-select-container">
+                  <button type="button" class="btn btn-sm w-100" id="majorsSelectBtn">
+                      <span id="majorsSelectBtnText" class="placeholder">اختر التخصصات...</span>
                   </button>
-                  {# The dropdown menu containing checkboxes #}
-                  <div class="dropdown-menu majors-dropdown-menu w-100" aria-labelledby="majorsDropdownBtn">
+                  <div class="majors-dropdown-menu" id="majorsDropdownMenu">
                       {% for major in all_majors %}
-                          <div class="form-check">
-                              <input class="form-check-input major-checkbox"
-                                     type="checkbox"
-                                     name="majors_needed"
-                                     value="{{ major.id }}"
-                                     id="major_{{ major.id }}"
-                                     {% if major.id|stringformat:"s" in selected_major_ids %}checked{% endif %}>
-                              <label class="form-check-label w-100" for="major_{{ major.id }}"> {# w-100 helps click area #}
-                                  {{ major.ar_name }}
-                              </label>
-                          </div>
+                          <button type="button" class="dropdown-item" data-major-id="{{ major.id }}">{{ major.ar_name }}</button>
                       {% empty %}
                           <small class="text-muted px-2">لا توجد تخصصات متاحة.</small>
                       {% endfor %}
                   </div>
+                  <div class="selected-majors" id="selectedMajorsContainer">
+                      {% for major_id in selected_major_ids %}
+                          {% for major in all_majors %}
+                              {% if major.id|stringformat:"s" == major_id %}
+                                  <span class="selected-major-tag" data-major-id="{{ major.id }}">{{ major.ar_name }}</span>
+                              {% endif %}
+                          {% endfor %}
+                      {% endfor %}
+                  </div>
               </div>
+              <input type="hidden" name="majors_needed" id="majorsNeededInput" value="{{ selected_major_ids|join:',' }}">
           </div>
           {# --- End Major Filter --- #}
 
@@ -337,48 +383,115 @@
 {% endblock %}
 
 {% block script %}
-{# --- Add this JavaScript block for the majors dropdown --- #}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const dropdownMenu = document.querySelector('.majors-dropdown-menu');
-    const dropdownButton = document.getElementById('majorsDropdownBtn');
-    const dropdownButtonText = document.getElementById('majorsDropdownBtnText');
-    const checkboxes = dropdownMenu.querySelectorAll('.major-checkbox');
+    const majorsSelectBtn = document.getElementById('majorsSelectBtn');
+    const majorsDropdownMenu = document.getElementById('majorsDropdownMenu');
+    const majorsSelectBtnText = document.getElementById('majorsSelectBtnText');
+    const majorsNeededInput = document.getElementById('majorsNeededInput');
+    const selectedMajorsContainer = document.getElementById('selectedMajorsContainer');
+    const majorItems = majorsDropdownMenu.querySelectorAll('.dropdown-item');
 
-    function updateButtonText() {
-        const checkedCheckboxes = dropdownMenu.querySelectorAll('.major-checkbox:checked');
-        if (checkedCheckboxes.length === 0) {
-            dropdownButtonText.textContent = 'اختر التخصصات...';
-            dropdownButton.classList.add('placeholder');
-        } else if (checkedCheckboxes.length === 1) {
-            // Find the label text for the single checked checkbox
-            const label = checkedCheckboxes[0].parentElement.querySelector('.form-check-label');
-            dropdownButtonText.textContent = label ? label.textContent.trim() : '1 تخصص محدد';
-            dropdownButton.classList.remove('placeholder');
+    let selectedMajorIds = new Set(majorsNeededInput.value.split(',').filter(Boolean));
+
+    function updateSelectedMajorsDisplay() {
+        selectedMajorsContainer.innerHTML = '';
+        let selectedNames = [];
+        selectedMajorIds.forEach(majorId => {
+            const majorItem = Array.from(majorItems).find(item => item.dataset.majorId === majorId);
+            if (majorItem) {
+                const tagName = document.createElement('span');
+                tagName.classList.add('selected-major-tag');
+                tagName.dataset.majorId = majorId;
+                tagName.textContent = majorItem.textContent;
+
+                const removeButton = document.createElement('button');
+                removeButton.innerHTML = '&times;';
+                removeButton.classList.add('btn', 'btn-sm', 'btn-light', 'ms-1');
+                removeButton.style.fontSize = '0.7rem';
+                removeButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    selectedMajorIds.delete(majorId);
+                    updateSelectedMajorsInput();
+                    updateSelectedMajorsDisplay();
+                    updateButtonText();
+                    // Re-add 'selected' class if the item is still conceptually selected
+                    majorItem.classList.remove('selected');
+                });
+                tagName.appendChild(removeButton);
+                selectedMajorsContainer.appendChild(tagName);
+                selectedNames.push(majorItem.textContent);
+            }
+        });
+
+        if (selectedNames.length > 0) {
+            majorsSelectBtnText.textContent = selectedNames.join(', ');
+            majorsSelectBtn.classList.remove('placeholder');
         } else {
-            dropdownButtonText.textContent = checkedCheckboxes.length + ' تخصصات محددة';
-            dropdownButton.classList.remove('placeholder');
+            majorsSelectBtnText.textContent = 'اختر التخصصات...';
+            majorsSelectBtn.classList.add('placeholder');
         }
     }
 
-    // Stop propagation on clicks inside the dropdown menu to keep it open
-    dropdownMenu.addEventListener('click', function(event) {
-        event.stopPropagation();
+    function updateSelectedMajorsInput() {
+        majorsNeededInput.value = Array.from(selectedMajorIds).join(',');
+    }
+
+    function updateButtonText() {
+        const selectedCount = selectedMajorIds.size;
+        if (selectedCount === 0) {
+            majorsSelectBtnText.textContent = 'اختر التخصصات...';
+            majorsSelectBtn.classList.add('placeholder');
+        } else if (selectedCount === 1) {
+            const selectedMajorId = selectedMajorIds.values().next().value;
+            const selectedItem = Array.from(majorItems).find(item => item.dataset.majorId === selectedMajorId);
+            majorsSelectBtnText.textContent = selectedItem ? selectedItem.textContent : '1 تخصص محدد';
+            majorsSelectBtn.classList.remove('placeholder');
+        } else {
+            majorsSelectBtnText.textContent = `${selectedCount} تخصصات محددة`;
+            majorsSelectBtn.classList.remove('placeholder');
+        }
+    }
+
+    majorsSelectBtn.addEventListener('click', function() {
+        majorsDropdownMenu.classList.toggle('show');
     });
 
-    // Update button text when a checkbox changes state
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateButtonText);
+    document.addEventListener('click', function(event) {
+        if (!majorsSelectBtn.contains(event.target) && !majorsDropdownMenu.contains(event.target)) {
+            majorsDropdownMenu.classList.remove('show');
+        }
     });
 
-    // Initial update of button text on page load
+    majorItems.forEach(item => {
+        const majorId = item.dataset.majorId;
+        if (selectedMajorIds.has(majorId)) {
+            item.classList.add('selected');
+        }
+
+        item.addEventListener('click', function() {
+            const id = this.dataset.majorId;
+            if (selectedMajorIds.has(id)) {
+                selectedMajorIds.delete(id);
+                this.classList.remove('selected');
+            } else {
+                selectedMajorIds.add(id);
+                this.classList.add('selected');
+            }
+            updateSelectedMajorsInput();
+            updateSelectedMajorsDisplay();
+            updateButtonText();
+        });
+    });
+
+    // Initial display of selected majors
+    updateSelectedMajorsDisplay();
     updateButtonText();
 });
 </script>
 
 <footer class="py-4 mt-5" style="background-color: #13A7B1;">
   <div class="container text-center">
-    <!-- أيقونات -->
     <div class="mb-3 d-flex justify-content-center gap-4 flex-wrap">
       <a href="https://www.linkedin.com/in/ahmed-alghamdi-hi/" target="_blank" class="text-white fs-4">
         <i class="fi fi-brands-linkedin"></i>
@@ -391,7 +504,6 @@ document.addEventListener('DOMContentLoaded', function() {
       </a>
     </div>
 
-    <!-- حقوق النشر -->
     <p class="text-white mb-0" style="font-size: 0.95rem;">
       © 2025 جميع الحقوق محفوظة لنقطة وصل — شروط الاستخدام، سياسة الخصوصية، وسياسة ملفات تعريف الارتباط
     </p>
