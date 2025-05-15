@@ -31,7 +31,7 @@
 
     /* --- Company Information Card --- */
     .company-info-card {
-        background-color: #ffffff !important; /* White background */
+        background-color: #ffffff !important;
         border: 1px solid #dee2e6;
         border-radius: 0.375rem;
         box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
@@ -43,7 +43,7 @@
         padding: 0.75rem 1.25rem;
     }
     .company-info-card .card-header h4 {
-        color: #13A7B1; /* Theme color for title */
+        color: #13A7B1;
         margin-bottom: 0;
         font-size: 1.25rem;
         font-weight: 600;
@@ -77,18 +77,19 @@
 
     /* --- General Material Symbols --- */
     .material-symbols-outlined {
-        vertical-align: text-bottom; /* Aligns icon better with text */
-        font-size: 1.1em; /* Default size */
-        margin-inline-end: 5px; /* Space after icon (for RTL) */
-        color: #13A7B1; /* Default theme color */
+        vertical-align: text-bottom;
+        font-size: 1.1em;
+        margin-inline-end: 5px;
+        color: #13A7B1;
     }
-    /* Specific icon colors if needed */
+
     .card-subtitle .material-symbols-outlined {
-        color: #6c757d; /* Muted color for icons in subtitles */
-        font-size: 1em; /* Match text size better */
+        color: #6c757d;
+        font-size: 1em;
     }
+
     .opportunity-card-footer .material-symbols-outlined {
-        color: #495057; /* Match footer text color */
+        color: #495057;
         font-size: 1em;
     }
 
@@ -97,6 +98,8 @@
     .opportunities-slider-section {
         margin-top: 2.5rem;
         padding-top: 1.5rem;
+        padding-bottom: 3rem; /* Initial padding-bottom */
+        transition: padding-bottom 0.3s ease; /* Smooth transition for dynamic changes */
     }
     .opportunities-slider-section .section-title-slider {
         color: #333;
@@ -115,25 +118,23 @@
         padding: 0.3em 0.6em;
     }
 
-    /* --- CRITICAL: Carousel Height Override for this specific slider --- */
+    /* --- Carousel Styling --- */
     #companyOpportunitiesCarousel .carousel-inner,
     #companyOpportunitiesCarousel .carousel-item {
-        height: auto !important; /* Override the global 100vh from style.css */
-        min-height: 1px; /* Prevent collapsing if item is empty */
-        position: relative; /* Keep default for controls/indicators */
+        height: auto !important;
+        min-height: 1px;
+        position: relative;
     }
-    /* Optional: To see carousel item bounds during debugging */
-    /* #companyOpportunitiesCarousel .carousel-item { background-color: rgba(255, 255, 0, 0.1); } */
-
 
     #companyOpportunitiesCarousel .clickable-card-link {
         text-decoration: none;
         color: inherit;
-        display: flex; /* Make link a flex container */
-        flex-direction: column; /* Stack card vertically */
-        width: 100%; /* Fill the column space */
-        height: 100%; /* Fill the column space if column itself uses flex */
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
     }
+
     #companyOpportunitiesCarousel .clickable-card-link:hover .card {
         border-color: #13A7B1;
         box-shadow: 0 .25rem .5rem rgba(0,0,0,.1);
@@ -145,24 +146,23 @@
         transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         display: flex;
         flex-direction: column;
-        width: 100%; /* Card takes full width of link */
-        flex-grow: 1; /* Card grows to fill link if link is d-flex and has space */
+        width: 100%;
+        flex-grow: 1;
         background-color: #fff;
         border-radius: 0.375rem;
-        text-align: center; /* Center content within the card */
+        text-align: center;
     }
 
     #companyOpportunitiesCarousel .card-body {
         display: flex;
         flex-direction: column;
-        flex-grow: 1; /* Body takes available space in the card */
+        flex-grow: 1;
         padding: 1rem;
-        text-align: start; /* For RTL text alignment within body */
+        text-align: start;
     }
 
-    #companyOpportunitiesCarousel .card-body .content-wrapper { /* Holds title, city, majors */
-        flex-grow: 1; /* This section takes up available vertical space */
-        /* background-color: rgba(255, 0, 0, 0.05); /* DEBUG */
+    #companyOpportunitiesCarousel .card-body .content-wrapper {
+        flex-grow: 1;
     }
 
     #companyOpportunitiesCarousel .card-title {
@@ -172,7 +172,7 @@
         margin-bottom: 0.5rem;
     }
 
-    #companyOpportunitiesCarousel .card-subtitle { /* For City */
+    #companyOpportunitiesCarousel .card-subtitle {
         font-size: 0.9rem;
         margin-bottom: 0.75rem;
         color: #FF7C34;
@@ -180,27 +180,28 @@
 
     #companyOpportunitiesCarousel .majors-list {
         display: flex;
-        flex-direction: column; /* Stack major groups vertically */
-        gap: 0.1rem; /* Small gap between lines of majors */
+        flex-direction: column;
+        gap: 0.1rem;
         margin-bottom: 0.75rem;
-        align-items: flex-start; /* Align groups to the start (for RTL) */
-        /* background-color: rgba(0, 255, 0, 0.05); /* DEBUG */
+        align-items: flex-start;
     }
+
     #companyOpportunitiesCarousel .majors-list .major-group {
-        display: flex; /* Badges within a group are inline */
-        flex-wrap: nowrap; /* Prevent badges themselves from wrapping within a group of 3 */
-        gap: 0.3rem; /* Space between badges in a group */
-        width: 100%; /* Makes each group effectively a new line in the flex column */
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.3rem;
+        width: 100%;
     }
 
     #companyOpportunitiesCarousel .badge {
         font-size: 0.75em;
         padding: 0.4em 0.6em;
-        background-color: #6c757d; /* Default: Bootstrap secondary grey */
+        background-color: #6c757d;
         color: white;
     }
-    #companyOpportunitiesCarousel .majors-list .badge.bg-light { /* For "empty" or "..." badge */
-        color: #212529 !important; /* Ensure text is visible on light background */
+
+    #companyOpportunitiesCarousel .majors-list .badge.bg-light {
+        color: #212529 !important;
         background-color: #f8f9fa !important;
     }
 
@@ -211,8 +212,8 @@
         font-size: 0.9rem;
         color: #13A7B1;
         font-weight: 500;
-        border-top: 1px solid #f0f0f0; /* Lighter separator */
-        margin-top: auto; /* Pushes this to the bottom of .card-body */
+        border-top: 1px solid #f0f0f0;
+        margin-top: auto;
     }
 
     #companyOpportunitiesCarousel .opportunity-card-footer {
@@ -222,8 +223,7 @@
         background-color: #f8f9fa;
         border-top: 1px solid #dee2e6;
         padding: 0.6rem 1rem;
-        text-align: start; /* For RTL */
-        /* margin-top: auto; /* Card itself is flex-column, footer is direct child */
+        text-align: start;
     }
 
     /* Controls and Indicators */
@@ -325,7 +325,7 @@
                         <div class="carousel-inner py-3">
                             {% for opp in active_opportunities %}
                             <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                <div class="col-md-9 col-lg-7 mx-auto d-flex"> {# Column is flex, for link to grow if needed #}
+                                <div class="col-md-9 col-lg-7 mx-auto d-flex">
                                     <a href="{% url 'posts:opportunity_detail' opp.id %}" class="clickable-card-link">
                                         <div class="card">
                                             <div class="card-body">
@@ -336,7 +336,6 @@
                                                         {{ opp.city.arabic_name|default:"مدينة غير محددة" }}
                                                     </h6>
                                                     <div class="majors-list">
-                                                        {# Regroup majors to display 4 per line effectively #}
                                                         {% for major in opp.majors_needed.all %}
                                                             {% if forloop.counter0|divisibleby:"4" and not forloop.first %}</div><div class="major-group w-100">{% endif %}
                                                             {% if forloop.first %}<div class="major-group w-100">{% endif %}
@@ -383,4 +382,51 @@
         </div>
     </div>
 </div>
+
+<script>
+    window.addEventListener('load', function() {
+        const opportunitiesSection = document.querySelector('.opportunities-slider-section');
+        const footer = document.querySelector('footer'); // Or the actual selector for your footer
+        const minPadding = 2; // in rem
+        const defaultPadding = 2;
+
+        function adjustPadding() {
+            if (!opportunitiesSection || !footer) {
+                return; // Exit if elements not found
+            }
+
+            const sectionRect = opportunitiesSection.getBoundingClientRect();
+            const footerRect = footer.getBoundingClientRect();
+            const overlap = sectionRect.bottom - footerRect.top;
+
+            const majorsLists = document.querySelectorAll('.majors-list');
+            let maxMajorGroups = 0;
+            majorsLists.forEach(list => {
+                const majorGroupsCount = list.querySelectorAll('.major-group').length;
+                maxMajorGroups = Math.max(maxMajorGroups, majorGroupsCount);
+            });
+
+            let paddingToAdd = Math.max(0, (maxMajorGroups - 1)) * minPadding;
+            const newPadding = defaultPadding + paddingToAdd;
+
+            opportunitiesSection.style.paddingBottom = `${newPadding}rem`;
+
+
+            if (overlap > 0) {
+                const overlapRem = overlap / parseFloat(getComputedStyle(document.documentElement).fontSize);
+                 opportunitiesSection.style.paddingBottom = `${Math.max(newPadding, defaultPadding + overlapRem)}rem`;
+            }
+            else{
+                 opportunitiesSection.style.paddingBottom = `${newPadding}rem`;
+            }
+        }
+
+        adjustPadding();
+        window.addEventListener('resize', adjustPadding);
+        const carousel = document.getElementById('companyOpportunitiesCarousel');
+        if (carousel) {
+             carousel.addEventListener('slid.bs.carousel', adjustPadding);
+        }
+    });
+</script>
 {% endblock %}

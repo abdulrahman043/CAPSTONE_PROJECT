@@ -43,7 +43,7 @@
                 {% for major in majors %}
                     <option value="{{ forloop.counter }}" {% if forloop.counter|stringformat:"s" in form_data.majors_needed %}>
                         {{ major.ar_name }}
-                    </option>
+                    </option{% endif %}>
                 {% endfor %}
             </select>
             {% if form_errors.majors_needed %}<div class="invalid-feedback d-block">{{ form_errors.majors_needed }}</div>{% endif %}

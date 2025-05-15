@@ -157,7 +157,7 @@ STATIC_URL = 'static/'
 # This is where your project-level static files (CSS, JS, images not tied to a specific app) are located.
 # It's okay for this to be BASE_DIR / "static" if that's where you want to keep them.
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "WasslPoint", "static") # Or adjust if your 'static' folder for source files is directly under BASE_DIR
+    os.path.join(BASE_DIR, "static") # Or adjust if your 'static' folder for source files is directly under BASE_DIR
 ]
 
 # This is the single directory where Django will collect all static files
