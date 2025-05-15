@@ -1,3 +1,5 @@
+import profile
+
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpRequest,HttpResponse
 from .models import StudentProfile,PersonalInformation,Country,ContactInformation,City,Experience,Skill,Language,Education,Certification,Major,CompanyProfile,Industry,ContactPerson,CompanyProfileEditRequest
@@ -10,7 +12,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.db import transaction
-from posts.models import Application
+from posts.models import Application, TrainingOpportunity
 from django.contrib.admin.views.decorators import staff_member_required 
 from decimal import Decimal
 from django.core.paginator import Paginator
@@ -858,22 +860,32 @@ def company_student_profile(request, student_id):
         }
     # Render the specific template uploaded by the user
     return render(request, 'profiles/company_student_profile.html', context)
-def public_company_profile_view(request, company_id):
+
+
+def public_company_profile_view(request, company_id): # Name based on your error trace
     """
-    Displays a public view of a company's profile.
-    Fetches the company profile based on its ID and ensures the associated user is active.
+    Displays a single company's public profile page.
     """
-    # Fetch the specific company profile, ensuring it's linked to an active user
-    # Use select_related for efficiency when accessing Industry and City
-    company_profile = get_object_or_404(
+    # Use a distinct variable name for your CompanyProfile instance
+    # to avoid collision with the 'profile' module.
+    company_instance = get_object_or_404(
         CompanyProfile.objects.select_related('user', 'industry', 'city'),
-        pk=company_id,
-        user__is_active=True # Only show profiles of active companies
+        pk=company_id
     )
 
+    # When fetching related objects, use the 'company_instance'
+    active_opportunities = TrainingOpportunity.objects.filter(
+        company=company_instance,  # Correct: Use the fetched CompanyProfile instance
+        status=TrainingOpportunity.Status.ACTIVE
+    ).select_related('city').prefetch_related('majors_needed').order_by('-created_at')
+
     context = {
-        'profile': company_profile,
+        # You can use 'profile' as the key in the context if your template
+        # (profiles/public_company_profile.html) expects {{ profile.company_name }}, etc.
+        'profile': company_instance,
+        'active_opportunities': active_opportunities,
     }
+    # Make sure this template path is correct
     return render(request, 'profiles/public_company_profile.html', context)
 @login_required
 def company_edit_requests(request):

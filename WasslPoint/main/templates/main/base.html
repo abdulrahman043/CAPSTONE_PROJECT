@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
-  
+
   {# Your Custom CSS #}
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {# Google Fonts (Tajawal) #}
@@ -35,7 +35,7 @@
 
   {% block style %}{% endblock %}
 
-  <title>{% block title %}وصل{% endblock %}</title>
+  <title>{% block title %}.وصل{% endblock %}</title>
 
   <style>
       .navbar-nav-center{
@@ -84,7 +84,7 @@
       font-variation-settings:
       'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
     }
-    
+
   </style>
 </head>
 <body>
@@ -145,25 +145,25 @@
                         </li>
                         <li class="nav-item">
                           {% if user.is_authenticated %}
-                            <a class="nav-link position-relative text-white p-2"
+                            <a class="nav-link position-relative teåxt-white p-2"
                                href="{% url 'notifications:notifications_page' %}"
                                title="الإشعارات">
-                              
+
                               {# الأيقونة دائماً مفتوحة #}
                               <span class="material-symbols-outlined nav-icon-notification">
                                 notifications
                               </span>
-                              
+
                               {# نقطة حمراء فقط لو في إشعارات غير مقروءة #}
                               {% if unread_notifications_count|default:0 > 0 %}
                                 <span class="nav-notification-dot"></span>
                               {% endif %}
-                              
+
                             </a>
                           {% endif %}
                         </li>
-                        
-                        
+
+
                     {% else %}
                          {# --- Anonymous User Links --- #}
                          <li class="nav-item mb-3 mb-lg-0">
@@ -248,14 +248,14 @@
             <i class="fi fi-sr-envelope"></i>
           </a>
         </div>
-    
+
         <!-- حقوق النشر -->
         <p class="text-white mb-0" style="font-size: 0.95rem;">
-          © 2025 جميع الحقوق محفوظة لشركة .وصل — شروط الاستخدام، سياسة الخصوصية، وسياسة ملفات تعريف الارتباط
+          © 2025 جميع الحقوق محفوظة لشركة .وصل للتدريب التعاوني — شروط الاستخدام، سياسة الخصوصية، وسياسة ملفات تعريف الارتباط
         </p>
       </div>
     </footer>
-    
+
 
 
     {% endblock %}

@@ -1,9 +1,10 @@
-# WasslPoint/posts/views.py
+import json
+from sqlite3 import IntegrityError
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
-# from django.contrib.admin.views.decorators import staff_member_required # Not used
 from .models import TrainingOpportunity, Application, Message
 from profiles.models import CompanyProfile, StudentProfile, Major, City
 from subscriptions.models import has_active_subscription
@@ -17,6 +18,7 @@ from django.db.models import Q
 import openpyxl
 from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
+from .forms import TrainingOpportunityForm
 
 # --- Helper Decorators ---
 def company_required(view_func):
@@ -258,7 +260,7 @@ def withdraw_application(request, application_id):
 @company_required
 def company_dashboard(request):
     """ Displays opportunities created by the logged-in company. """
-    company_profile = request.user.company_profile
+    company_profile = CompanyProfile.objects.get(user=request.user)
     opportunities = TrainingOpportunity.objects.filter(company=company_profile).prefetch_related('applications').order_by('-created_at')
     context = {
         'opportunities': opportunities,
@@ -266,176 +268,66 @@ def company_dashboard(request):
     }
     return render(request, 'posts/company_dashboard.html', context)
 
-
 @company_required
 def create_opportunity(request):
-    company_profile = request.user.company_profile
-    majors = Major.objects.filter(status=True)
-    cities = City.objects.filter(status=True)
-
     if request.method == 'POST':
-        major_ids = request.POST.getlist('majors_needed')
-        city_id = request.POST.get('city')
-        start_date_str = request.POST.get('start_date')
-        duration = request.POST.get('duration')
-        application_deadline_str = request.POST.get('application_deadline')
-        requirements = request.POST.get('requirements')
-        benefits = request.POST.get('benefits', '')
-        status = request.POST.get('status', TrainingOpportunity.Status.ACTIVE)
+        is_draft = 'save_draft' in request.POST
+        form = TrainingOpportunityForm(request.POST, skip_required=is_draft)
+        if form.is_valid():
+            opportunity = form.save(commit=False)
+            opportunity.status = 'DRAFT' if is_draft else 'ACTIVE'
+            opportunity.company = CompanyProfile.objects.get(user=request.user)
 
-        errors = []
-        # Translated Messages
-        if not major_ids: errors.append("يجب اختيار تخصص واحد على الأقل.")
-        if not city_id: errors.append("المدينة مطلوبة.")
-        if not start_date_str: errors.append("تاريخ البدء مطلوب.")
-        if not duration: errors.append("المدة مطلوبة.")
-        if not application_deadline_str: errors.append("الموعد النهائي للتقديم مطلوب.")
-        if not requirements: errors.append("المتطلبات مطلوبة.")
+            # Skip saving if it's a draft and required fields are missing
+            required_fields = ['start_date', 'duration', 'application_deadline']
+            missing_required = any(not getattr(opportunity, field) for field in required_fields)
 
-        city = None
-        start_date = None
-        application_deadline = None
+            if is_draft and missing_required:
+                # skip saving incomplete drafts
+                messages.success(request, 'تم حفظ الفرصة كمسودة')
+            else:
+                try:
+                    opportunity.save()
+                    form.save_m2m()
+                    if is_draft:
+                        messages.success(request, 'تم حفظ الفرصة كمسودة')
+                except IntegrityError as e:
+                    raise e  # Show error for unexpected cases
 
-        try:
-            if city_id: city = City.objects.get(pk=city_id)
-        except City.DoesNotExist:
-             errors.append("المدينة المحددة غير صالحة.")
+            return redirect('posts:company_dashboard')
+    else:
+        form = TrainingOpportunityForm()
 
-        try:
-            if start_date_str: start_date = timezone.datetime.strptime(start_date_str, '%Y-%m-%d').date()
-            if application_deadline_str: application_deadline = timezone.datetime.strptime(application_deadline_str, '%Y-%m-%d').date()
-        except ValueError:
-             errors.append("تنسيق التاريخ غير صالح (YYYY-MM-DD).")
-
-        if start_date and application_deadline and application_deadline > start_date:
-             errors.append("لا يمكن أن يكون الموعد النهائي للتقديم قبل تاريخ البدء.")
-
-        if errors:
-             for error in errors:
-                 messages.error(request, error)
-        else:
-            try:
-                opportunity = TrainingOpportunity.objects.create(
-                    company=company_profile, city=city, start_date=start_date, duration=duration,
-                    application_deadline=application_deadline, requirements=requirements,
-                    benefits=benefits, status=status
-                )
-                opportunity.majors_needed.set(major_ids)
-                # Translated Message
-                messages.success(request, "تم إنشاء فرصة التدريب بنجاح!")
-                return redirect('posts:company_dashboard')
-            except Exception as e:
-                 # Translated Message
-                 messages.error(request, f"حدث خطأ أثناء إنشاء الفرصة: {e}")
-
-    context = {
-        'majors': majors, 'cities': cities, 'statuses': TrainingOpportunity.Status.choices,
-        'form_data': request.POST if request.method == 'POST' else {}
-    }
-    return render(request, 'posts/opportunity_form.html', context)
+    return render(request, 'posts/create_opportunity.html', {'form': form})
 
 
-@require_http_methods(["GET", "POST"])
 @login_required
+@company_required # Ensures only logged-in companies can access
 def edit_opportunity(request, opportunity_id):
-    opportunity = get_object_or_404(TrainingOpportunity, pk=opportunity_id)
+    opportunity = get_object_or_404(TrainingOpportunity, id=opportunity_id)
+    company_profile = request.user.company_profile
 
-    is_owner = hasattr(request.user, 'company_profile') and opportunity.company == request.user.company_profile
-    if not request.user.is_staff and not is_owner:
-        # Translated Message
-        messages.error(request, "ليس لديك الإذن لتعديل هذه الفرصة.")
-        return redirect('posts:opportunity_list')
-
-    majors = Major.objects.filter(status=True)
-    cities = City.objects.filter(status=True)
+    # Authorization: Check if the logged-in company is the owner of the opportunity
+    if opportunity.company != company_profile:
+        messages.error(request, "لا تملك الصلاحية لتعديل هذه الفرصة.")
+        return redirect('posts:company_dashboard') # Or another appropriate redirect
 
     if request.method == 'POST':
-        major_ids = request.POST.getlist('majors_needed')
-        city_id = request.POST.get('city')
-        start_date_str = request.POST.get('start_date')
-        duration = request.POST.get('duration')
-        application_deadline_str = request.POST.get('application_deadline')
-        requirements = request.POST.get('requirements')
-        benefits = request.POST.get('benefits', '')
-        status = request.POST.get('status')
-
-        errors = []
-        # Translated Messages
-        if not major_ids: errors.append("يجب اختيار تخصص واحد على الأقل.")
-        if not city_id: errors.append("المدينة مطلوبة.")
-        if not start_date_str: errors.append("تاريخ البدء مطلوب.")
-        if not duration: errors.append("المدة مطلوبة.")
-        if not application_deadline_str: errors.append("الموعد النهائي للتقديم مطلوب.")
-        if not requirements: errors.append("المتطلبات مطلوبة.")
-        if not status or status not in [choice[0] for choice in TrainingOpportunity.Status.choices]:
-            errors.append("الحالة المحددة غير صالحة.")
-
-        city = None
-        start_date = None
-        application_deadline = None
-
-        try:
-            if city_id: city = City.objects.get(pk=city_id)
-        except City.DoesNotExist:
-            errors.append("المدينة المحددة غير صالحة.")
-
-        try:
-            if start_date_str: start_date = timezone.datetime.strptime(start_date_str, '%Y-%m-%d').date()
-            if application_deadline_str: application_deadline = timezone.datetime.strptime(application_deadline_str, '%Y-%m-%d').date()
-        except ValueError:
-            errors.append("تنسيق التاريخ غير صالح (YYYY-MM-DD).")
-
-        if start_date and application_deadline and application_deadline > start_date:
-             errors.append("لا يمكن أن يكون الموعد النهائي للتقديم قبل تاريخ البدء.")
-
-        if errors:
-             for error in errors:
-                 messages.error(request, error)
-             form_data = request.POST.copy()
-             context = {
-                 'opportunity': opportunity, 'majors': majors, 'cities': cities,
-                 'statuses': TrainingOpportunity.Status.choices, 'form_data': form_data, 'is_edit': True
-             }
-             return render(request, 'posts/opportunity_form.html', context)
+        form = TrainingOpportunityForm(request.POST, instance=opportunity)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'تم تحديث الفرصة بنجاح.')
+            return redirect('posts:opportunity_detail', opportunity_id=opportunity.id)
         else:
-            try:
-                opportunity.city = city
-                opportunity.start_date = start_date
-                opportunity.duration = duration
-                opportunity.application_deadline = application_deadline
-                opportunity.requirements = requirements
-                opportunity.benefits = benefits
-                opportunity.status = status
-                opportunity.majors_needed.set(major_ids)
-                opportunity.save()
-                # Translated Message
-                messages.success(request, "تم تحديث فرصة التدريب بنجاح!")
-                if request.user.is_staff and not is_owner:
-                    return redirect('posts:opportunity_detail', opportunity_id=opportunity.id)
-                else:
-                    return redirect('posts:company_dashboard')
-            except Exception as e:
-                 # Translated Message
-                 messages.error(request, f"حدث خطأ أثناء تحديث الفرصة: {e}")
-                 context = {
-                     'opportunity': opportunity, 'majors': majors, 'cities': cities,
-                     'statuses': TrainingOpportunity.Status.choices, 'form_data': request.POST, 'is_edit': True
-                 }
-                 return render(request, 'posts/opportunity_form.html', context)
-    else: # GET Request
-        form_data = {
-            'majors_needed': list(opportunity.majors_needed.values_list('id', flat=True)),
-            'city': opportunity.city.id if opportunity.city else '',
-            'start_date': opportunity.start_date.strftime('%Y-%m-%d') if opportunity.start_date else '',
-            'duration': opportunity.duration,
-            'application_deadline': opportunity.application_deadline.strftime('%Y-%m-%d') if opportunity.application_deadline else '',
-            'requirements': opportunity.requirements, 'benefits': opportunity.benefits, 'status': opportunity.status,
-        }
-        context = {
-            'opportunity': opportunity, 'majors': majors, 'cities': cities,
-            'statuses': TrainingOpportunity.Status.choices, 'form_data': form_data, 'is_edit': True
-        }
-        return render(request, 'posts/opportunity_form.html', context)
+            messages.error(request, 'يرجى تصحيح الأخطاء الموجودة في النموذج.')
+    else: # GET request
+        form = TrainingOpportunityForm(instance=opportunity)
+
+    return render(request, 'posts/edit_opportunity.html', {
+        'form': form,
+        'opportunity': opportunity, # Pass opportunity for the cancel button or other context
+        'is_edit': True # You can use this in the template if needed for conditional logic
+    })
 
 
 @require_POST
@@ -589,21 +481,17 @@ def application_chat(request, application_id):
     return render(request, "posts/application_chat.html", context)
 
 @login_required
+# posts/views.py
+
+@login_required
 def export_opportunity_applications_excel(request, opportunity_id):
-    """
-    Exports the list of applicants for a specific opportunity to an Excel file.
-    Only accessible by the company that owns the opportunity or staff.
-    """
     opportunity = get_object_or_404(TrainingOpportunity, pk=opportunity_id)
     user = request.user
 
-    # --- Authorization Check (Same as opportunity_applications view) ---
     is_owner = hasattr(user, 'company_profile') and opportunity.company == user.company_profile
     if not user.is_staff and not is_owner:
         messages.error(request, "ليس لديك الصلاحية لتصدير قائمة المتقدمين لهذه الفرصة.")
-        # Redirect or raise permission denied
         return redirect('posts:opportunity_applications', opportunity_id=opportunity_id)
-    # --- End Authorization Check ---
 
     applications = Application.objects.filter(
         opportunity=opportunity
@@ -613,67 +501,82 @@ def export_opportunity_applications_excel(request, opportunity_id):
         'student__contact_info'
     ).order_by('status', '-applied_at')
 
-    # Create Excel Workbook and Sheet
     workbook = openpyxl.Workbook()
     sheet = workbook.active
-    sheet.title = f"Applications_{opportunity.id}"
-    sheet.sheet_view.rightToLeft = True # Set sheet direction to RTL
+    # Make sheet title more descriptive
+    sheet.title = f"Applicants for {opportunity.title[:20]}" # Sheet titles have length limits
+    sheet.sheet_view.rightToLeft = True
 
-    # Define Headers
+    # --- Add Opportunity Title as a Header in the Sheet ---
+    # Merge cells for the title
+    sheet.merge_cells('A1:F1') # Merge across the width of your headers
+    title_cell = sheet['A1']
+    title_cell.value = f"قائمة المتقدمين لفرصة: {opportunity.title}"
+    title_cell.font = Font(bold=True, size=14, name='Arial') # Example styling
+    title_cell.alignment = openpyxl.styles.Alignment(horizontal='center', vertical='center')
+    sheet.row_dimensions[1].height = 20 # Adjust row height for the title
+
+    # Define Headers (starting from row 2 now)
     headers = [
         "اسم المتقدم", "البريد الإلكتروني", "رقم الهاتف",
         "تاريخ التقديم", "الحالة", "رسالة التقديم"
     ]
-    sheet.append(headers)
+    sheet.append(headers) # This will append to the next available row, which is row 2
 
-    # Style Header Row (Optional)
-    header_font = Font(bold=True)
-    for col_num, header in enumerate(headers, 1):
-        cell = sheet.cell(row=1, column=col_num)
+    # Style Header Row for applicant data (Row 2)
+    header_font = Font(bold=True, name='Arial') # Consistent font
+    for col_num, header_text in enumerate(headers, 1): # header_text instead of header
+        cell = sheet.cell(row=2, column=col_num) # Explicitly set to row 2
         cell.font = header_font
+        cell.alignment = openpyxl.styles.Alignment(horizontal='center')
 
-    # Populate Data
+
+    # Populate Data (starting from row 3)
+    current_row = 3 # Start data from row 3
     for app in applications:
-        # Safely get related data
         student_name = getattr(app.student.personal_info, 'full_name', None) or \
                        app.student.user.get_full_name() or \
                        app.student.user.username
         email = getattr(app.student.user, 'email', 'N/A')
         phone = getattr(getattr(app.student, 'contact_info', None), 'phone', 'N/A')
         applied_date = app.applied_at.strftime('%Y-%m-%d %H:%M') if app.applied_at else 'N/A'
-        status = app.get_status_display()
-        message = getattr(app, 'message', '')
+        status_display = app.get_status_display() # Renamed for clarity
+        message_text = getattr(app, 'message', '') # Renamed for clarity
 
-        sheet.append([
-            student_name, email, phone,
-            applied_date, status, message
-        ])
+        sheet.cell(row=current_row, column=1, value=student_name)
+        sheet.cell(row=current_row, column=2, value=email)
+        sheet.cell(row=current_row, column=3, value=phone)
+        sheet.cell(row=current_row, column=4, value=applied_date)
+        sheet.cell(row=current_row, column=5, value=status_display)
+        sheet.cell(row=current_row, column=6, value=message_text)
+        current_row += 1
+
 
     # Adjust Column Widths (Optional)
     for col_num in range(1, sheet.max_column + 1):
          column_letter = get_column_letter(col_num)
-         # Simple auto-fit simulation (adjust max length as needed)
          max_length = 0
-         column = list(sheet.columns)[col_num-1] # Get column object
-         for cell in column:
-             try:
-                 if len(str(cell.value)) > max_length:
-                     max_length = len(str(cell.value))
-             except:
-                 pass
-         adjusted_width = (max_length + 2) * 1.2 # Add padding and factor
+         # Iterate from row 2 (headers) downwards for calculating max_length
+         for row_idx in range(2, sheet.max_row + 1):
+             cell_value = sheet.cell(row=row_idx, column=col_num).value
+             if cell_value:
+                 cell_len = len(str(cell_value))
+                 if cell_len > max_length:
+                     max_length = cell_len
+         adjusted_width = (max_length + 4) # Add some padding
+         if adjusted_width > 50: # Optional: cap max width
+             adjusted_width = 50
          sheet.column_dimensions[column_letter].width = adjusted_width
 
 
-    # Create HTTP Response
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     )
     safe_company_name = "".join(c if c.isalnum() else "_" for c in opportunity.company.company_name)
-    filename = f'applicants_{safe_company_name}_{opportunity_id}.xlsx'
+    # Make filename more descriptive and include opportunity title if possible (sanitize it)
+    safe_opportunity_title = "".join(c if c.isalnum() else "_" for c in opportunity.title[:30]) # Truncate and sanitize
+    filename = f'متقدمون_{safe_opportunity_title}_{safe_company_name}_{opportunity_id}.xlsx'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-    # Save workbook to response
     workbook.save(response)
-
     return response
