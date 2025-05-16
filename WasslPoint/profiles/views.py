@@ -27,32 +27,32 @@ def get_target_profile(request, user_id=None):
         return user.student_profile
     return request.user.student_profile
 @login_required
+@login_required
 def profile_view(request:HttpRequest,user_id=None):
     if user_id:
         if not request.user.is_staff:
             messages.error(request, "عذراً، ليس لديك صلاحية للاطلاع على ملف مستخدم آخر.")
-
             return redirect("main:home_view")
         user = get_object_or_404(User, pk=user_id)
-        profile=user.student_profile
+        profile = user.student_profile
     else:
         try:
-            profile=request.user.student_profile
+            profile = request.user.student_profile
         except StudentProfile.DoesNotExist:
             messages.error(
                         request,
                         "عذراً، لا يوجد ملف شخصي مرتبط بحسابك بعد. الرجاء إعداد ملفك الشخصي أولاً."
                     )
             return redirect('main:home_view')
-    if request.method=='POST':
+    if request.method == 'POST':
         if 'picture' in request.FILES:
             try:
                 personal, _ = PersonalInformation.objects.get_or_create(profile=profile)
                 personal.picture = request.FILES['picture']
                 personal.save()
                 messages.success(request, "تمت إضافة الصورة الشخصية بنجاح.")
-            except Exception:
-                messages.error(request, "عذراً، حدث خطأ أثناء رفع الصورة. حاول مرة أخرى.")
+            except Exception as e:
+                messages.error(request, f"عذراً، حدث خطأ أثناء رفع الصورة: {e}")
 
             if user_id:
                 return redirect('profiles:profile_view_admin', user_id=user_id)
@@ -60,17 +60,35 @@ def profile_view(request:HttpRequest,user_id=None):
                 return redirect('profiles:profile_view')
         if 'personal-submit' in request.POST:
             try:
-                personal, _ = PersonalInformation.objects.get_or_create(profile=profile)
-                personal.full_name     = request.POST.get('name')
-                personal.date_of_birth = request.POST.get('date_of_birth') or None
-                personal.gender        = request.POST.get('gender')
-                nat_id = request.POST.get('nationality')
-                if nat_id:
-                    personal.nationality = Country.objects.get(pk=nat_id)
-                personal.save()
-                messages.success(request, "تم التعديل على المعلومات الشخصية بنجاح.")
-            except Exception:
-                messages.error(request, "عذراً، حدث خطأ أثناء تحديث المعلومات الشخصية. حاول مرة أخرى.")
+                with transaction.atomic(): # Start a transaction
+                    personal, _ = PersonalInformation.objects.get_or_create(profile=profile)
+                    personal.full_name     = request.POST.get('name')
+                    personal.date_of_birth = request.POST.get('date_of_birth') or None
+                    personal.gender        = request.POST.get('gender')
+                    nat_id = request.POST.get('nationality')
+                    if nat_id:
+                        personal.nationality = Country.objects.get(pk=nat_id)
+                    personal.save()
+
+                    # --- Save City (moved from contact-submit and corrected) ---
+                    contact, _ = ContactInformation.objects.get_or_create(profile=profile)
+                    city_id = request.POST.get('city')  # Get city_id from the request
+                    print(f"City ID from request: {city_id}") # Add this line
+                    if city_id:
+                        try:
+                            city = City.objects.get(pk=city_id)  # Assign City instance
+                            contact.city = city
+                            print(f"City object found: {city}") # Add this line
+                        except City.DoesNotExist:
+                            messages.error(request, f"عذراً، المدينة المختارة غير موجودة.")
+                            transaction.rollback()
+                            return redirect('profiles:profile_view')
+                    contact.save()
+                    print(f"Contact object after save: {contact.__dict__}") # Add this line
+                    messages.success(request, "تم التعديل على المعلومات الشخصية بنجاح.")
+            except Exception as e:
+                transaction.rollback()
+                messages.error(request, f"عذراً، حدث خطأ أثناء تحديث المعلومات الشخصية: {e}") # Include the error
 
             if user_id:
                 return redirect('profiles:profile_view_admin', user_id=user_id)
@@ -87,15 +105,27 @@ def profile_view(request:HttpRequest,user_id=None):
                     contact.city = City.objects.get(pk=city_id)
                 contact.save()
                 messages.success(request, "تم التعديل على بيانات الاتصال بنجاح.")
-            except Exception:
-                messages.error(request, "عذراً، حدث خطأ أثناء تحديث بيانات الاتصال. حاول مرة أخرى.")
+            except Exception as e:
+                messages.error(request, f"عذراً، حدث خطأ أثناء تحديث بيانات الاتصال: {e}")
             if user_id:
                 return redirect('profiles:profile_view_admin', user_id=user_id)
             else:
                 return redirect('profiles:profile_view')
-    countries = Country.objects.filter(status=True) 
-    majors = Major.objects.filter(status=True) 
-    cities = City.objects.filter(status=True) 
+    countries = Country.objects.filter(status=True)
+    # --- Ordering Countries with Saudi Arabia first ---
+    saudi_arabia = None
+    other_countries = []
+    for country in countries:
+        if country.arabic_name == 'السعودية': # Adjust the name based on your data
+            saudi_arabia = country
+        else:
+            other_countries.append(country)
+    # Sort other countries alphabetically by arabic_name
+    other_countries.sort(key=lambda x: x.arabic_name)
+    countries = [saudi_arabia] + other_countries if saudi_arabia else other_countries
+    # -------------------------------------------------
+    majors = Major.objects.filter(status=True)
+    cities = City.objects.filter(status=True).order_by('arabic_name') # Order Cities Alphabetically
     context = {
     'admin_view':bool(user_id),
     'profile':profile,
@@ -110,6 +140,7 @@ def profile_view(request:HttpRequest,user_id=None):
     'cities':cities,
 }
     return render(request,'profiles/profile.html',context)
+
 @login_required
 @require_POST
 def delate_exp(request:HttpRequest,exp_id,user_id=None):
