@@ -14,9 +14,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 load_dotenv()
-print(os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT"))
-print(os.getenv("STRIPE_SECRET_KEY"))
-
+print(os.getenv('t'))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 STRIPE_SECRET_KEY       = os.getenv("STRIPE_SECRET_KEY")
@@ -29,7 +27,7 @@ STRIPE_WEBHOOK_SECRET   = os.getenv("STRIPE_WEBHOOK_SECRET")
 SECRET_KEY = 'django-insecure-4j6766$xiradnp_i4$$egf4@iyvc^hz3wajwuq@75io^y_h@0w'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
