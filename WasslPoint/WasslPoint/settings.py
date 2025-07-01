@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 load_dotenv()
+print(os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT"))
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 STRIPE_SECRET_KEY       = os.getenv("STRIPE_SECRET_KEY")
@@ -183,7 +185,6 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-print(os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT"))
 endpoint = os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT").split("//")[1]
 MEDIA_URL = f'https://{CLOUDFLARE_R2_CONFIG_OPTIONS["bucket_name"]}.{endpoint}/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
