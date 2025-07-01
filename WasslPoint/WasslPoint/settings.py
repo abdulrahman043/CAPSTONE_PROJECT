@@ -27,7 +27,7 @@ STRIPE_WEBHOOK_SECRET   = os.getenv("STRIPE_WEBHOOK_SECRET")
 SECRET_KEY = 'django-insecure-4j6766$xiradnp_i4$$egf4@iyvc^hz3wajwuq@75io^y_h@0w'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
