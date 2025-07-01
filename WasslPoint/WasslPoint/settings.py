@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 load_dotenv()
-print(os.getenv('t'))
+print("PGHOST =", os.getenv("PGHOST"))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 STRIPE_SECRET_KEY       = os.getenv("STRIPE_SECRET_KEY")
