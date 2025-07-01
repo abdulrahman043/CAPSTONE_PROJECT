@@ -183,10 +183,7 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-endpoint_url = os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT")
-if not endpoint_url:
-    raise ValueError("CLOUDFLARE_R2_BUCKET_ENDPOINT is not set in environment variables")
-endpoint = endpoint_url.split("//")[1]
+endpoint = os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT").split("//")[1]
 MEDIA_URL = f'https://{CLOUDFLARE_R2_CONFIG_OPTIONS["bucket_name"]}.{endpoint}/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
