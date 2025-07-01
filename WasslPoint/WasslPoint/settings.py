@@ -172,6 +172,7 @@ try:
 except ImportError:
     import os
     config = os.environ.get
+print(config("CLOUDFLARE_R2_BUCKET_ENDPOINT"))
 
 CLOUDFLARE_R2_CONFIG_OPTIONS = {
     "bucket_name": config("CLOUDFLARE_R2_BUCKET"),
