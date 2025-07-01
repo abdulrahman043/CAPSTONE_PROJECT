@@ -166,14 +166,20 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_collected")
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+try:
+    from decouple import config
+
+except ImportError:
+    import os
+    config = os.environ.get
+
 CLOUDFLARE_R2_CONFIG_OPTIONS = {
-    "bucket_name": os.getenv("CLOUDFLARE_R2_BUCKET"),
+    "bucket_name": config("CLOUDFLARE_R2_BUCKET"),
     "default_acl": "public-read",  # or "private"
     "signature_version": "s3v4",
-    "endpoint_url": os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT"),
-    "access_key": os.getenv("CLOUDFLARE_R2_ACCESS_KEY"),
-    "secret_key": os.getenv("CLOUDFLARE_R2_SECRET_KEY"),
+    "endpoint_url": config("CLOUDFLARE_R2_BUCKET_ENDPOINT"),
+    "access_key": config("CLOUDFLARE_R2_ACCESS_KEY"),
+    "secret_key": config("CLOUDFLARE_R2_SECRET_KEY"),
 }
 STORAGES = {
     "default": {
@@ -183,11 +189,9 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-endpoint = os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT").split("//")[1]
+endpoint = config("CLOUDFLARE_R2_BUCKET_ENDPOINT").split("//")[1]
 MEDIA_URL = f'https://{CLOUDFLARE_R2_CONFIG_OPTIONS["bucket_name"]}.{endpoint}/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
