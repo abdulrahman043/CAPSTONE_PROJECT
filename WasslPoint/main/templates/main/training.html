@@ -388,7 +388,7 @@
           </div>
       </form>
 
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mt-4" dir="ltr">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mt-4" >
       {% for op in opportunities %}
       <div class="col d-flex align-items-stretch">
           <a class="text-decoration-none w-100" href="{% url 'posts:opportunity_detail' op.id %}">
@@ -412,9 +412,13 @@
           </a>
       </div>
       {% empty %}
-         <div class="col-12">
-             <p class="text-center lead mt-4">لا توجد تدريبات تطابق معايير البحث أو الفلترة الحالية.</p>
-         </div>
+    <div class="d-flex justify-content-center align-items-center" style=" width: 100%;">
+  <div class="text-center empty-state">
+       <span class="material-symbols-outlined fs-1 text-muted">search_off</span>
+      <p class="lead mt-3">لا توجد تدريبات تطابق معايير البحث الحالية.</p>
+      <p class="text-muted small">حاول تعديل الفلتر أو البحث، وتأكد من وجود فرص تدريب مسجلة ومفعّلة من قبل الشركات.</p>
+  </div>
+</div>
       {% endfor %}
       </div>
 

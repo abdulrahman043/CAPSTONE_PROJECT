@@ -297,7 +297,6 @@
       <h1 class="hero-title mb-4">اكتشف الفرص الآن</h1>
       <form action="{% url 'main:company_view' %}" method="GET" class="search-form">
         <input type="text" name="company_name_search" value="{{ company_name_search|default:'' }}" placeholder="ابحث بالاسم، الشركة..." class="search-input">
-        <button type="submit" class="search-button">بحث</button>
       </form>
     </div>
 </section>
