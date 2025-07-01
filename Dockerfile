@@ -25,16 +25,18 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip \
  && pip install -r /app/requirements.txt
 
-# 6. Copy project files
+# 6. Copy your code (brings in WasslPoint/ with manage.py)
 COPY . /app
 
-# 7. Set working directory for manage.py
+# 7. Switch into the directory holding manage.py
 WORKDIR /app/WasslPoint
 
-# 8. Expose port
+# 8. (Optional) Pre-collect static files
+RUN python manage.py collectstatic --noinput
+
+# 9. Expose port
 EXPOSE 8000
 
-# 9. Run migrations + collectstatic + gunicorn
+# 10. Migrate & start Gunicorn
 CMD python manage.py migrate --noinput \
- && python manage.py collectstatic --noinput \
  && exec gunicorn WasslPoint.wsgi:application --bind 0.0.0.0:8000 --workers 3
