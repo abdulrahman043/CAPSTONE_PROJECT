@@ -98,7 +98,7 @@ if DEBUG:
     DATABASES = {
         'default': dj_database_url.config(
             conn_max_age=600,
-            default='1'
+            default='postgresql://postgres:TVVwQYTyDXUuRhHwncafamgJLAAJMddY@hopper.proxy.rlwy.net:47306/railway'
         )
     }
 else:
@@ -177,14 +177,7 @@ CLOUDFLARE_R2_CONFIG_OPTIONS = {
     "access_key": os.getenv("CLOUDFLARE_R2_ACCESS_KEY"),
     "secret_key": os.getenv("CLOUDFLARE_R2_SECRET_KEY"),
 }
-STORAGES = {
-    "default": {
- "BACKEND": "storages.backends.s3.S3Storage",
-        "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS,    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
+
 endpoint = os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT").split("//")[1]
 MEDIA_URL = f'https://{CLOUDFLARE_R2_CONFIG_OPTIONS["bucket_name"]}.{endpoint}/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
