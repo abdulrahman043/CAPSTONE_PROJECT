@@ -167,7 +167,24 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_collected")
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-MEDIA_URL = "/media/"
+CLOUDFLARE_R2_CONFIG_OPTIONS = {
+    "bucket_name": os.getenv("CLOUDFLARE_R2_BUCKET"),
+    "default_acl": "public-read",  # or "private"
+    "signature_version": "s3v4",
+    "endpoint_url": os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT"),
+    "access_key": os.getenv("CLOUDFLARE_R2_ACCESS_KEY"),
+    "secret_key": os.getenv("CLOUDFLARE_R2_SECRET_KEY"),
+}
+STORAGES = {
+    "default": {
+ "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS,    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+endpoint = os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT").split("//")[1]
+MEDIA_URL = f'https://{CLOUDFLARE_R2_CONFIG_OPTIONS["bucket_name"]}.{endpoint}/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
