@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-print(os.getenv('t'))
+load_dotenv()
+print("PGHOST =", os.getenv("PGHOST"))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 STRIPE_SECRET_KEY       = os.getenv("STRIPE_SECRET_KEY")
@@ -166,23 +167,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_collected")
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-try:
-    from decouple import config
-
-except ImportError:
-    import os
-    config = os.environ.get
-print(config("CLOUDFLARE_R2_BUCKET_ENDPOINT"))
-print(config("CLOUDFLARE_R2_BUCKET"))
-print(config("CLOUDFLARE_R2_ACCESS_KEY"))
-
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CLOUDFLARE_R2_CONFIG_OPTIONS = {
-    "bucket_name": config("CLOUDFLARE_R2_BUCKET"),
+    "bucket_name": os.getenv("CLOUDFLARE_R2_BUCKET"),
     "default_acl": "public-read",  # or "private"
     "signature_version": "s3v4",
-    "endpoint_url": config("CLOUDFLARE_R2_BUCKET_ENDPOINT"),
-    "access_key": config("CLOUDFLARE_R2_ACCESS_KEY"),
-    "secret_key": config("CLOUDFLARE_R2_SECRET_KEY"),
+    "endpoint_url": os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT"),
+    "access_key": os.getenv("CLOUDFLARE_R2_ACCESS_KEY"),
+    "secret_key": os.getenv("CLOUDFLARE_R2_SECRET_KEY"),
 }
 STORAGES = {
     "default": {
@@ -192,9 +184,11 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-endpoint = config("CLOUDFLARE_R2_BUCKET_ENDPOINT").split("//")[1]
+endpoint = os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT").split("//")[1]
 MEDIA_URL = f'https://{CLOUDFLARE_R2_CONFIG_OPTIONS["bucket_name"]}.{endpoint}/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
