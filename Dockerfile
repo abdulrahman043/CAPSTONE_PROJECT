@@ -1,11 +1,11 @@
-# 1. Base Python image
+# 1. Base image
 FROM python:3.11-slim
 
-# 2. Environment settings
+# 2. Env settings
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
-# 3. Install OS dependencies (WeasyPrint needs these)
+# 3. Install WeasyPrint dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libcairo2 \
     libpango-1.0-0 \
@@ -23,16 +23,19 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# 6. Copy entire project
+# 6. Copy full project into /app
 COPY . .
 
-# 7. Ensure static folder exists to avoid warnings
-RUN mkdir -p /app/static
+# 7. Set working directory to where manage.py actually is
+WORKDIR /app/WasslPoint
 
-# 8. Expose port for Gunicorn
+# 8. Create static folder (optional)
+RUN mkdir -p /app/WasslPoint/static
+
+# 9. Expose port
 EXPOSE 8000
 
-# 9. Runtime command
+# 10. Run migrate + collectstatic + gunicorn
 CMD bash -c "\
     python manage.py migrate --noinput && \
     python manage.py collectstatic --noinput && \
