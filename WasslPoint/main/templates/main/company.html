@@ -392,26 +392,13 @@
             </form>
 
             {# Active Filters Text #}
-            {% if selected_industry or selected_city or company_name_search %}
-            <div class="active-filters-text">
-                <span>الفلاتر المطبقة:</span>
-                {% if company_name_search %}
-                <span class="fw-bold">بحث: "{{ company_name_search }}"</span>
-                {% endif %}
-                {% if selected_industry %}
-                <span class="fw-bold">المجال: {{ selected_industry.arabic_name }}</span>
-                {% endif %}
-                {% if selected_city %}
-                <span class="fw-bold">المدينة: {{ selected_city.arabic_name }}</span>
-                {% endif %}
-            </div>
-            {% endif %}
+           
         </div>
 
         {# --- Conditionally Display Grid or Empty Message --- #}
         {% if page_obj.object_list %}
             {# Company List Grid #}
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" dir="ltr">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 {% for profile in page_obj.object_list %}
                     <div class="col d-flex align-items-stretch">
                         <div class="card company-card shadow-sm h-100 w-100">

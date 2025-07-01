@@ -64,7 +64,8 @@ def training_view(request):
     selected_major_ids = request.GET.getlist('majors_needed') # Get list even if empty
     search_query = request.GET.get('q', '').strip()
     page_number = request.GET.get('page')
-
+    selected_city = City.objects.filter(id=selected_city_id).first() if selected_city_id else None
+    selected_industry = Industry.objects.filter(id=selected_industry_id).first() if selected_industry_id else None
     # Convert submitted major IDs to integers for filtering, handle potential errors
     major_ids_int = []
     if majors_filter_applied:
@@ -151,6 +152,8 @@ def training_view(request):
     context = {
         'opportunities': page_obj.object_list, # Renamed to match template loop var
         'page_obj': page_obj,
+        'selected_city': selected_city,
+        'selected_industry': selected_industry,
         'all_cities': all_cities,
         'all_industries': all_industries,
         'all_majors': all_majors,
@@ -205,6 +208,8 @@ def company_view(request):
     selected_industry_id = request.GET.get('industry')
     selected_city_id = request.GET.get('city')
     company_name_search = request.GET.get('company_name_search', '').strip()
+    selected_city = City.objects.filter(id=selected_city_id).first() if selected_city_id else None
+    selected_industry = Industry.objects.filter(id=selected_industry_id).first() if selected_industry_id else None
 
     # Apply Industry Filter
     if selected_industry_id:
@@ -244,6 +249,9 @@ def company_view(request):
     context = {
         'page_obj': page_obj,
         'industries': industries,
+        'selected_city': selected_city,
+        'selected_industry': selected_industry,
+
         'cities': cities,
         'selected_industry_id': selected_industry_id,
         'selected_city_id': selected_city_id,

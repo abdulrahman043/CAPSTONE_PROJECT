@@ -19,7 +19,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STRIPE_SECRET_KEY       = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY  = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_WEBHOOK_SECRET   = os.getenv("STRIPE_WEBHOOK_SECRET")
-5+3
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
