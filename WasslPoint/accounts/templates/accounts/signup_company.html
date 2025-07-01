@@ -1,9 +1,148 @@
 {% extends 'main/base.html' %}
 {% load static %}
-{% block title %} تسجيل الشركات  {% endblock %}
+{% block title %} تسجيل الشركات {% endblock %}
 
 {% block style %}
+  {# Link to your original signup.css file (DO NOT modify this file) #}
   <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+  {# Link to Choices.js base CSS (keep this external) #}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+
+  {# --- Custom Styles for Choices.js Fields (Both City and Industry) --- #}
+  {# These styles override default Choices.js to match your form controls #}
+  {# They are placed here because signup.css cannot be modified #}
+  <style>
+      /* Custom Styles for Choices.js containers */
+      .choices {
+          margin-bottom: 0; /* Remove default bottom margin if present */
+      }
+
+      /* Styles for the main interactive area within Choices.js */
+      /* Apply common form control look and padding for left icon */
+      .form-group:has(#city) .choices__inner,
+      .form-group:has(#industry) .choices__inner {
+          background-color: #fff; /* Match other fields background */
+          border-radius: 10px; /* Match other fields' border-radius */
+          /* Match .form-control-contact padding: 12px top/bottom, 40px left (for icon), 20px right */
+          padding: 12px 20px 12px 40px;
+          font-size: 1rem; /* Match other fields' font size */
+          min-height: calc(1.5em + 0.75rem + 2px); /* Standard height */
+          /* Border color is set specifically below */
+      }
+
+      /* Styles for the text input area within Choices.js */
+       .form-group:has(#city) .choices__input,
+       .form-group:has(#industry) .choices__input {
+           font-size: 1rem; /* Match other fields' font size */
+           margin-bottom: 0; /* Remove default margin */
+           background-color: transparent; /* Ensure transparency */
+           text-align: right; /* Right align for RTL */
+           direction: rtl; /* Set RTL direction */
+           font-weight: bold; /* Make text bold */
+           padding: 0; /* Remove Choices.js default internal padding */
+           /* Color is set specifically below */
+       }
+
+        /* Styles for placeholder text */
+       .form-group:has(#city) .choices__input::placeholder,
+       .form-group:has(#industry) .choices__input::placeholder {
+           opacity: 1; /* Ensure placeholder is visible */
+           text-align: right;
+           font-weight: bold;
+           /* Color is set specifically below */
+       }
+       /* Vendor prefixes for placeholder styling */
+        .form-group:has(#city) .choices__input::-webkit-input-placeholder, .form-group:has(#industry) .choices__input::-webkit-input-placeholder { text-align: right; font-weight: bold; }
+        .form-group:has(#city) .choices__input::-moz-placeholder, .form-group:has(#industry) .choices__input::-moz-placeholder { opacity: 1; text-align: right; font-weight: bold; }
+        .form-group:has(#city) .choices__input:-ms-input-placeholder, .form-group:has(#industry) .choices__input:-ms-input-placeholder { text-align: right; font-weight: bold; }
+
+
+      /* Styles for dropdown list items */
+      .choices__list--dropdown .choices__item {
+          padding: 0.5rem 0.75rem; /* Standard padding */
+          text-align: right; /* Right align */
+          cursor: pointer;
+          font-weight: bold; /* Make text bold */
+          /* Color is set specifically below */
+      }
+
+      /* Styles for the selected item displayed in the input area */
+      .choices__list--single .choices__item {
+           text-align: right; /* Right align */
+           direction: rtl; /* Set RTL direction */
+           font-weight: bold; /* Make text bold */
+           padding: 0; /* Remove internal padding */
+           /* Color is set specifically below */
+      }
+
+
+       /* --- Specific Colors for City Field (#13A7B1) --- */
+      .form-group:has(#city) .choices__inner { border-color: #13A7B1; }
+      .form-group:has(#city) .choices__input,
+      .form-group:has(#city) .choices__input::placeholder,
+      .form-group:has(#city) .choices__list--dropdown .choices__item,
+      .form-group:has(#city) .choices__list--single .choices__item {
+          color: #13A7B1;
+      }
+       /* Vendor prefixes for placeholder color */
+       .form-group:has(#city) .choices__input::-webkit-input-placeholder { color: #13A7B1; }
+       .form-group:has(#city) .choices__input::-moz-placeholder { color: #13A7B1; opacity: 1; }
+       .form-group:has(#city) .choices__input:-ms-input-placeholder { color: #13A7B1; }
+
+      /* --- Specific Colors for Industry Field (#FF7C34) --- */
+       .form-group:has(#industry) .choices__inner { border-color: #FF7C34; }
+       .form-group:has(#industry) .choices__input,
+       .form-group:has(#industry) .choices__input::placeholder,
+       .form-group:has(#industry) .choices__list--dropdown .choices__item,
+       .form-group:has(#industry) .choices__list--single .choices__item {
+           color: #FF7C34;
+       }
+        /* Vendor prefixes for placeholder color */
+        .form-group:has(#industry) .choices__input::-webkit-input-placeholder { color: #FF7C34; }
+        .form-group:has(#industry) .choices__input::-moz-placeholder { color: #FF7C34; opacity: 1; }
+        .form-group:has(#industry) .choices__input:-ms-input-placeholder { color: #FF7C34; }
+
+
+       /* Highlight color for dropdown items (can be common) */
+       .choices__list--dropdown .choices__item--selectable.is-highlighted {
+           background-color: #f0f0f0; /* Highlight color */
+           /* Text color is inherited from the specific field color rules above */
+       }
+
+        /* Styles for the dropdown list container */
+        .choices__list--dropdown {
+           z-index: 1050; /* Ensure it appears above most elements */
+           border-color: #ced4da; /* Standard dropdown border color */
+           border-radius: 0.25rem; /* Match standard dropdown radius */
+           background-color: #fff; /* White background */
+           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow */
+           max-height: 200px; /* Limit height and enable scroll */
+           overflow-y: auto;
+       }
+
+       /* Style for no results message in dropdown */
+       .choices__list--dropdown .choices__item.is-disabled {
+           opacity: 1;
+           text-align: center;
+           cursor: default;
+           background-color: transparent;
+           color: #6c757d; /* Standard muted text color */
+           font-weight: normal;
+       }
+
+      /* Ensure form-group has relative positioning for absolute dropdown positioning */
+       .form-group {
+           position: relative;
+       }
+
+       /* Icon positioning is handled by the original signup.css .input-icon { left: 10px; ... } */
+       /* Icon color is handled by the :has(.orange-border), :has(.blue-border), and default rules in signup.css */
+       /* City field icon should be orange (#FF7C34) by default */
+       /* Industry field icon should be blue/teal (#009999) by :has(.orange-border) rule */
+
+  </style>
+  {# --- End Custom Styles for Choices.js Fields --- #}
+
 {% endblock %}
 
 {% block content %}
@@ -21,8 +160,8 @@
       <div class="form-group">
         <div class="input-icon">
           <i class="fi fi-rr-pen-field"></i>
-                </div>
-          <input
+        </div>
+        <input
           type="text"
           name="commercial_register_number"
           class="form-control-contact orange-border"
@@ -33,15 +172,18 @@
       </div>
 
       <div class="form-group file-group">
-        <div class="input-icon"><i class="fi fi-rr-file-pdf"></i></div>
-      
+        <div class="input-icon">
+            <i class="fi fi-rr-file-pdf"></i>
+        </div>
+
         <label
           for="commercial_register_file"
           class="form-control-contact blue-border file-placeholder text-start"
+          data-default="ملف السجل التجاري"
         >
           ملف السجل التجاري
         </label>
-      
+
         <input
           type="file"
           id="commercial_register_file"
@@ -54,7 +196,9 @@
       </div>
 
       <div class="form-group">
-        <div class="input-icon"><i class="fi fi-rr-user"></i></div>
+        <div class="input-icon">
+            <i class="fi fi-rr-user"></i>
+        </div>
         <input
           type="text"
           name="company_name"
@@ -64,12 +208,11 @@
           value="{{company_name}}"
         >
       </div>
-      <div class="form-group file-group">
-      
-   
 
       <div class="form-group">
-        <div class="input-icon"><i class="fi fi-rr-envelope"></i></div>
+        <div class="input-icon">
+            <i class="fi fi-rr-envelope"></i>
+        </div>
         <input
           type="email"
           name="email"
@@ -82,7 +225,9 @@
       </div>
 
       <div class="form-group">
-        <div class="input-icon"><i class="fi fi-rr-lock"></i></div>
+        <div class="input-icon">
+            <i class="fi fi-rr-lock"></i>
+        </div>
         <input
           type="password"
           name="password"
@@ -93,7 +238,9 @@
       </div>
 
       <div class="form-group">
-        <div class="input-icon"><i class="fi fi-rr-lock"></i></div>
+        <div class="input-icon">
+            <i class="fi fi-rr-lock"></i>
+        </div>
         <input
           type="password"
           name="password2"
@@ -103,34 +250,55 @@
         >
       </div>
 
-      <div class="form-group">
-        <div class="input-icon"><i class="fi fi-rr-angle-down"></i></div>
-        
+      {# City Select field - Choices.js will enhance this #}
+      {# Note: city-field-group class was added earlier for specific icon positioning, but original CSS should handle it now #}
+      <div class="form-group city-field-group"> {# Keeping this class just in case your signup.css uses it #}
+        {# Keep the input icon div for layout consistency - positioning is handled by signup.css #}
+        <div class="input-icon">
+            <i class="fi fi-rr-angle-down"></i>
+        </div>
+
+        {# The standard select element that Choices.js will transform #}
         <select
           name="city"
-          class="form-control-contact tail-border"
+          class="form-select form-control-contact tail-border" {# Add form-select class, keep original classes #}
+          id="city" {# Add a unique ID for JavaScript initialization #}
           required
         >
           <option value="" disabled selected> المدينة </option>
           {% for city in cites %}
-            <option value="{{ city.id }}">{{ city.arabic_name }}</option>
+            {# Check if the city ID matches the submitted POST data if the form reloaded due to errors #}
+            <option value="{{ city.id }}" {% if city.id|stringformat:"s" == request.POST.city|stringformat:"s" %}selected{% endif %}>
+                {{ city.arabic_name }}
+            </option>
           {% endfor %}
         </select>
+         {# Choices.js will insert its structure after this select element #}
       </div>
+      {# End City field #}
+
+
+      {# Industry Select field - Add searchable functionality #}
       <div class="form-group">
         <div class="input-icon"><i class="fi fi-rr-angle-down"></i></div>
         <select
           name="industry"
-          class="form-control-contact orange-border"
+          class="form-select form-control-contact orange-border" {# Added form-select class #}
+          id="industry" {# Added ID for JavaScript initialization #}
           required
         >
           <option value="" disabled selected>مجال عمل الشركة</option>
           {% for ind in industries %}
-            <option value="{{ ind.id }}">{{ ind.arabic_name }}</option>
+            {# Check if the industry ID matches the submitted POST data if the form reloaded due to errors #}
+             <option value="{{ ind.id }}" {% if ind.id|stringformat:"s" == request.POST.industry|stringformat:"s" %}selected{% endif %}>
+                 {{ ind.arabic_name }}
+             </option>
           {% endfor %}
         </select>
       </div>
-      
+      {# End Industry field #}
+
+
       <div class="form-check form-check-inline justify-content-center mb-4">
         <input
           class="form-check-input"
@@ -148,7 +316,7 @@
        الشروط والأحكام
     </a>
       </div>
-      
+
       <div class="extra-links text-center mb-4">
         <a href="{% url 'accounts:login_view' %}">
            سجّل دخولك هنا
@@ -157,14 +325,12 @@
         <a href="{%url 'accounts:signup_view'%}">تسجيل الطلاب</a>
 
       </div>
-      <!-- زر التسجيل -->
       <button type="submit" class="send-btn w-100">إنشاء حساب</button>
 
-     
+
     </form>
   </div>
-  <!-- نافذة الشروط والأحكام الخاصة بالشركات -->
-<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsLabel" aria-hidden="true">
+  <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
     <div class="modal-content" dir="rtl">
       <div class="modal-header">
@@ -175,7 +341,7 @@
       <div class="modal-body" style="line-height:1.9">
         <ol class="pe-2 mb-0">
           <li>
-            تُقرّ الشركة بأن جميع البيانات المقدَّمة في نموذج التسجيل صحيحة وحديثة،
+            تُقرّ الشركة بأن جميع البيانات المقدَّمة في نموذج التسجيل صحيحة وحديثة،
             وتتعهد بتحديثها فور حدوث أي تغيير جوهري.
           </li>
 
@@ -211,7 +377,8 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
-        <button         style="background-color:#FF7C34; border-color:#FF7C34; color:#fff;"
+        <button
+        style="background-color:#FF7C34; border-color:#FF7C34; color:#fff;"
         type="button" class="btn btn-primary" data-bs-dismiss="modal">أوافق</button>
       </div>
     </div>
@@ -219,15 +386,12 @@
 </div>
 
 </section>
+
+{# Include Choices.js JavaScript library #}
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 <script>
-  function updateFileLabel(input) {
-    const lbl = document.querySelector('.file-placeholder');
-    if (input.files && input.files.length) {
-      lbl.textContent = input.files[0].name;
-    } else {
-      lbl.textContent = 'ملف السجل التجاري';
-    }
-  }
+  // Function to update file label (keep this)
   function updateFileLabel(input) {
     const lbl = document.querySelector(`label[for="${input.id}"]`);
     if (!lbl) return;
@@ -235,8 +399,58 @@
     if (input.files && input.files.length > 0) {
       lbl.textContent = input.files[0].name;
     } else {
-      lbl.textContent = lbl.dataset.default;
+      lbl.textContent = lbl.dataset.default || 'Select File';
     }
   }
-  </script>
+   document.querySelector('label[for="commercial_register_file"]').dataset.default = 'ملف السجل التجاري';
+
+
+  // Initialize Choices.js for the select fields
+  document.addEventListener('DOMContentLoaded', function () {
+    // Initialize City select field
+    const citySelectElement = document.getElementById('city');
+    if (citySelectElement) {
+        const choicesCity = new Choices(citySelectElement, {
+            searchEnabled: true,
+            itemSelectText: 'اضغط للاختيار',
+            placeholderValue: 'ابحث عن المدينة',
+            shouldSort: true,
+            rtl: true,
+            allowHTML: false,
+            noResultsText: 'لا يوجد نتائج مطابقة',
+            itemSelectText: 'اختر',
+        });
+    }
+
+    // Initialize Industry select field
+    const industrySelectElement = document.getElementById('industry');
+    if (industrySelectElement) {
+        const choicesIndustry = new Choices(industrySelectElement, {
+            searchEnabled: true,
+            itemSelectText: 'اضغط للاختيار',
+            placeholderValue: 'ابحث عن مجال العمل',
+            shouldSort: true,
+            rtl: true,
+            allowHTML: false,
+            noResultsText: 'لا يوجد نتائج مطابقة',
+            itemSelectText: 'اختر',
+        });
+    }
+
+
+    // Keep your existing form validation script if needed
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+  });
+</script>
 {% endblock %}

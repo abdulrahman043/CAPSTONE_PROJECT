@@ -4,7 +4,7 @@
     background-color: #f8f9fa;
     min-height: 100vh;
   }
-  
+
   .signup-title {
     font-size: 2.5rem;
     color: #009999;
@@ -27,18 +27,18 @@
   .signup-title span {
     font-size: 1.2rem;
   }
-  
+
   .contact-form-container {
     width: 90%;
     max-width: 600px;
     margin: auto;
   }
-  
+
   .form-group {
     position: relative;
     margin-bottom: 20px;
   }
-  
+
   .input-icon {
     position: absolute;
     top: 50%;
@@ -47,7 +47,7 @@
     color: #FF7C34;
     font-size: 1.3rem;
   }
-  
+
   .form-control-contact {
     width: 100%;
     padding: 12px 20px 12px 40px;
@@ -58,22 +58,22 @@
     color: #009999;
     outline: none;
   }
-  
+
   .form-control-contact::placeholder {
     color: #009999;
     opacity: 0.8;
     font-weight: bold;
   }
-  
+
   /* لون الحدود حسب الحقل */
   .orange-border {
     border-color: #FF7C34;
   }
-  
+
   .blue-border {
     border-color: #009999;
   }
-  
+
   /* زر الإرسال/التسجيل */
   .send-btn {
     background: transparent;
@@ -86,13 +86,13 @@
     transition: all 0.3s ease;
     cursor: pointer;
   }
-  
+
   .send-btn:hover {
     background: #FF7C34;
     color: white;
     border-color: #FF7C34;
   }
-  
+
   /* تنسيق الشروط والأحكام */
   .form-check {
     display: flex;
@@ -101,7 +101,7 @@
     font-size: 1.1rem;
     color: #009999;
   }
-  
+
   .form-check-input {
     width: 1.2rem;
     height: 1.2rem;
@@ -109,37 +109,37 @@
     margin-right: 0.3rem;
     border: 2px solid #FF7C34;
   }
-  
+
   .form-check-input:checked {
     background-color: #FF7C34;
     border-color: #FF7C34;
   }
 .extra-links a {
-    color: #009999;           
+    color: #009999;
     font-weight: bold;
     text-decoration: none;
     transition: color 0.2s;
     font-size: 0.95rem;
   }
   .extra-links a:hover {
-    color: #FF7C34;           
+    color: #FF7C34;
   }
   .extra-links span {
     color: #ccc;
     font-weight: normal;
   }
   select.form-control-contact {
-    appearance: none;           
-    -webkit-appearance: none;   
-    -moz-appearance: none;      
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
   }
   select.form-control-contact::-ms-expand {
-    display: none;              
+    display: none;
   }
 .file-placeholder {
     display: block;
     width: 100%;
-    padding: 12px 20px 12px 40px; 
+    padding: 12px 20px 12px 40px;
     font-size: 1rem;
     border: 2px solid #009999;
     border-radius: 10px;
@@ -148,23 +148,23 @@
     cursor: pointer;
     user-select: none;
   }
-  
+
   .file-placeholder:hover {
     background: rgba(0, 153, 153, 0.05);
   }
-  
+
   .file-group .input-icon {
     left: 10px;
   }
 .form-control-contact.orange-border {
-    color: #FF7C34;            
+    color: #FF7C34;
   }
   .form-control-contact.orange-border::placeholder {
-    color: #FF7C34;           
+    color: #FF7C34;
     opacity: 0.8;
     font-weight: bold;
   }
-  
+
   .form-control-contact.blue-border {
     color: #009999;
   }
@@ -172,19 +172,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;               
-    font-size: clamp(1.5rem, 5vw, 2rem); 
-    white-space: nowrap;       
+    gap: 0.5rem;
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    white-space: nowrap;
     margin: 2rem 0;
   }
-  
+
   .contact-title .divider {
-    flex: 1;                  
+    flex: 1;
     height: 1px;
     background-color: #FF7C34;
   }
-  
-  
+
+
   @media (max-width: 576px) {
     .contact-title {
       gap: 0.25rem;
@@ -198,11 +198,11 @@
     opacity: 0.8;
   }
   .form-group:has(.form-control-contact.orange-border) .input-icon i {
-    color: #009999; 
+    color: #009999;
   }
-  
+
   .form-group:has(.form-control-contact.blue-border) .input-icon i {
-    color: #FF7C34;  
+    color: #FF7C34;
   }
   /* 1) Bold all placeholders in inputs & textareas */
 .form-control-contact::placeholder {
@@ -228,3 +228,5 @@ select.form-control-contact {
 .file-placeholder {
   font-weight: bold;
 }
+
+

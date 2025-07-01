@@ -193,185 +193,172 @@ def verify_signup_otp(request):
     
 
 def signup_company_detail_view(request: HttpRequest):
-    if  request.user.is_authenticated:
+    if request.user.is_authenticated:
         return redirect('main:home_view')
+
     data = request.session.get('pending_signup')
     if not data or data.get('type') != 'company':
         return redirect('accounts:signup_company_email')
-    industries = Industry.objects.filter(status=True)
-    cities = City.objects.filter(status=True) 
 
-    email                     = data['email']
+    industries = Industry.objects.filter(status=True)
+    # --- START Modification for Cities Data ---
+    # Fetch cities and structure them as a list of dictionaries
+    cities_list = list(City.objects.filter(status=True).values('id', 'arabic_name'))
+    # --- END Modification for Cities Data ---
+
+    email = data['email'] # Email is already validated from the previous step
 
     if request.method == 'POST':
+        password = request.POST.get('password', '')
+        password2 = request.POST.get('password2', '')
+        company_name = request.POST.get('company_name', '').strip()
+        commercial_register_number = request.POST.get('commercial_register_number', '').strip()
+        reg_file = request.FILES.get('commercial_register_file')
+        industry_id = request.POST.get('industry')
+        # city_id is now correctly received from the hidden input with name="city"
+        city_id = request.POST.get('city')
 
-        password                  = request.POST.get('password', '')
-        password2                 = request.POST.get('password2', '')
-        company_name              = request.POST.get('company_name', '').strip()
-        commercial_register_number= request.POST.get('commercial_register_number', '').strip()
-        reg_file                  = request.FILES.get('commercial_register_file')
-        industry_id               = request.POST.get('industry')
-        city_id               = request.POST.get('city')
-        print(request.POST)
+        print(request.POST) # Good for debugging submitted data
+
         missing = []
-        if not email:      missing.append('البريد الإلكتروني')
+        # The email is from session, so it's not checked here as a missing POST field
         if not password:   missing.append('كلمة السر')
         if not password2:  missing.append('تأكيد كلمة السر')
-        if not company_name:             missing.append('اسم الشركة')
+        if not company_name: missing.append('اسم الشركة')
         if not commercial_register_number: missing.append('رقم السجل التجاري')
         if not reg_file:   missing.append('ملف السجل التجاري')
-        if not industry_id:missing.append('مجال العمل')
-        if not city_id:missing.append(' المدينة')
+        if not industry_id: missing.append('مجال العمل')
+        if not city_id: missing.append(' المدينة') # Check if the city ID from hidden input is present
+
         if missing:
             messages.error(request, "هذه الحقول مطلوبة: " + ", ".join(missing))
             return render(request, 'accounts/signup_company.html', {
                 'industries': industries,
-                'cites':cities,
-                'email':email,
-                'company_name':company_name,
-                'commercial_register_number':commercial_register_number,
-
-
-
-
+                'cites': cities_list, # Pass the formatted list
+                'email': email,
+                'company_name': company_name,
+                'commercial_register_number': commercial_register_number,
             })
 
         if password != password2:
             messages.error(request, "كلمتا السر غير متطابقتين.")
             return render(request, 'accounts/signup_company.html', {
-                 'industries': industries,
-                'email':email,
-                                'cites':cities,
-
-                'company_name':company_name,
-                'commercial_register_number':commercial_register_number,
+                'industries': industries,
+                'email': email,
+                'cites': cities_list, # Pass the formatted list
+                'company_name': company_name,
+                'commercial_register_number': commercial_register_number,
             })
 
+        # Using username=email for unique identification as per your code
         if User.objects.filter(username=email).exists():
             messages.error(request, "هذا البريد مسجل مسبقًا.")
             return render(request, 'accounts/signup_company.html', {
-                 'industries': industries,
-                'email':email,
-                                'cites':cities,
-
-                'company_name':company_name,
-                'commercial_register_number':commercial_register_number,
-
+                'industries': industries,
+                'email': email,
+                'cites': cities_list, # Pass the formatted list
+                'company_name': company_name,
+                'commercial_register_number': commercial_register_number,
             })
 
         try:
+            # User=None is fine for general password policy checks
             validate_password(password, user=None)
-
         except ValidationError as error:
+            # Improved handling of validation errors
             for e in error.error_list:
-                if e.code=='password_too_short':
-                    messages.error(request, 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.')
-                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
-                'email':email,
-                'company_name':company_name,
-                                'cites':cities,
+                 # Check specific error codes and provide user-friendly messages
+                 if e.code == 'password_too_short':
+                     messages.error(request, 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.')
+                 elif e.code == 'password_entirely_numeric':
+                     messages.error(request, "لا يمكن أن تكون كلمة المرور أرقامًا فقط.")
+                 elif e.code == 'password_too_common':
+                     messages.error(request, "هذه كلمة مرور شائعة جدًا، اختر كلمة أخرى أكثر أمانًا.")
+                 elif e.code == 'password_similar_to_username':
+                     messages.error(request, "كلمة المرور قريبة من البريد الإلكتروني أو الاسم، اختر كلمة أخرى.")
+                 else:
+                     # Fallback for other potential validation errors
+                     messages.error(request, f"خطأ في كلمة المرور: {e.message}")
 
-                'commercial_register_number':commercial_register_number,})
-                elif e.code == 'password_entirely_numeric':
-                    messages.error(request,"لا يمكن أن تكون كلمة المرور أرقامًا فقط.")
-                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
-                'email':email,
-                'company_name':company_name,
-                                'cites':cities,
+            # Return render after displaying messages
+            return render(request, 'accounts/signup_company.html', {
+                'industries': industries,
+                'email': email,
+                'cites': cities_list, # Pass the formatted list
+                'company_name': company_name,
+                'commercial_register_number': commercial_register_number,
+            })
 
-                'commercial_register_number':commercial_register_number,})
 
-                elif e.code == 'password_too_common':
-                    messages.error(request,"هذه كلمة مرور شائعة جدًا، اختر كلمة أخرى أكثر أمانًا.")
-                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
-                'email':email,
-                'company_name':company_name,
-                                'cites':cities,
-
-                'commercial_register_number':commercial_register_number,})
-
-                elif e.code == 'password_similar_to_username':
-                    messages.error(request,"كلمة المرور قريبة من البريد الإلكتروني أو الاسم، اختر كلمة أخرى.")
-                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
-                'email':email,
-                'company_name':company_name,
-                                'cites':cities,
-
-                'commercial_register_number':commercial_register_number,})
-
-                else:
-                    messages.error(request,error)
-                    return render(request, 'accounts/signup_company.html',{  'industries': industries,
-                'email':email,
-                'company_name':company_name,
-                                'cites':cities,
-
-                'commercial_register_number':commercial_register_number,})
         try:
-            industry = industries.get(pk=industry_id)
+            industry = Industry.objects.get(pk=industry_id, status=True) # Ensure status is true
         except Industry.DoesNotExist:
             messages.error(request, "اختر مجالًا صالحًا للصناعة.")
             return render(request, 'accounts/signup_company.html', {
                 'industries': industries,
-                'email':email,
-                                'cites':cities,
-
-                'company_name':company_name,
-                'commercial_register_number':commercial_register_number,
+                'email': email,
+                'cites': cities_list, # Pass the formatted list
+                'company_name': company_name,
+                'commercial_register_number': commercial_register_number,
             })
+
         try:
-            city = cities.get(pk=city_id)
+            city = City.objects.get(pk=city_id, status=True) # Ensure status is true
         except City.DoesNotExist:
-            messages.error(request, "اختر مدينة صالحه")
+            messages.error(request, "اختر مدينة صالحة.")
             return render(request, 'accounts/signup_company.html', {
                 'industries': industries,
-                'email':email,
-                                'cites':cities,
-
-                'company_name':company_name,
-                'commercial_register_number':commercial_register_number,
+                'email': email,
+                'cites': cities_list, # Pass the formatted list
+                'company_name': company_name,
+                'commercial_register_number': commercial_register_number,
             })
+
 
         with transaction.atomic():
             user = User.objects.create_user(
-                username = email,
-                email    = email,
-                password = password,
-                is_active= False   
+                username=email, # Using email as username
+                email=email,
+                password=password,
+                is_active=False # User is inactive until verified
             )
-            if "logo" in request.FILES:
-                CompanyProfile.objects.create(
-                    user                        = user,
-                    company_name                = company_name,
-                    commercial_register         = commercial_register_number,
-                    crm_certificate  = reg_file,
-                    industry                    = industry,
-                    city=city,
-                )
-            else:
-                  CompanyProfile.objects.create(
-                    user                        = user,
-                    company_name                = company_name,
-                    commercial_register         = commercial_register_number,
-                    crm_certificate  = reg_file,
-                    industry                    = industry,
-                    city=city,
-                )
-            del request.session['pending_signup']
+
+            # Check specifically for 'commercial_register_file' in request.FILES
+            # No need for an 'if "logo" in request.FILES' block here based on form
+            company_profile = CompanyProfile.objects.create(
+                user=user,
+                company_name=company_name,
+                commercial_register=commercial_register_number,
+                crm_certificate=reg_file, # This will be None if file wasn't uploaded (handled by missing check)
+                industry=industry,
+                city=city,
+            )
+
+            # If you were expecting a logo file besides the CRM certificate, you'd handle it here
+            # if 'logo' in request.FILES:
+            #     company_profile.logo = request.FILES['logo']
+            #     company_profile.save()
 
 
+            # Clear the session data after successful creation
+            if 'pending_signup' in request.session:
+                del request.session['pending_signup']
 
         messages.success(request,
-    "تم استلام طلب تسجيل شركتكم بنجاح! 📩\n"
-    "سيتولى مسؤول الموقع تفعيل حسابكم مباشرةً بعد التحقق من صحة البيانات."
-)
+            "تم استلام طلب تسجيل شركتكم بنجاح! 📩\n"
+            "سيتولى مسؤول الموقع تفعيل حسابكم مباشرةً بعد التحقق من صحة البيانات."
+        )
         return redirect('accounts:login_view')
 
+    # This block handles GET requests and returning the form initially or on validation errors
     return render(request, 'accounts/signup_company.html', {
         'industries': industries,
-        'email':email,
-            'cites':cities,
-
+        'email': email,
+        'cites': cities_list, # Pass the formatted list for GET requests too
+        # Include other fields here if you want them to persist on GET reload after error
+        'company_name': request.POST.get('company_name', ''), # Retain value on POST error
+        'commercial_register_number': request.POST.get('commercial_register_number', ''), # Retain value on POST error
+        # Note: file inputs cannot have their value pre-filled for security reasons
     })
 
 def login_view(request: HttpRequest):

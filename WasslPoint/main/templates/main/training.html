@@ -1,8 +1,8 @@
 {% extends 'main/base.html' %}
+
 {% load static %}
 
 {% block style %}
-{# --- Add/Modify these styles --- #}
 <style>
   .filter-form {
       background-color: #f8f9fa;
@@ -20,29 +20,118 @@
       margin-bottom: 0.5rem;
   }
 
-  /* Style for the dropdown menu containing checkboxes */
-  .majors-dropdown-menu {
-      max-height: 250px;
-      overflow-y: auto;
-      padding: 0.5rem;
+  /* Unified dropdown styling for all filters */
+  .searchable-select-container {
+      position: relative;
   }
-  .majors-dropdown-menu .form-check {
-      padding: 0.25rem 0.75rem;
-  }
-  #majorsDropdownBtn {
-      text-align: right;
+
+  .dropdown-btn {
       width: 100%;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+      border: 1px solid #ced4da;
+      border-radius: 0.25rem;
+      background-color: #fff;
+      color: #212529;
+      text-align: right;
+      cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: #fff;
-      border: 1px solid #ced4da;
-      color: #212529;
-  }
-  #majorsDropdownBtn.placeholder {
-      color: #6c757d;
+      height: calc(1.5em + 0.75rem + 2px);
   }
 
+  .dropdown-btn::after {
+      content: "▼";
+      font-size: 0.7em;
+      margin-right: 0.5em;
+  }
+
+  .dropdown-menu {
+      position: absolute;
+      width: 100%;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+      background: white;
+      border: 1px solid rgba(0,0,0,.15);
+      border-radius: 0.25rem;
+      box-shadow: 0 0.5rem 1rem rgba(0,0,0,.175);
+      display: none;
+  }
+
+  .dropdown-menu.show {
+      display: block;
+  }
+
+  .dropdown-item {
+      display: block;
+      width: 100%;
+      padding: 0.5rem 1rem;
+      clear: both;
+      font-weight: 400;
+      color: #212529;
+      text-align: right;
+      text-decoration: none;
+      white-space: nowrap;
+      background-color: transparent;
+      border: 0;
+      cursor: pointer;
+  }
+
+  .dropdown-item:hover,
+  .dropdown-item.selected {
+      background-color: #f8f9fa;
+      color: #000;
+  }
+
+  .dropdown-search-container {
+      position: relative;
+      padding: 0.5rem;
+      border-bottom: 1px solid #dee2e6;
+  }
+
+  .dropdown-search-input {
+      width: 100%;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+      border: 1px solid #ced4da;
+      border-radius: 0.25rem;
+      background-color: #fff;
+  }
+
+  .dropdown-search-input:focus {
+      outline: none;
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  .no-results {
+      padding: 0.5rem 1rem;
+      color: #6c757d;
+      font-size: 0.875rem;
+      text-align: center;
+  }
+
+  /* Selected majors tags */
+  .selected-majors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+  }
+
+  .selected-major-tag {
+      background-color: #e9ecef;
+      color: #495057;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.2rem;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+  }
+
+  /* Other existing styles */
   .search-container {
       position: relative;
       z-index: 2;
@@ -97,12 +186,9 @@
   .search-input:focus {
       outline: none;
   }
-
-  /* إخفاء زر البحث */
   .search-button {
       display: none;
   }
-
   .section-header {
       display: flex;
       align-items: center;
@@ -150,8 +236,6 @@
       font-size: 0.9rem;
       color: #777;
   }
-
-  /* زر عام */
   .btn {
       background-color: #FF7C34;
       color: white !important;
@@ -162,7 +246,6 @@
       background-color: #13A7B1;
       color: white !important;
   }
-
   .btn-outline-secondary {
       background-color: white;
       color: #FF7C34;
@@ -177,20 +260,17 @@
 {% endblock %}
 
 {% block content %}
-
 <section class="hero-banner d-flex align-items-center justify-content-center text-center" style="background-image: url('{% static "images/banner5.jpg" %}'); height: 500px; background-size: cover; background-position: center;">
   <div class="search-container">
     <h1 class="hero-title mb-4">اكتشف الفرص الآن</h1>
     <form action="{% url 'main:training_view' %}" method="GET" class="search-form">
       <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="ابحث بالاسم، الشركة..." class="search-input">
-      <!-- تم حذف زر البحث -->
     </form>
   </div>
 </section>
 
 <section class="py-5 bg-light position-relative">
     <div class="container">
-
       <div class="section-header">
         <h2 class="section-title">
           <span class="orange-arrows"></span>
@@ -200,67 +280,106 @@
       </div>
 
       <form method="GET" action="{% url 'main:training_view' %}" class="filter-form row g-3 align-items-start">
-          {# Hidden input to preserve search query #}
           {% if search_query %}
             <input type="hidden" name="q" value="{{ search_query }}">
           {% endif %}
 
           {# City Filter #}
           <div class="col-md-6 col-lg-4">
-              <label for="cityFilter" class="form-label">المدينة:</label>
-              <select class="form-select form-select-sm" id="cityFilter" name="city">
-                  <option value="">كل المدن</option>
-                  {% for city in all_cities %}
-                      <option value="{{ city.id }}" {% if city.id|stringformat:"s" == selected_city_id %}selected{% endif %}>
-                          {{ city.arabic_name }}
-                      </option>
-                  {% endfor %}
-              </select>
+              <label for="cityFilterBtn" class="form-label">المدينة:</label>
+              <div class="searchable-select-container">
+                  <button type="button" class="dropdown-btn" id="cityFilterBtn">
+                      {% if selected_city %}
+                          {{ selected_city.arabic_name }}
+                      {% else %}
+                          كل المدن
+                      {% endif %}
+                  </button>
+                  <div class="dropdown-menu" id="cityDropdownMenu">
+                      <div class="dropdown-search-container">
+                          <input type="text" class="dropdown-search-input" id="citySearchInput" placeholder="ابحث عن المدينة...">
+                      </div>
+                      <div class="dropdown-items-container">
+                          <button type="button" class="dropdown-item" data-value="">كل المدن</button>
+                          {% for city in all_cities %}
+                              <button type="button" class="dropdown-item" data-value="{{ city.id }}">
+                                  {{ city.arabic_name }}
+                              </button>
+                          {% endfor %}
+                      </div>
+                  </div>
+                  <input type="hidden" name="city" id="cityFilterInput" value="{{ selected_city_id|default:'' }}">
+              </div>
           </div>
 
           {# Industry Filter #}
           <div class="col-md-6 col-lg-4">
-              <label for="industryFilter" class="form-label">مجال الشركة:</label>
-              <select class="form-select form-select-sm" id="industryFilter" name="industry">
-                  <option value="">كل المجالات</option>
-                  {% for industry in all_industries %}
-                      <option value="{{ industry.id }}" {% if industry.id|stringformat:"s" == selected_industry_id %}selected{% endif %}>
-                          {{ industry.arabic_name }}
-                      </option>
-                  {% endfor %}
-              </select>
-          </div>
-
-          {# --- Major Filter (Dropdown with Checkboxes) --- #}
-          <div class="col-lg-4">
-              <label class="form-label d-block">التخصصات المطلوبة:</label>
-              <div class="dropdown">
-                  {# Button to toggle the dropdown #}
-                  <button class="btn btn-sm dropdown-toggle" type="button" id="majorsDropdownBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                      <span id="majorsDropdownBtnText">اختر التخصصات...</span> {# Text updated by JS #}
+              <label for="industryFilterBtn" class="form-label">مجال الشركة:</label>
+              <div class="searchable-select-container">
+                  <button type="button" class="dropdown-btn" id="industryFilterBtn">
+                      {% if selected_industry %}
+                          {{ selected_industry.arabic_name }}
+                      {% else %}
+                          كل المجالات
+                      {% endif %}
                   </button>
-                  {# The dropdown menu containing checkboxes #}
-                  <div class="dropdown-menu majors-dropdown-menu w-100" aria-labelledby="majorsDropdownBtn">
-                      {% for major in all_majors %}
-                          <div class="form-check">
-                              <input class="form-check-input major-checkbox"
-                                     type="checkbox"
-                                     name="majors_needed"
-                                     value="{{ major.id }}"
-                                     id="major_{{ major.id }}"
-                                     {% if major.id|stringformat:"s" in selected_major_ids %}checked{% endif %}>
-                              <label class="form-check-label w-100" for="major_{{ major.id }}"> {# w-100 helps click area #}
-                                  {{ major.ar_name }}
-                              </label>
-                          </div>
-                      {% empty %}
-                          <small class="text-muted px-2">لا توجد تخصصات متاحة.</small>
-                      {% endfor %}
+                  <div class="dropdown-menu" id="industryDropdownMenu">
+                      <div class="dropdown-search-container">
+                          <input type="text" class="dropdown-search-input" id="industrySearchInput" placeholder="ابحث عن المجال...">
+                      </div>
+                      <div class="dropdown-items-container">
+                          <button type="button" class="dropdown-item" data-value="">كل المجالات</button>
+                          {% for industry in all_industries %}
+                              <button type="button" class="dropdown-item" data-value="{{ industry.id }}">
+                                  {{ industry.arabic_name }}
+                              </button>
+                          {% endfor %}
+                      </div>
                   </div>
+                  <input type="hidden" name="industry" id="industryFilterInput" value="{{ selected_industry_id|default:'' }}">
               </div>
           </div>
-          {# --- End Major Filter --- #}
 
+          {# Majors Filter #}
+          <div class="col-lg-4">
+              <label for="majorsSelectBtn" class="form-label">التخصصات المطلوبة:</label>
+              <div class="searchable-select-container">
+                  <button type="button" class="dropdown-btn" id="majorsSelectBtn">
+                      {% if selected_major_ids %}
+                          {{ selected_major_ids|length }} تخصص محدد
+                      {% else %}
+                          كل التخصصات
+                      {% endif %}
+                  </button>
+                  <div class="dropdown-menu" id="majorsDropdownMenu">
+                      <div class="dropdown-search-container">
+                          <input type="text" class="dropdown-search-input" id="majorSearchInput" placeholder="ابحث عن التخصصات...">
+                      </div>
+                      <div class="dropdown-items-container">
+                          {% for major in all_majors %}
+                              <button type="button" class="dropdown-item" data-major-id="{{ major.id }}">
+                                  {{ major.ar_name }}
+                              </button>
+                          {% empty %}
+                              <small class="text-muted px-2">لا توجد تخصصات متاحة.</small>
+                          {% endfor %}
+                      </div>
+                  </div>
+                  <div class="selected-majors" id="selectedMajorsContainer">
+                      {% for major_id in selected_major_ids %}
+                          {% for major in all_majors %}
+                              {% if major.id|stringformat:"s" == major_id %}
+                                  <span class="selected-major-tag" data-major-id="{{ major.id }}">
+                                      {{ major.ar_name }}
+                                      <button type="button" class="btn-close btn-close-white btn-sm ms-1" aria-label="إزالة" style="font-size: 0.5rem;"></button>
+                                  </span>
+                              {% endif %}
+                          {% endfor %}
+                      {% endfor %}
+                  </div>
+                  <input type="hidden" name="majors_needed" id="majorsNeededInput" value="{{ selected_major_ids|join:',' }}">
+              </div>
+          </div>
 
           {# Submit Button #}
           <div class="col-12 text-center mt-3">
@@ -268,8 +387,9 @@
               <a href="{% url 'main:training_view' %}" class="btn btn-dark ms-2">إعادة تعيين</a>
           </div>
       </form>
+
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mt-4" dir="ltr">
-      {% for op in opportunities %} {# Loop through page_obj.object_list from the view #}
+      {% for op in opportunities %}
       <div class="col d-flex align-items-stretch">
           <a class="text-decoration-none w-100" href="{% url 'posts:opportunity_detail' op.id %}">
             <div class="training-card">
@@ -296,89 +416,166 @@
              <p class="text-center lead mt-4">لا توجد تدريبات تطابق معايير البحث أو الفلترة الحالية.</p>
          </div>
       {% endfor %}
-    </div>
-    {% if page_obj and page_obj.has_other_pages %}
-       <nav aria-label="Page navigation" class="mt-5 d-flex justify-content-center">
-         <ul class="pagination">
-           {# Previous Button #}
-           {% if page_obj.has_previous %}
-             <li class="page-item">
-                 <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}{% for key, valuelist in request.GET.lists %}{% if key != 'page' %}{% for value in valuelist %}&{{ key }}={{ value }}{% endfor %}{% endif %}{% endfor %}">&laquo;</a>
-            </li>
-           {% else %}
-             <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-           {% endif %}
+      </div>
 
-           {# Page Numbers #}
-           {% for i in page_obj.paginator.page_range %}
-             {% if page_obj.number == i %}
-               <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-             {% else %}
+      {% if page_obj and page_obj.has_other_pages %}
+         <nav aria-label="Page navigation" class="mt-5 d-flex justify-content-center">
+           <ul class="pagination">
+             {% if page_obj.has_previous %}
                <li class="page-item">
-                 <a class="page-link" href="{{ request.path }}?page={{ i }}{% for key, valuelist in request.GET.lists %}{% if key != 'page' %}{% for value in valuelist %}&{{ key }}={{ value }}{% endfor %}{% endif %}{% endfor %}">{{ i }}</a>
-                </li>
+                   <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}{% for key, valuelist in request.GET.lists %}{% if key != 'page' %}{% for value in valuelist %}&{{ key }}={{ value }}{% endfor %}{% endif %}{% endfor %}">&laquo;</a>
+              </li>
+             {% else %}
+               <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
              {% endif %}
-           {% endfor %}
 
-           {# Next Button #}
-           {% if page_obj.has_next %}
-             <li class="page-item">
-                <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}{% for key, valuelist in request.GET.lists %}{% if key != 'page' %}{% for value in valuelist %}&{{ key }}={{ value }}{% endfor %}{% endif %}{% endfor %}">&raquo;</a>
-            </li>
-           {% else %}
-             <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-           {% endif %}
-         </ul>
-       </nav>
-     {% endif %}
-     </div> {# End Container #}
+             {% for i in page_obj.paginator.page_range %}
+               {% if page_obj.number == i %}
+                 <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+               {% else %}
+                 <li class="page-item">
+                   <a class="page-link" href="{{ request.path }}?page={{ i }}{% for key, valuelist in request.GET.lists %}{% if key != 'page' %}{% for value in valuelist %}&{{ key }}={{ value }}{% endfor %}{% endif %}{% endfor %}">{{ i }}</a>
+                  </li>
+               {% endif %}
+             {% endfor %}
+
+             {% if page_obj.has_next %}
+               <li class="page-item">
+                  <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}{% for key, valuelist in request.GET.lists %}{% if key != 'page' %}{% for value in valuelist %}&{{ key }}={{ value }}{% endfor %}{% endif %}{% endfor %}">&raquo;</a>
+              </li>
+             {% else %}
+               <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+             {% endif %}
+           </ul>
+         </nav>
+       {% endif %}
+    </div>
 </section>
-
 {% endblock %}
 
 {% block script %}
-{# --- Add this JavaScript block for the majors dropdown --- #}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const dropdownMenu = document.querySelector('.majors-dropdown-menu');
-    const dropdownButton = document.getElementById('majorsDropdownBtn');
-    const dropdownButtonText = document.getElementById('majorsDropdownBtnText');
-    const checkboxes = dropdownMenu.querySelectorAll('.major-checkbox');
+    // Initialize all dropdowns
+    function initDropdown(btnId, menuId, searchInputId, hiddenInputId, isMultiSelect = false) {
+        const btn = document.getElementById(btnId);
+        const menu = document.getElementById(menuId);
+        const searchInput = document.getElementById(searchInputId);
+        const hiddenInput = document.getElementById(hiddenInputId);
+        const items = menu.querySelectorAll('.dropdown-item');
 
-    function updateButtonText() {
-        const checkedCheckboxes = dropdownMenu.querySelectorAll('.major-checkbox:checked');
-        if (checkedCheckboxes.length === 0) {
-            dropdownButtonText.textContent = 'اختر التخصصات...';
-            dropdownButton.classList.add('placeholder');
-        } else if (checkedCheckboxes.length === 1) {
-            // Find the label text for the single checked checkbox
-            const label = checkedCheckboxes[0].parentElement.querySelector('.form-check-label');
-            dropdownButtonText.textContent = label ? label.textContent.trim() : '1 تخصص محدد';
-            dropdownButton.classList.remove('placeholder');
-        } else {
-            dropdownButtonText.textContent = checkedCheckboxes.length + ' تخصصات محددة';
-            dropdownButton.classList.remove('placeholder');
-        }
+        // Toggle dropdown
+        btn.addEventListener('click', function() {
+            menu.classList.toggle('show');
+            if (menu.classList.contains('show')) {
+                searchInput.focus();
+            }
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            let hasResults = false;
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Item selection
+        items.forEach(item => {
+            item.addEventListener('click', function() {
+                if (isMultiSelect) {
+                    const majorId = this.dataset.majorId;
+                    if (selectedMajorIds.has(majorId)) {
+                        selectedMajorIds.delete(majorId);
+                        this.classList.remove('selected');
+                    } else {
+                        selectedMajorIds.add(majorId);
+                        this.classList.add('selected');
+                    }
+                    updateSelectedMajors();
+                } else {
+                    const value = this.dataset.value;
+                    const text = this.textContent;
+                    hiddenInput.value = value;
+                    btn.textContent = text;
+                    menu.classList.remove('show');
+                }
+            });
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!btn.contains(event.target) && !menu.contains(event.target)) {
+                menu.classList.remove('show');
+            }
+        });
     }
 
-    // Stop propagation on clicks inside the dropdown menu to keep it open
-    dropdownMenu.addEventListener('click', function(event) {
-        event.stopPropagation();
-    });
+    // Majors specific functionality
+    const selectedMajorsContainer = document.getElementById('selectedMajorsContainer');
+    const majorsNeededInput = document.getElementById('majorsNeededInput');
+    let selectedMajorIds = new Set(majorsNeededInput.value.split(',').filter(Boolean));
 
-    // Update button text when a checkbox changes state
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateButtonText);
-    });
+    function updateSelectedMajors() {
+        // Update hidden input
+        majorsNeededInput.value = Array.from(selectedMajorIds).join(',');
 
-    // Initial update of button text on page load
-    updateButtonText();
+        // Update button text
+        const majorsBtn = document.getElementById('majorsSelectBtn');
+        if (selectedMajorIds.size > 0) {
+            majorsBtn.textContent = `${selectedMajorIds.size} تخصص محدد`;
+        } else {
+            majorsBtn.textContent = 'كل التخصصات';
+        }
+
+        // Update selected tags display
+        selectedMajorsContainer.innerHTML = '';
+        selectedMajorIds.forEach(majorId => {
+            const majorItem = document.querySelector(`.dropdown-item[data-major-id="${majorId}"]`);
+            if (majorItem) {
+                const tag = document.createElement('span');
+                tag.className = 'selected-major-tag';
+                tag.dataset.majorId = majorId;
+                tag.innerHTML = `
+                    ${majorItem.textContent}
+                    <button type="button" class="btn-close btn-close-white btn-sm ms-1" aria-label="إزالة" style="font-size: 0.5rem;"></button>
+                `;
+                tag.querySelector('button').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    selectedMajorIds.delete(majorId);
+                    majorItem.classList.remove('selected');
+                    updateSelectedMajors();
+                });
+                selectedMajorsContainer.appendChild(tag);
+            }
+        });
+    }
+
+    // Initialize all dropdowns
+    initDropdown('cityFilterBtn', 'cityDropdownMenu', 'citySearchInput', 'cityFilterInput');
+    initDropdown('industryFilterBtn', 'industryDropdownMenu', 'industrySearchInput', 'industryFilterInput');
+    initDropdown('majorsSelectBtn', 'majorsDropdownMenu', 'majorSearchInput', 'majorsNeededInput', true);
+
+    // Initialize selected majors
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        if (item.dataset.majorId && selectedMajorIds.has(item.dataset.majorId)) {
+            item.classList.add('selected');
+        }
+    });
+    updateSelectedMajors();
 });
 </script>
 
 <footer class="py-4 mt-5" style="background-color: #13A7B1;">
   <div class="container text-center">
-    <!-- أيقونات -->
     <div class="mb-3 d-flex justify-content-center gap-4 flex-wrap">
       <a href="https://www.linkedin.com/in/ahmed-alghamdi-hi/" target="_blank" class="text-white fs-4">
         <i class="fi fi-brands-linkedin"></i>
@@ -391,12 +588,9 @@ document.addEventListener('DOMContentLoaded', function() {
       </a>
     </div>
 
-    <!-- حقوق النشر -->
     <p class="text-white mb-0" style="font-size: 0.95rem;">
       © 2025 جميع الحقوق محفوظة لنقطة وصل — شروط الاستخدام، سياسة الخصوصية، وسياسة ملفات تعريف الارتباط
     </p>
   </div>
 </footer>
-
-
 {% endblock %}

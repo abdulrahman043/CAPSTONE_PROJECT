@@ -1,3 +1,4 @@
+/* === Your existing style.css content begins here === */
 /* === تكبير عناصر الـ Navigation Bar + تمييز الهوفر والعنصر النشط === */
 .navbar-nav .nav-link {
   font-size: 1.2rem;
@@ -35,7 +36,7 @@ body {
 }
 
 .carousel-inner {
-  height: 100vh;
+  height: 100vh; /* This was duplicated, kept one */
 }
 
 .carousel-item {
@@ -103,7 +104,7 @@ body {
 }
 
 /* ===== الإحصائيات ===== */
-.shadow-sm i,
+.shadow-sm i, /* This was duplicated with .bg-white i, consolidated */
 .bg-white i {
   color: #FF7C34 !important; /* برتقالي ثابت */
   font-size: 100px !important; /* تكبير الحجم */
@@ -161,7 +162,7 @@ body {
 }
 
 /* لضبط خلفيات السلايدر الحديثة */
-.hero-slide-image {
+.hero-slide-image { /* This was duplicated, kept one */
   height: 100vh;
   background-size: cover;
   background-position: center center;
@@ -173,14 +174,14 @@ body {
   background: #f8f8f8;
 }
 
-.section-title {
+.section-title { /* This was duplicated, kept one. Note: HTML template uses this for H2 inside .section-header */
   color: #009999;
   font-size: 2.5rem;
   font-weight: bold;
   position: relative;
 }
 
-.orange-arrows {
+.orange-arrows { /* Original definition from style.css */
   color: #FF7C34;
   font-size: 1.5rem;
 }
@@ -238,77 +239,91 @@ body {
 
 
 /* بحث صفحه التدريب */
-.hero-banner {
+.hero-banner { /* Original style.css definition for .hero-banner (potentially for training page) */
   position: relative;
   color: white;
-
+  /* margin-bottom: 3rem; was in inline, conflicts with other .hero-banner uses if not scoped */
 }
 
-.search-container {
+.search-container { /* Original style.css definition for .search-container (potentially for training page) */
   width: 90%;
   max-width: 700px;
   background: rgba(0, 0, 0, 0.0); /* شفاف بدون خلفية */
   padding: 20px;
   border-radius: 15px;
+  /* position: relative; z-index: 2; margin: 0 auto; padding: 0 15px; from inline */
 }
 
-.hero-title {
-  font-size: 3rem;
-  font-weight: bold;
-  color: white;
-  margin-bottom: 2rem;
+.hero-title { /* Original style.css definition for .hero-title (potentially for training page) */
+  font-size: 3rem; /* from style.css, inline was 2.5rem */
+  font-weight: bold; /* from style.css, inline was 700 */
+  color: white; /* from style.css, inline was #fff (same) */
+  margin-bottom: 2rem; /* from style.css, inline was 1.5rem for .search-form */
+  /* text-shadow: 1px 1px 3px rgba(0,0,0,0.6); from inline */
 }
 
-.search-form {
+.search-form { /* Original style.css definition for .search-form (potentially for training page) */
   display: flex;
   align-items: center;
   justify-content: center;
   border: 3px solid #009999; /* الأزرق المستخدم */
-  border-radius: 15px;
+  border-radius: 15px; /* from style.css, inline was 50px */
   overflow: hidden;
+  /* gap: 0; padding: 5px; background-color: rgba(255, 255, 255, 0.95); box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 1.5rem; from inline */
 }
 
-.search-input {
+.search-input { /* Original style.css definition for .search-input (potentially for training page) */
   flex: 1;
   background: transparent;
   border: none;
-  padding: 15px;
-  color: white;
-  font-size: 1.2rem;
+  padding: 15px; /* from style.css, inline was 10px 20px */
+  color: white; /* from style.css, inline was #333 */
+  font-size: 1.2rem; /* from style.css, inline was 1rem */
   outline: none;
 }
 
-.search-input::placeholder {
-  color: white;
+.search-input::placeholder { /* Original style.css definition for .search-input::placeholder */
+  color: white; /* from style.css, inline was #888 */
   opacity: 0.8;
 }
 
-.search-button {
-  background: transparent;
+.search-button { /* Original style.css definition for .search-button (potentially for training page) */
+  background: transparent; /* from style.css, inline was #FF7C34 */
   border: none;
-  color: white;
-  padding: 15px 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
+  color: white; /* from style.css, inline was white (same) */
+  padding: 15px 20px; /* from style.css, inline was 10px 25px */
+  font-size: 1.2rem; /* from style.css, inline was 1rem */
+  font-weight: bold; /* from style.css, inline was 500 */
   cursor: pointer;
-  transition: background 0.3s, color 0.3s;
+  transition: background 0.3s, color 0.3s; /* from style.css, inline was background-color 0.3s ease */
+  /* border-radius: 0 50px 50px 0; white-space: nowrap; from inline */
 }
 
-.search-button:hover {
-  background-color: #FF7C34;
+.search-button:hover { /* Original style.css definition for .search-button:hover */
+  background-color: #FF7C34; /* from style.css, inline was #e56b24 */
   color: white;
 }
 
 
 /* ===== قسم البانر عن وصل ===== */
-.hero-banner-about {
-  height: 70vh;
+.hero-banner-about { /* This was duplicated, kept one. This is distinct from the company list page hero banner. */
+  height: 70vh; /* Overridden by later .hero-banner-about definition */
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   color: white;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-  padding: 30px;
+  padding: 30px; /* Overridden by later .hero-banner-about definition */
+  /* Additional properties from later definition */
+  position: relative; /* From later def */
+  min-height: 450px; /* From later def */
+  display: flex; /* From later def */
+  flex-direction: column; /* From later def */
+  align-items: center; /* From later def */
+  justify-content: center; /* From later def */
+  text-align: center; /* From later def */
+  z-index: 1; /* From later def */
+  overflow: hidden; /* From later def */
 }
 
 .hero-logo {
@@ -317,20 +332,13 @@ body {
   color: #009999;
 }
 
-.hero-description {
+.hero-description { /* Original style.css definition */
   max-width: 800px;
-  font-size: 1.5rem;
+  font-size: 1.5rem; /* from style.css, .hero-banner-about .hero-description is 1.6rem / 1.2rem */
   margin-top: 20px;
-  color: #FF7C34;
-  font-weight: bold;
-  line-height: 1.7;
-}
-
-/* ===== عنوان من نحن ===== */
-.section-title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #009999;
+  color: #FF7C34; /* from style.css, .hero-banner-about .hero-description is #ffffff */
+  font-weight: bold; /* from style.css, .hero-banner-about .hero-description is 500 */
+  line-height: 1.7; /* from style.css, .hero-banner-about .hero-description is 1.5 / 1.4 */
 }
 
 /* ===== بطاقات الفريق ===== */
@@ -438,16 +446,14 @@ body {
 }
 
 
-/* ======= صفحة الشركات ======= */
-
-/* تنسيق العنوان الرئيسي */
+/* ======= صفحة الشركات (الاعلانات) ======= */
+/* This .ads section seems for a different type of "company" or "advertisement" listing */
 .ads h2 {
   text-align: center;
   font-size: 2.5rem;
   margin-bottom: 3rem;
 }
 
-/* الحاوية التي تحتوي على كل الكروت */
 .ads-container {
   display: flex;
   flex-wrap: wrap;
@@ -456,7 +462,6 @@ body {
   margin: 2rem 0;
 }
 
-/* الكارد الواحد (التدريب) */
 .ad-card {
   background-color: white;
   border: 2px solid #FF7C34;
@@ -468,13 +473,11 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* تأثير الهوفر على الكارد */
 .ad-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* اسم الشركة */
 .ad-card h1 {
   font-size: 1.8rem;
   font-weight: bold;
@@ -482,7 +485,6 @@ body {
   margin-bottom: 1rem;
 }
 
-/* اللقب */
 .ad-card h2 {
   font-size: 1.5rem;
   font-weight: bold;
@@ -490,7 +492,6 @@ body {
   margin-bottom: 1rem;
 }
 
-/* النصوص العادية */
 .ad-card p {
   font-size: 1rem;
   color: #555;
@@ -498,16 +499,14 @@ body {
   line-height: 1.5;
 }
 
-/* الوصف الطويل يتم قطعه */
 .description-clamp {
   display: -webkit-box;
-  -webkit-line-clamp: 4; /* عدد السطور اللي تبين */
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* زر التفاصيل */
 .ad-card button {
   margin-top: 1rem;
   background-color: #FF7C34;
@@ -520,13 +519,12 @@ body {
   transition: background-color 0.3s ease;
 }
 
-/* زر التفاصيل عند الهوفر */
 .ad-card button:hover {
   background-color: #009999;
 }
 
 /* زر إضافة تدريب */
-.btn a {
+.btn a { /* This is very generic, might conflict */
   background-color: #009999;
   color: white;
   padding: 10px 20px;
@@ -536,571 +534,75 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.btn a:hover {
+.btn a:hover { /* This is very generic */
   background-color: #FF7C34;
 }
 
 /* زر التصنيف */
-.dropdown-menu {
+.dropdown-menu { /* Original style.css definition. Inline bootstrap-select styles might override/add to this */
   min-width: 10rem;
   text-align: center;
   border-radius: 10px;
   background-color: #ffffff;
 }
 
-.dropdown-item {
+.dropdown-item { /* Original style.css definition */
   padding: 10px;
   color: #009999;
   font-weight: bold;
   transition: 0.3s;
 }
 
-.dropdown-item:hover {
+.dropdown-item:hover { /* Original style.css definition */
   background-color: #FF7C34;
   color: #ffffff;
 }
-#heroCarousel {
-    position: relative;
-  }
 
-  .carousel-inner {
-    height: 100vh;
-  }
+/* Duplicate #heroCarousel and related styles removed as they were identical to earlier ones */
 
-  .carousel-item {
-    height: 100vh;
-    position: relative;
-  }
-
-  .hero-slide {
-    height: 100vh;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    width: 100%;
-  }
-
-  /* ===== نص السلايدر ===== */
-  .carousel-caption {
-    bottom: 20%;
-    text-align: center;
-  }
-
-  .carousel-caption h1 {
-    font-size: 3rem;
-    font-weight: bold;
-    color: white;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-  }
-
-  .carousel-caption p {
-    font-size: 1.2rem;
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-  }
-
-  .carousel-caption a.btn {
-    font-size: 1.1rem;
-    padding: 10px 20px;
-    margin-top: 10px;
-    border-radius: 8px;
-  }
-
-  /* ===== الأسهم ===== */
-  .carousel-control-prev,
-  .carousel-control-next {
-    width: 50px;
-    height: 50px;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: transparent;
-    border-radius: 50%;
-    transition: background-color 0.3s ease;
-  }
-
-  .carousel-control-prev:hover,
-  .carousel-control-next:hover {
-    background-color: rgba(0, 0, 0, 0.4);
-  }
-
-  .carousel-control-prev-icon,
-  .carousel-control-next-icon {
-    width: 24px;
-    height: 24px;
-    background-size: 100% 100%;
-    filter: brightness(0) invert(1);
-  }
-
-  /* ===== الإحصائيات ===== */
-  .shadow-sm i,
-  .bg-white i {
-    color: #FF7C34 !important; /* برتقالي ثابت */
-    font-size: 100px !important; /* تكبير الحجم */
-    width: 100px !important;
-    height: 100px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-
-  /* ===== النص داخل الإحصائيات ===== */
-  .stat-box h5 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #009999;
-  }
-
+@media (max-width: 576px) {
+  .stat-box h5,
   .stat-box span {
-    color: #009999;
+    font-size: 1.5rem !important;
   }
 
-  /* ===== الفوتر ===== */
-  .site-footer {
-    background-color: #f8f9fa;
-    color: #333;
-    font-size: 14px;
-    border-top: 1px solid #ddd;
+  .shadow-sm i {
+    font-size: 60px !important;
+    width: 60px !important;
+    height: 60px !important;
   }
 
-  .site-footer p {
-    margin: 0;
+  .bg-white.p-4 {
+    padding: 1rem !important;
   }
 
-  .site-footer .footer-links a {
-    color: #009999;
-    text-decoration: none;
-    font-weight: bold;
-  }
-
-  .site-footer .footer-links a:hover {
-    text-decoration: underline;
-  }
-
-
-  /* لضبط خلفيات السلايدر الحديثة */
-  .hero-slide-image {
-    height: 100vh;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    width: 100%;
-  }
-
-  .trainings-section {
-    background: #f8f8f8;
-  }
-
-  .section-title {
-    color: #009999;
-    font-size: 2.5rem;
-    font-weight: bold;
-    position: relative;
-  }
-
-  .orange-arrows {
-    color: #FF7C34;
-    font-size: 1.5rem;
-  }
-
-  .filter-btn {
-    font-size: 1rem;
-    color: #009999;
-    border: 2px solid #FF7C34;
-    border-radius: 8px;
-    padding: 5px 15px;
-    background: transparent;
-    margin-right: 20px;
-    float: right;
-  }
-
-  .training-card {
-    background: white;
-    border: 2px solid #009999;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
-    height: 100%;
-  }
-
-  .training-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .company-logo {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-  }
-
-  .company-name {
-    color: #009999;
-    font-weight: bold;
-    font-size: 1.5rem;
-  }
-
-  .training-opportunity {
-    color: #FF7C34;
-    font-weight: bold;
-    font-size: 1.3rem;
-    margin-top: 10px;
-  }
-
-  .training-fields {
-    color: #555;
-    font-size: 0.95rem;
-    margin-top: 10px;
-    line-height: 1.6;
-  }
-
-
-  /* بحث صفحه التدريب */
-  .hero-banner {
-    position: relative;
-    color: white;
-
-  }
-
-  .search-container {
-    width: 90%;
-    max-width: 700px;
-    background: rgba(0, 0, 0, 0.0); /* شفاف بدون خلفية */
-    padding: 20px;
-    border-radius: 15px;
-  }
-
-  .hero-title {
-    font-size: 3rem;
-    font-weight: bold;
-    color: white;
-    margin-bottom: 2rem;
-  }
-
-  .search-form {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid #009999; /* الأزرق المستخدم */
-    border-radius: 15px;
-    overflow: hidden;
-  }
-
-  .search-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 15px;
-    color: white;
-    font-size: 1.2rem;
-    outline: none;
-  }
-
-  .search-input::placeholder {
-    color: white;
-    opacity: 0.8;
-  }
-
-  .search-button {
-    background: transparent;
-    border: none;
-    color: white;
-    padding: 15px 20px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s, color 0.3s;
-  }
-
-  .search-button:hover {
-    background-color: #FF7C34;
-    color: white;
-  }
-
-
-  /* ===== قسم البانر عن وصل ===== */
-  .hero-banner-about {
-    height: 70vh;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    color: white;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-    padding: 30px;
-  }
-
-  .hero-logo {
-    font-size: 6rem;
-    font-weight: bold;
-    color: #009999;
-  }
-
-  .hero-description {
-    max-width: 800px;
-    font-size: 1.5rem;
-    margin-top: 20px;
-    color: #FF7C34;
-    font-weight: bold;
-    line-height: 1.7;
-  }
-
-  /* ===== عنوان من نحن ===== */
-  .section-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #009999;
-  }
-
-  /* ===== بطاقات الفريق ===== */
-  .team-card {
-    border: 3px solid #009999;
-    border-radius: 15px;
-    background: #fff;
-    color: #009999;
-    transition: transform 0.3s;
-  }
-
-  .team-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .team-card i {
-    font-size: 80px;
-    color: #FF7C34;
-  }
-
-  .team-card h5 {
-    margin-top: 10px;
-    font-size: 1.3rem;
-    font-weight: bold;
-  }
-
-
-  /* ===== صفحة اتصل بنا ===== */
-  .contact-us-page {
-    padding: 40px 20px;
-    background-color: #f8f9fa;
-    min-height: 100vh;
-  }
-
-  .contact-title {
-    font-size: 2.5rem;
-    color: #009999;
-    font-weight: bold;
-    margin-bottom: 40px;
-  }
-
-  .contact-form-container {
-    width: 90%;
-    max-width: 600px;
-    margin: auto;
-  }
-
-  .form-group {
-    position: relative;
-    margin-bottom: 20px;
-  }
-
-  .input-icon {
-    position: absolute;
-    top: 50%;
-    left: 10px;
-    transform: translateY(-50%);
-    color: #FF7C34;
+  .stats-section h2 {
     font-size: 1.3rem;
   }
+}
+.export-pdf-btn {
+  --bs-btn-padding-y: 0.5rem;
+  --bs-btn-padding-x: 1rem;
+  --bs-btn-border-radius: 0.375rem;
+  background-color: transparent;
+  border: 2px solid #FF7C34;
+  color: #FF7C34;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
 
-  .form-control-contact {
-    width: 100%;
-    padding: 12px 20px 12px 40px;
-    font-size: 1rem;
-    border: 2px solid #009999;
-    border-radius: 10px;
-    background: transparent;
-    color: #009999;
-    outline: none;
-  }
-
-  .form-control-contact::placeholder {
-    color: #009999;
-    opacity: 0.8;
-    font-weight: bold;
-  }
-
-  /* لون الحدود حسب الخانة */
-  .orange-border {
-    border-color: #FF7C34;
-  }
-
-  .blue-border {
-    border-color: #009999;
-  }
-
-  /* زر الارسال */
-  .send-btn {
-    background: transparent;
-    border: 2px solid #009999;
-    color: #FF7C34;
-    font-size: 1.2rem;
-    font-weight: bold;
-    padding: 8px 25px;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-
-  .send-btn:hover {
-    background: #FF7C34;
-    color: white;
-    border-color: #FF7C34;
-  }
-
-
-  /* ======= صفحة الشركات ======= */
-
-  /* تنسيق العنوان الرئيسي */
-  .ads h2 {
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 3rem;
-  }
-
-  /* الحاوية التي تحتوي على كل الكروت */
-  .ads-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-    margin: 2rem 0;
-  }
-
-  /* الكارد الواحد (التدريب) */
-  .ad-card {
-    background-color: white;
-    border: 2px solid #FF7C34;
-    border-radius: 20px;
-    padding: 2rem;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  /* تأثير الهوفر على الكارد */
-  .ad-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-
-  /* اسم الشركة */
-  .ad-card h1 {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #009999;
-    margin-bottom: 1rem;
-  }
-
-  /* اللقب */
-  .ad-card h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #FF7C34;
-    margin-bottom: 1rem;
-  }
-
-  /* النصوص العادية */
-  .ad-card p {
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 0.8rem;
-    line-height: 1.5;
-  }
-
-  /* الوصف الطويل يتم قطعه */
-  .description-clamp {
-    display: -webkit-box;
-    -webkit-line-clamp: 4; /* عدد السطور اللي تبين */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* زر التفاصيل */
-  .ad-card button {
-    margin-top: 1rem;
-    background-color: #FF7C34;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-  }
-
-  /* زر التفاصيل عند الهوفر */
-  .ad-card button:hover {
-    background-color: #009999;
-  }
-
-  /* زر إضافة تدريب */
-  .btn a {
-    background-color: #009999;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn a:hover {
-    background-color: #FF7C34;
-  }
-
-  @media (max-width: 576px) {
-    .stat-box h5,
-    .stat-box span {
-      font-size: 1.5rem !important;
-    }
-
-    .shadow-sm i {
-      font-size: 60px !important;
-      width: 60px !important;
-      height: 60px !important;
-    }
-
-    .bg-white.p-4 {
-      padding: 1rem !important;
-    }
-
-    .stats-section h2 {
-      font-size: 1.3rem;
-    }
-  }
-  .export-pdf-btn {
-    --bs-btn-padding-y: 0.5rem;
-    --bs-btn-padding-x: 1rem;
-    --bs-btn-border-radius: 0.375rem;
-    background-color: transparent;
-    border: 2px solid #FF7C34;
-    color: #FF7C34;
-    font-weight: bold;
-    transition: background-color 0.3s, color 0.3s;
-  }
-
-  .export-pdf-btn:hover,
-  .export-pdf-btn:focus {
-    background-color: #FF7C34;
-    color: white;
-    text-decoration: none;
-  }
+.export-pdf-btn:hover,
+.export-pdf-btn:focus {
+  background-color: #FF7C34;
+  color: white;
+  text-decoration: none;
+}
 
 /* نص لا توجد فرص حالياً */
-
-.text-muted {
-  color: #FF7C34 !important;
-  font-weight: bold;
+.text-muted { /* This is a Bootstrap class, overriding it globally like this is risky */
+  /* color: #FF7C34 !important;  // From original style.css. The HTML template uses .text-muted on company cards. */
+  /* font-weight: bold; // From original style.css */
+  /* The company card CSS defines its own .card-text.text-muted styling implicitly by not overriding Bootstrap much */
 }
 
 
@@ -1116,9 +618,10 @@ body {
 }
 
 /* صوره اسفل الاحصايات */
-.hero-banner {
-  background-color: #f8f9fa;
+.hero-banner { /* This is another definition for .hero-banner from original style.css */
+  background-color: #f8f9fa; /* This conflicts with the image background from inline style */
   padding: 0;
+  /* Other .hero-banner properties defined above and in moved styles will interact here */
 }
 
 .banner-text {
@@ -1236,42 +739,24 @@ body {
 }
 
 
-.custom-filter-btn {
-  background-color: #FF7C34;
+.custom-filter-btn { /* Original definition from style.css */
+  background-color: #FF7C34; /* from style.css, inline was #13A7B1 */
   color: white;
-  border: none;
+  border: none; /* from style.css, inline had border-color: #13A7B1; */
 }
 
-.custom-filter-btn:hover {
-  background-color: #13A7B1;
+.custom-filter-btn:hover { /* Original definition from style.css */
+  background-color: #13A7B1; /* from style.css, inline was #0e7d85 */
   color: white;
 }
 
-/*  */
-.carousel {
+/* */
+.carousel { /* This definition is very minimal, likely overridden or not used */
   height: 100px;
 }
 
-.carousel-inner {
-  height: 100px;
-}
+/* .carousel-inner { height: 100px; } -> This was already defined as 100vh earlier */
 
-
-.hero-banner-about {
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  padding: 100px 20px;
-  min-height: 450px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: white;
-  z-index: 1;
-  overflow: hidden;
-}
 
 .hero-banner-about .overlay {
   position: absolute;
@@ -1294,7 +779,7 @@ body {
   margin-bottom: 20px;
 }
 
-.hero-banner-about .hero-description {
+.hero-banner-about .hero-description { /* This is a more specific definition for .hero-description in .hero-banner-about context */
   font-size: 1.6rem;
   line-height: 1.5;
   font-weight: 500;
@@ -1306,25 +791,18 @@ body {
   margin-bottom: 15px;
 }
 
-.hero-banner-about {
-  position: relative;
-  padding: 80px 20px;
-  background-size: cover;
-  background-position: center;
-  color: white;
-  text-align: center;
-}
+/* .hero-banner-about { ... } -> This was a duplicate of an earlier definition */
 
 
 /* تصميم افتراضي للشاشات الكبيرة */
-.hero-banner-about .hero-logo-img {
-  width: 150px;
-  margin-bottom: 20px;
+.hero-banner-about .hero-logo-img { /* Duplicate definition for .hero-banner-about .hero-logo-img */
+  width: 150px; /* Same as max-width */
+  margin-bottom: 20px; /* Earlier was 15px */
   transition: all 0.3s ease-in-out;
 }
 
-.hero-banner-about .hero-description {
-  font-size: 1.7rem;
+.hero-banner-about .hero-description { /* Duplicate definition for .hero-banner-about .hero-description */
+  font-size: 1.7rem; /* Earlier was 1.6rem */
   line-height: 1.5;
   color: #ffffff;
   transition: all 0.3s ease-in-out;
@@ -1344,4 +822,185 @@ body {
       color: #ffffff;
   }
 }
+/* Removed a stray closing brace } that was at the end of the provided style.css */
 
+/* === End of your original style.css content === */
+
+/* === Styles moved from the HTML template for "الشركات المسجلة" page START === */
+/* These styles are intended for the company listing page.
+   If they affect other pages unexpectedly, consider scoping them with a page-specific class. */
+
+/* --- Hero Banner and Search Bar Styles (for Company List Page) --- */
+.hero-banner { /* Appended from HTML - will likely override earlier .hero-banner definitions for this page */
+    position: relative;
+    color: #fff; /* Was white in some style.css defs */
+    margin-bottom: 3rem; /* New or different from other .hero-banner */
+    /* background-image, height, background-size, background-position are applied inline in HTML */
+}
+.hero-banner::before { /* Appended from HTML */
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4); /* Dark overlay */
+    z-index: 1;
+}
+.search-container { /* Appended from HTML - specific to company list page's hero */
+    position: relative;
+    z-index: 2;
+    width: 100%; /* style.css had 90% for other context */
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 15px; /* style.css had 20px for other context */
+    /* background & border-radius from style.css's other .search-container will not apply if this one matches */
+}
+.hero-title { /* Appended from HTML - specific to company list page's hero */
+    font-size: 2.5rem; /* style.css had 3rem for other context */
+    font-weight: 700; /* style.css had bold for other context */
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    /* color & margin-bottom from style.css's other .hero-title might be overridden */
+}
+.search-form { /* Appended from HTML - specific to company list page's hero */
+    display: flex;
+    gap: 0;
+    padding: 5px; /* style.css had no padding, but border */
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 50px; /* style.css had 15px for other context */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-top: 1.5rem;
+    /* align-items, justify-content, border from style.css's other .search-form will not apply if this one matches */
+}
+.search-input { /* Appended from HTML - specific to company list page's hero search */
+    flex: 1;
+    padding: 10px 20px; /* style.css had 15px for other context */
+    border: none;
+    font-size: 1rem; /* style.css had 1.2rem for other context */
+    background-color: transparent; /* style.css had transparent for other context */
+    color: #333; /* style.css had white for other context */
+}
+.search-input::placeholder { /* Appended from HTML */
+    color: #888; /* style.css had white for other context */
+}
+.search-input:focus { /* Appended from HTML */
+    outline: none;
+}
+.search-button { /* Appended from HTML - specific to company list page's hero search (if it had one) */
+                /* The HTML provided for company list page didn't have a search button in the hero banner's form */
+                /* This style is from the original inline block, kept for completeness if button added back */
+    padding: 10px 25px; /* style.css had 15px 20px for other context */
+    border: none;
+    border-radius: 0 50px 50px 0; /* style.css had no border-radius for other context's button */
+    background-color: #FF7C34; /* style.css had transparent for other context */
+    color: white;
+    font-size: 1rem; /* style.css had 1.2rem for other context */
+    font-weight: 500; /* style.css had bold for other context */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+.search-button:hover { /* Appended from HTML */
+    background-color: #e56b24; /* style.css had #FF7C34 for other context */
+}
+
+/* --- Section Header Styles (for Company List Page) --- */
+.section-header { /* Appended from HTML */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center header */
+    margin-bottom: 2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #eee;
+}
+
+.orange-arrows { /* Appended from HTML - for Company List Page section header */
+    color: #FF7C34;
+    font-size: 0.8em; /* style.css had 1.5rem for a more generic .orange-arrows */
+    font-weight: bold;
+}
+
+/* --- Filter Form (for Company List Page) --- */
+ .filter-form { /* Appended from HTML - mostly layout classes from Bootstrap are used */
+    /* Using flexbox for inline layout - This comment was present, no specific rules were in the HTML for it */
+}
+
+/* Ensure Bootstrap-select dropdown width behaves (for Company List Page) */
+.bootstrap-select .dropdown-toggle { /* Appended from HTML */
+    width: 100% !important;
+    text-align: right;
+ }
+ .bootstrap-select .dropdown-menu { /* Appended from HTML */
+    text-align: right;
+ }
+ .bootstrap-select .inner .bs-searchbox input { /* Appended from HTML */
+     text-align: right;
+ }
+
+
+/* --- Company Card Styles (for Company List Page) --- */
+.company-card { /* Appended from HTML */
+    transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    background-color: #fff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.company-card:hover { /* Appended from HTML */
+    transform: translateY(-5px);
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+}
+.company-card .card-img-top { /* Appended from HTML */
+    height: 150px; object-fit: contain; background-color: #f8f9fa;
+    padding: 10px; border-bottom: 1px solid #dee2e6;
+}
+.company-card .card-body { /* Appended from HTML */
+    flex-grow: 1; display: flex; flex-direction: column;
+    justify-content: space-between; padding: 1rem;
+}
+.company-card .card-title { /* Appended from HTML */
+    color: #343a40; font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem;
+}
+.company-card .card-text { /* Appended from HTML */
+    font-size: 0.9rem; margin-bottom: 0.5rem;
+    /* Note: .text-muted is a Bootstrap class. If global .text-muted was changed, it might affect this. */
+}
+.company-card .card-text .material-symbols-outlined { /* Appended from HTML */
+    font-size: 1.1em; vertical-align: text-bottom; margin-inline-end: 0.25rem;
+}
+
+/* --- Empty State Styles (for Company List Page) --- */
+.empty-state { /* Appended from HTML */
+  padding: 3rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.375rem;
+  margin-top: 1rem;
+}
+.empty-state .material-symbols-outlined { /* Appended from HTML */
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+
+/* --- Pagination (for Company List Page) --- */
+.pagination .page-link { /* Appended from HTML */
+    color: #13A7B1;
+}
+.pagination .page-item.active .page-link { /* Appended from HTML */
+    background-color: #13A7B1; border-color: #13A7B1; color: white;
+}
+
+/* Custom filter button styling (for Company List Page filters) */
+.custom-filter-btn { /* Appended from HTML */
+    background-color: #13A7B1; /* style.css had #FF7C34 */
+    color: white;
+    border-color: #13A7B1; /* style.css had border: none */
+    /* border: none; from HTML's .custom-filter-btn will be overridden by border-color if Bootstrap adds a default border-style */
+}
+.custom-filter-btn:hover { /* Appended from HTML */
+    background-color: #0e7d85; /* style.css had #13A7B1 */
+    border-color: #0e7d85; /* New, as style.css hover for this had no border change */
+    color: white;
+}
+/* === Styles moved from the HTML template for "الشركات المسجلة" page END === */

@@ -43,7 +43,7 @@
                 <p>{{profile.industry.arabic_name}}</p>
             </div>
         </div>
-       
+
         <div class="row mb-2">
             <div class="col">
                 <p>المدينة</p>
@@ -60,7 +60,7 @@
                 <p>{%if profile.company_location%} {{profile.company_location}} {%endif%}</p>
             </div>
         </div>
-       
+
         <div class="row mb-2">
             <div class="col">
                 <p>ملف السجل التجاري</p>
@@ -70,7 +70,7 @@
                 <a href="{{ profile.crm_certificate.url }}" target="_blank"  class="btn export-pdf-btn btn-sm mb-2">
                     عرض السجل التجاري
                 </a>
-              
+
 
                 {% endif %}
             </div>
@@ -125,7 +125,7 @@
                     </select></p>
                 </div>
             </div>
-           
+
             <div class="row mb-2">
                 <div class="col">
                     <label class="required" for="city">المدينة</label>
@@ -146,7 +146,7 @@
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <label class="form-label " for="company_location"> موقع الشركة الالكتروني         </label>
+                    <label class="form-label " for="company_location"> موقع الشركة على (قوقل ماب)         </label>
                 </div>
                 <div class="col">
                     <p><input class="form-control" min="7" id="company_location" name="company_location" type="text" {%if profile.company_location%} value="{{profile.company_location}}" {%endif%}  ></p>
