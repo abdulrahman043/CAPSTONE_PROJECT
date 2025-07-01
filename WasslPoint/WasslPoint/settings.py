@@ -98,7 +98,7 @@ if DEBUG:
     DATABASES = {
         'default': dj_database_url.config(
             conn_max_age=600,
-            default='postgresql://postgres:TVVwQYTyDXUuRhHwncafamgJLAAJMddY@hopper.proxy.rlwy.net:47306/railway'
+            default='1'
         )
     }
 else:
@@ -202,3 +202,7 @@ EMAIL_HOST_PASSWORD = 'kasb dbur ilcf zvss'
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+print("DEBUG:", DEBUG)
+print("DATABASES:", DATABASES)
+print("STRIPE KEY:", os.getenv("STRIPE_SECRET_KEY"))
+print("CLOUDFLARE_R2_BUCKET_ENDPOINT:", os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT"))
