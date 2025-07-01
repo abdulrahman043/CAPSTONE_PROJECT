@@ -98,7 +98,7 @@ if DEBUG:
     DATABASES = {
         'default': dj_database_url.config(
             conn_max_age=600,
-            default='postgresql://postgres:TVVwQYTyDXUuRhHwncafamgJLAAJMddY@hopper.proxy.rlwy.net:47306/railway'
+            default=''
         )
     }
 else:
